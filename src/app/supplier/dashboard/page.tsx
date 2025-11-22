@@ -7,13 +7,9 @@ export default async function DashboardPage() {
 
     const {
         data: { user },
-        error
     } = await supabase.auth.getUser()
 
-    console.log('Dashboard Auth Check:', { user: user?.id, error })
-
     if (!user) {
-        console.log('Redirecting to register from dashboard')
         return redirect('/auth/register')
     }
 
