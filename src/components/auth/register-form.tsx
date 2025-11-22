@@ -20,7 +20,14 @@ export default function RegisterForm() {
         const email = (formData.get('email') as string).trim()
         const password = (formData.get('password') as string).trim()
         const companyName = (formData.get('companyName') as string).trim()
-        const website = (formData.get('website') as string).trim()
+        let website = (formData.get('website') as string).trim()
+
+        // Relaxed URL validation: Prepend https:// if missing
+        if (website && !/^https?:\/\//i.test(website)) {
+            website = `https://${website}`
+        }
+
+        console.log('Attempting signup with:', { email: `"${email}"`, website, companyName })
 
         try {
             // 1. Sign up the user
@@ -88,9 +95,9 @@ export default function RegisterForm() {
                 <input
                     id="website"
                     name="website"
-                    type="url"
+                    type="text"
                     required
-                    placeholder="https://example.com"
+                    placeholder="example.com"
                     className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white placeholder-gray-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 sm:text-sm"
                 />
             </div>
