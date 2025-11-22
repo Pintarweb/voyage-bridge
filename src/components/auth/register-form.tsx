@@ -31,7 +31,6 @@ export default function RegisterForm() {
 
         try {
             // 1. Sign up the user
-            // We pass company_name and website_url in metadata so the database trigger can pick them up
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
                 password,
@@ -54,10 +53,36 @@ export default function RegisterForm() {
             if (!authData.session) {
                 // If no session, it likely means email confirmation is required
                 alert('Registration successful! Please check your email to confirm your account before logging in.')
+                return // Stop here, cannot insert into DB without session
             }
 
-            // 2. Redirect to payment success (placeholder)
-            // The 'suppliers' table entry is created automatically by a Postgres Trigger
+            // 2. Manual Insert Fallback
+            // We try to insert manually just in case the trigger didn't run.
+            // RLS allows this if we have a session.
+            const { error: dbError } = await supabase
+                .from('suppliers')
+                .insert({
+                    id: authData.user.id,
+                    company_name: companyName,
+                    website_url: website,
+                    contact_email: email,
+                })
+                .select()
+
+            if (dbError) {
+                // If it's a duplicate key error, it means the trigger WORKED. We can ignore it.
+                if (dbError.code === '23505') { // unique_violation
+                    console.log('Profile already created by trigger.')
+                } else {
+                    console.error('Manual insert failed:', dbError)
+                    // We don't throw here because the trigger might have worked, 
+                    // or we want to let them proceed to dashboard to see if it works.
+                }
+            } else {
+                console.log('Manual insert successful.')
+            }
+
+            // 3. Redirect to payment success
             router.push('/supplier/payment-success')
         } catch (err: any) {
             console.error('Registration error:', err)
