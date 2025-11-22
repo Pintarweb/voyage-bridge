@@ -38,6 +38,17 @@ export default function RegisterForm() {
             if (authError) throw authError
             if (!authData.user) throw new Error('Registration failed')
 
+            console.log('Registration successful:', {
+                user: authData.user.id,
+                session: authData.session
+            })
+
+            if (!authData.session) {
+                // If no session, it likely means email confirmation is required
+                alert('Registration successful! Please check your email to confirm your account before logging in.')
+                // We can still redirect to success page, but maybe with a query param
+            }
+
             // 2. Redirect to payment success (placeholder)
             // The 'suppliers' table entry is created automatically by a Postgres Trigger
             router.push('/supplier/payment-success')
