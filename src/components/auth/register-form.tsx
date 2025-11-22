@@ -23,12 +23,14 @@ export default function RegisterForm() {
 
         try {
             // 1. Sign up the user
+            // We pass company_name and website_url in metadata so the database trigger can pick them up
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
                     data: {
                         company_name: companyName,
+                        website_url: website,
                     },
                 },
             })
@@ -36,31 +38,11 @@ export default function RegisterForm() {
             if (authError) throw authError
             if (!authData.user) throw new Error('Registration failed')
 
-            // 2. Insert into suppliers table
-            // Note: This relies on RLS allowing insert for the authenticated user.
-            // If email confirmation is enabled, the user might not be authenticated yet.
-            // For MVP, we assume we can insert or we handle it via a trigger (preferred) 
-            // or we just try to insert.
-
-            const { error: dbError } = await supabase
-                .from('suppliers')
-                .insert({
-                    id: authData.user.id,
-                    company_name: companyName,
-                    website_url: website,
-                    contact_email: email,
-                })
-
-            if (dbError) {
-                // If insert fails, it might be because of RLS or trigger issues.
-                // But let's assume it works for now as per plan.
-                console.error('Error creating supplier profile:', dbError)
-                throw new Error('Failed to create supplier profile')
-            }
-
-            // 3. Redirect to payment success (placeholder)
+            // 2. Redirect to payment success (placeholder)
+            // The 'suppliers' table entry is created automatically by a Postgres Trigger
             router.push('/supplier/payment-success')
         } catch (err: any) {
+            console.error('Registration error:', err)
             setError(err.message)
         } finally {
             setLoading(false)
