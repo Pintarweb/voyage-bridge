@@ -17,22 +17,28 @@ export async function POST(request: Request) {
     try {
         const body = await request.json()
         const {
-            title,
+            product_name, // Renamed from title
+            product_category,
             description,
             website_url,
+            country_code, // Renamed from country, now ISO code
+            city,
+            region,
+            continent,
+            currency,
+            agent_price,
+            public_price,
+            validity_start_date,
+            validity_end_date,
             photo_url_1,
             photo_url_2,
             photo_url_3,
-            city,
-            country,
-            region,
-            continent,
         } = body
 
-        // 2. Validate required fields (basic validation)
-        if (!title || !city || !country) {
+        // 2. Validate required fields
+        if (!product_name || !country_code || !city || !currency || !agent_price) {
             return NextResponse.json(
-                { error: 'Missing required fields' },
+                { error: 'Missing required fields (Name, Country, City, Currency, Agent Price)' },
                 { status: 400 }
             )
         }
@@ -42,16 +48,22 @@ export async function POST(request: Request) {
             .from('products')
             .insert({
                 supplier_id: user.id,
-                title,
+                product_name,
+                product_category,
                 description,
                 website_url,
+                country_code,
+                city,
+                region,
+                continent,
+                currency,
+                agent_price,
+                public_price,
+                validity_start_date,
+                validity_end_date,
                 photo_url_1,
                 photo_url_2,
                 photo_url_3,
-                city,
-                country,
-                region,
-                continent,
             })
             .select()
             .single()
