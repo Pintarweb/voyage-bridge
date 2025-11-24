@@ -81,7 +81,15 @@ export default function Step4Review() {
 
         } catch (err: any) {
             console.error('Registration error:', err)
-            setError(err.message)
+            let errorMessage = 'An unexpected error occurred'
+            if (typeof err === 'string') {
+                errorMessage = err
+            } else if (err instanceof Error) {
+                errorMessage = err.message
+            } else if (err && typeof err === 'object' && 'message' in err) {
+                errorMessage = String(err.message)
+            }
+            setError(errorMessage)
         } finally {
             setLoading(false)
         }

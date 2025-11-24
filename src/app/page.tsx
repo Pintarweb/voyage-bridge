@@ -20,7 +20,8 @@ export default async function Home() {
           VoyageBridge
         </div>
         <div className="flex gap-6 text-sm font-medium text-gray-400">
-          <Link href="/login" className="hover:text-white transition-colors">Agent Login</Link>
+          <Link href="/auth/supplier" className="hover:text-white transition-colors">Supplier Access</Link>
+          <Link href="/auth/agent" className="hover:text-white transition-colors">Agent Access</Link>
         </div>
       </nav>
 
@@ -44,16 +45,16 @@ export default async function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
             <Link
-              href="/login"
+              href="/auth/agent"
               className="px-8 py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition-all transform hover:scale-105"
             >
-              Agent Login
+              Travel Agent Access
             </Link>
             <Link
-              href="/login?tab=register"
+              href="/auth/supplier"
               className="px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-lg hover:bg-white/10 transition-all"
             >
-              Apply for Access
+              Supplier Access
             </Link>
           </div>
         </div>

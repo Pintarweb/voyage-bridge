@@ -38,7 +38,7 @@ export async function updateSession(request: NextRequest) {
     // Protected Route: /portal (Agents)
     if (request.nextUrl.pathname.startsWith('/portal')) {
         if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url))
+            return NextResponse.redirect(new URL('/auth/agent', request.url))
         }
 
         const { data: profile } = await supabase
@@ -64,7 +64,7 @@ export async function updateSession(request: NextRequest) {
     // Protected Route: /supplier/dashboard (Suppliers)
     if (request.nextUrl.pathname.startsWith('/supplier/dashboard')) {
         if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url))
+            return NextResponse.redirect(new URL('/auth/supplier', request.url))
         }
 
         // Check metadata first

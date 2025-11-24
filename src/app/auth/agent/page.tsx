@@ -41,7 +41,7 @@ const CITY_TO_COUNTRY: Record<string, string> = {
     'cairo': 'EG', 'johannesburg': 'ZA', 'cape town': 'ZA', 'lagos': 'NG', 'nairobi': 'KE'
 }
 
-export default function LoginPage() {
+export default function AgentAuthPage() {
     const searchParams = useSearchParams()
     const [activeTab, setActiveTab] = useState<'login' | 'register'>(
         searchParams.get('tab') === 'register' ? 'register' : 'login'
@@ -145,7 +145,8 @@ export default function LoginPage() {
                     address: formData.address,
                     phone_number: formData.phone_number,
                     verification_status: 'pending',
-                    has_agreed_tc: formData.has_agreed_tc
+                    has_agreed_tc: formData.has_agreed_tc,
+                    email: formData.email
                 })
 
             if (profileError) throw profileError
@@ -281,6 +282,15 @@ export default function LoginPage() {
                                 type="url"
                                 name="website_url"
                                 placeholder="Website URL"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                                onChange={handleRegisterChange}
+                            />
+
+                            <input
+                                type="text"
+                                name="address"
+                                required
+                                placeholder="Address"
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                                 onChange={handleRegisterChange}
                             />

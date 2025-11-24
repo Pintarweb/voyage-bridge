@@ -9,9 +9,23 @@ export default function Step3Profile() {
     const { formData, updateFormData, setStep } = useWizard()
     const [otherType, setOtherType] = useState('')
 
+    const [errors, setErrors] = useState<Record<string, string>>({})
+
+    const validate = () => {
+        const newErrors: Record<string, string> = {}
+        if (!formData.supplier_type) newErrors.supplier_type = 'Supplier Category is required'
+        if (!formData.website_url) newErrors.website_url = 'Website URL is required'
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
         updateFormData({ [name]: value })
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }))
+        }
     }
 
     const handleSupplierTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -21,12 +35,18 @@ export default function Step3Profile() {
         } else {
             updateFormData({ supplier_type: value })
         }
+        if (errors.supplier_type) {
+            setErrors(prev => ({ ...prev, supplier_type: '' }))
+        }
     }
 
     const handleOtherTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setOtherType(value)
         updateFormData({ supplier_type: value })
+        if (errors.supplier_type) {
+            setErrors(prev => ({ ...prev, supplier_type: '' }))
+        }
     }
 
     const handleLanguageToggle = (lang: string) => {
@@ -40,11 +60,9 @@ export default function Step3Profile() {
 
     const handleNext = (e: React.FormEvent) => {
         e.preventDefault()
-        if (!formData.supplier_type || !formData.website_url) {
-            alert('Please fill in all required fields.')
-            return
+        if (validate()) {
+            setStep(4)
         }
-        setStep(4)
     }
 
     return (
@@ -59,13 +77,14 @@ export default function Step3Profile() {
                         value={SUPPLIER_TYPES.includes(formData.supplier_type) ? formData.supplier_type : 'Other'}
                         onChange={handleSupplierTypeChange}
                         required
-                        className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        className={`mt-1 block w-full rounded-md border ${errors.supplier_type ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
                     >
                         <option value="">Select Category</option>
                         {SUPPLIER_TYPES.map((type) => (
                             <option key={type} value={type}>{type}</option>
                         ))}
                     </select>
+                    {errors.supplier_type && <p className="mt-1 text-xs text-red-500">{errors.supplier_type}</p>}
 
                     {(SUPPLIER_TYPES.includes(formData.supplier_type) ? formData.supplier_type === 'Other' : true) && (
                         <input
@@ -98,8 +117,9 @@ export default function Step3Profile() {
                         onChange={handleChange}
                         required
                         placeholder="https://example.com"
-                        className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        className={`mt-1 block w-full rounded-md border ${errors.website_url ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
                     />
+                    {errors.website_url && <p className="mt-1 text-xs text-red-500">{errors.website_url}</p>}
                 </div>
 
                 <div>

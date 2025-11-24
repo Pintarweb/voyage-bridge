@@ -9,29 +9,42 @@ import { useState } from 'react'
 export default function Step2Legal() {
     const { formData, updateFormData, setStep } = useWizard()
 
+    const [errors, setErrors] = useState<Record<string, string>>({})
+
+    const validate = () => {
+        const newErrors: Record<string, string> = {}
+        if (!formData.company_reg_no) newErrors.company_reg_no = 'Registration Number is required'
+        if (!formData.contact_email) newErrors.contact_email = 'Official Email is required'
+        if (!formData.phone_number) {
+            newErrors.phone_number = 'Phone Number is required'
+        } else if (!isValidPhoneNumber(formData.phone_number)) {
+            newErrors.phone_number = 'Invalid phone number for the selected country'
+        }
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         updateFormData({ [name]: value })
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }))
+        }
     }
 
     const handlePhoneChange = (value: string | undefined) => {
         updateFormData({ phone_number: value || '' })
+        if (errors.phone_number) {
+            setErrors(prev => ({ ...prev, phone_number: '' }))
+        }
     }
 
     const handleNext = (e: React.FormEvent) => {
         e.preventDefault()
-
-        if (!formData.company_reg_no || !formData.contact_email || !formData.phone_number) {
-            alert('Please fill in all required fields.')
-            return
+        if (validate()) {
+            setStep(3)
         }
-
-        if (formData.phone_number && !isValidPhoneNumber(formData.phone_number)) {
-            alert('Please enter a valid phone number for the selected country.')
-            return
-        }
-
-        setStep(3)
     }
 
     const countryName = formData.country_code ? COUNTRY_DATA[formData.country_code]?.name : 'Unknown'
@@ -55,8 +68,9 @@ export default function Step2Legal() {
                             value={formData.company_reg_no}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                            className={`mt-1 block w-full rounded-md border ${errors.company_reg_no ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
                         />
+                        {errors.company_reg_no && <p className="mt-1 text-xs text-red-500">{errors.company_reg_no}</p>}
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-gray-300">License Number (e.g. MOTAC)</label>
@@ -90,23 +104,25 @@ export default function Step2Legal() {
                             value={formData.contact_email}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                            className={`mt-1 block w-full rounded-md border ${errors.contact_email ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
                         />
+                        {errors.contact_email && <p className="mt-1 text-xs text-red-500">{errors.contact_email}</p>}
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-gray-300">Support Phone (Hotline) *</label>
-                        <div className="mt-1 text-black phone-input-container">
+                        <div className={`mt-1 text-black phone-input-container ${errors.phone_number ? 'border-red-500' : ''}`}>
                             <PhoneInput
                                 international
                                 defaultCountry={formData.country_code as any}
                                 value={formData.phone_number}
                                 onChange={handlePhoneChange}
-                                className="flex h-9 w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                className={`flex h-9 w-full rounded-md border ${errors.phone_number ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:cursor-not-allowed disabled:opacity-50`}
                                 numberInputProps={{
                                     className: "bg-transparent border-none text-white focus:ring-0 text-xs w-full ml-2 placeholder-gray-500"
                                 }}
                             />
                         </div>
+                        {errors.phone_number && <p className="mt-1 text-xs text-red-500">{errors.phone_number}</p>}
                     </div>
                 </div>
             </div>
