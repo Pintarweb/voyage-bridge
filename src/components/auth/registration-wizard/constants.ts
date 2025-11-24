@@ -46,3 +46,49 @@ export const LANGUAGES = [
     'Spanish',
     'German',
 ]
+
+export const CONTINENTS = [
+    'Asia',
+    'Europe',
+    'North America',
+    'South America',
+    'Africa',
+    'Oceania',
+    'Antarctica',
+]
+
+export const REGIONS = [
+    'South East Asia',
+    'East Asia',
+    'South Asia',
+    'Middle East',
+    'Western Europe',
+    'Eastern Europe',
+    'Northern Europe',
+    'Southern Europe',
+    'North America',
+    'Central America',
+    'Caribbean',
+    'South America',
+    'North Africa',
+    'Sub-Saharan Africa',
+    'Oceania',
+]
+
+export const REGION_TO_CONTINENT_MAP: Record<string, string> = {
+    'South East Asia': 'Asia',
+    'East Asia': 'Asia',
+    'South Asia': 'Asia',
+    'Middle East': 'Asia',
+    'Western Europe': 'Europe',
+    'Eastern Europe': 'Europe',
+    'Northern Europe': 'Europe',
+    'Southern Europe': 'Europe',
+    'North America': 'North America',
+    'Central America': 'North America',
+    'Caribbean': 'North America',
+    'South America': 'South America',
+    'North Africa': 'Africa',
+    'Sub-Saharan Africa': 'Africa',
+    'Oceania': 'Oceania',
+}
