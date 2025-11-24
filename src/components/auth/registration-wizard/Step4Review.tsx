@@ -24,6 +24,7 @@ export default function Step4Review() {
                 password: formData.password,
                 options: {
                     data: {
+                        role: 'supplier',
                         company_name: formData.company_name,
                         country_code: formData.country_code,
                         base_currency: formData.base_currency,

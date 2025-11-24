@@ -38,7 +38,7 @@ export async function updateSession(request: NextRequest) {
     // Protected Route: /portal (Agents)
     if (request.nextUrl.pathname.startsWith('/portal')) {
         if (!user) {
-            return NextResponse.redirect(new URL('/auth/login', request.url))
+            return NextResponse.redirect(new URL('/login', request.url))
         }
 
         const { data: profile } = await supabase
@@ -64,7 +64,24 @@ export async function updateSession(request: NextRequest) {
     // Protected Route: /supplier/dashboard (Suppliers)
     if (request.nextUrl.pathname.startsWith('/supplier/dashboard')) {
         if (!user) {
-            return NextResponse.redirect(new URL('/auth/login', request.url))
+            return NextResponse.redirect(new URL('/login', request.url))
+        }
+
+        // Check metadata first
+        if (user.user_metadata?.role === 'supplier') {
+            return response
+        }
+
+        // Fallback: Check DB
+        const { data: supplier } = await supabase
+            .from('suppliers')
+            .select('id')
+            .eq('id', user.id)
+            .single()
+
+        if (!supplier) {
+            // Not a supplier, redirect to portal (which will handle agent check)
+            return NextResponse.redirect(new URL('/portal', request.url))
         }
     }
 

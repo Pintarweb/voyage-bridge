@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import PhoneInput, { Country } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import CountrySelect from '@/components/ui/CountrySelect'
@@ -42,7 +42,10 @@ const CITY_TO_COUNTRY: Record<string, string> = {
 }
 
 export default function LoginPage() {
-    const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
+    const searchParams = useSearchParams()
+    const [activeTab, setActiveTab] = useState<'login' | 'register'>(
+        searchParams.get('tab') === 'register' ? 'register' : 'login'
+    )
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const router = useRouter()
@@ -66,8 +69,10 @@ export default function LoginPage() {
         has_agreed_tc: false
     })
 
-    // Auto-suggest country
+    // Auto-suggest country & Prefetch Portal
     useEffect(() => {
+        router.prefetch('/portal')
+
         if (formData.city) {
             const cityLower = formData.city.toLowerCase().trim()
             const suggestedCountry = CITY_TO_COUNTRY[cityLower]
@@ -75,7 +80,7 @@ export default function LoginPage() {
                 setFormData(prev => ({ ...prev, country_code: suggestedCountry }))
             }
         }
-    }, [formData.city, formData.country_code])
+    }, [formData.city, formData.country_code, router])
 
     const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
