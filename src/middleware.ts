@@ -33,7 +33,40 @@ export async function updateSession(request: NextRequest) {
         }
     )
 
-    await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Protected Route: /portal (Agents)
+    if (request.nextUrl.pathname.startsWith('/portal')) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/auth/login', request.url))
+        }
+
+        const { data: profile } = await supabase
+            .from('agent_profiles')
+            .select('verification_status')
+            .eq('id', user.id)
+            .single()
+
+        if (!profile) {
+            // Not an agent (or profile not created yet)
+            return NextResponse.redirect(new URL('/', request.url))
+        }
+
+        if (profile.verification_status === 'pending') {
+            return NextResponse.redirect(new URL('/approval-pending', request.url))
+        }
+
+        if (profile.verification_status === 'rejected') {
+            return NextResponse.redirect(new URL('/', request.url))
+        }
+    }
+
+    // Protected Route: /supplier/dashboard (Suppliers)
+    if (request.nextUrl.pathname.startsWith('/supplier/dashboard')) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/auth/login', request.url))
+        }
+    }
 
     return response
 }

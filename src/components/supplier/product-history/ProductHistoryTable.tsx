@@ -18,7 +18,7 @@ export type Product = {
     product_category: string
     city: string
     country_code: string
-    public_price: number
+    suggested_retail_price: number
     currency: string
     status: 'active' | 'draft' | 'archived'
     validity_end_date: string
@@ -50,7 +50,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 cell: (info) => `${info.getValue()}, ${info.row.original.country_code}`,
             },
             {
-                accessorKey: 'public_price',
+                accessorKey: 'suggested_retail_price',
                 header: 'Suggested Retail Price',
                 cell: (info) => `${info.row.original.currency} ${info.getValue()}`,
             },

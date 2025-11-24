@@ -1,0 +1,11 @@
+.phone-input-dark .PhoneInputInput {
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+.phone-input-dark .PhoneInputInput:focus {
+    outline: none;
+}
+.phone-input-dark .PhoneInputCountrySelect {
+    color: black;
+}
