@@ -2,7 +2,8 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import ProductDetailsView from '@/components/portal/ProductDetailsView'
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     const supabase = await createClient()
 
     const { data: product, error } = await supabase
@@ -14,7 +15,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
                 contact_email
             )
         `)
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
     if (error || !product) {
@@ -22,7 +23,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
         return (
             <div className="p-8 text-white">
                 <h1 className="text-2xl text-red-500">Error Loading Product</h1>
-                <p>Product ID: {params.id}</p>
+                <p>Product ID: {id}</p>
                 <pre className="bg-gray-900 p-4 mt-4 rounded overflow-auto">
                     {JSON.stringify(error, null, 2)}
                 </pre>
