@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { FaGlobe, FaUserCircle, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa'
+import { FaGlobe, FaUserCircle, FaSignOutAlt, FaBars, FaTimes, FaLanguage } from 'react-icons/fa'
 import { useCurrency } from '@/context/CurrencyContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { createClient } from '@/utils/supabase/client'
 
 interface GlobalHeaderProps {
@@ -13,6 +14,7 @@ interface GlobalHeaderProps {
 
 export default function GlobalHeader({ type }: GlobalHeaderProps) {
     const { currency, setCurrency, symbol } = useCurrency()
+    const { language, setLanguage, languageName } = useLanguage()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isProfileOpen, setIsProfileOpen] = useState(false)
     const router = useRouter()
@@ -63,6 +65,35 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
                     {/* Right Side Actions */}
                     <div className="hidden md:flex items-center space-x-6">
 
+                        {/* Language Selector */}
+                        <div className="relative group">
+                            <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm font-medium focus:outline-none">
+                                <FaLanguage className="text-teal-500" />
+                                <span>{language.split('-')[0].toUpperCase()}</span>
+                            </button>
+                            <div className="absolute right-0 mt-2 w-40 bg-[#1A1A20] border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right max-h-64 overflow-y-auto scrollbar-hide">
+                                {[
+                                    { code: 'en-US', name: 'English (US)' },
+                                    { code: 'zh-CN', name: '简体中文' },
+                                    { code: 'es-ES', name: 'Español' },
+                                    { code: 'fr-FR', name: 'Français' },
+                                    { code: 'de-DE', name: 'Deutsch' },
+                                    { code: 'ja-JP', name: '日本語' },
+                                    { code: 'ko-KR', name: '한국어' },
+                                    { code: 'ar-SA', name: 'العربية' }
+                                ].map((lang) => (
+                                    <button
+                                        key={lang.code}
+                                        onClick={() => setLanguage(lang.code as any)}
+                                        className={`block w-full text-left px-4 py-2 text-sm hover:bg-white/5 ${language === lang.code ? 'text-teal-400 font-bold' : 'text-gray-300'
+                                            }`}
+                                    >
+                                        {lang.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Currency Selector */}
                         <div className="relative group">
                             <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm font-medium focus:outline-none">
@@ -82,7 +113,6 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
                                 ))}
                             </div>
                         </div>
-
 
                         {/* User Profile */}
                         <div className="relative">
@@ -141,6 +171,23 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
                                 {link.label}
                             </Link>
                         ))}
+                        <div className="border-t border-white/10 my-2 pt-2">
+                            <div className="px-3 py-2 text-sm font-medium text-gray-400">Language</div>
+                            <div className="grid grid-cols-2 gap-2 px-3 pb-2">
+                                {['en-US', 'zh-CN', 'es-ES', 'fr-FR'].map((lang) => (
+                                    <button
+                                        key={lang}
+                                        onClick={() => setLanguage(lang as any)}
+                                        className={`px-3 py-1 rounded text-xs border ${language === lang
+                                            ? 'border-teal-500 text-teal-400'
+                                            : 'border-gray-600 text-gray-400'
+                                            }`}
+                                    >
+                                        {lang.split('-')[0].toUpperCase()}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                         <div className="border-t border-white/10 my-2 pt-2">
                             <div className="px-3 py-2 text-sm font-medium text-gray-400">Currency</div>
                             <div className="flex space-x-2 px-3 pb-2">

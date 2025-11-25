@@ -1,4 +1,5 @@
 import { CurrencyProvider } from '@/context/CurrencyContext'
+import { LanguageProvider } from '@/context/LanguageContext'
 import GlobalHeader from '@/components/layout/GlobalHeader'
 
 export default function SupplierLayout({
@@ -7,11 +8,13 @@ export default function SupplierLayout({
     children: React.ReactNode
 }) {
     return (
-        <CurrencyProvider>
-            <div className="min-h-screen bg-[#101015]">
-                <GlobalHeader type="supplier" />
-                <main>{children}</main>
-            </div>
-        </CurrencyProvider>
+        <LanguageProvider>
+            <CurrencyProvider>
+                <div className="min-h-screen bg-[#101015]">
+                    <GlobalHeader type="supplier" />
+                    <main>{children}</main>
+                </div>
+            </CurrencyProvider>
+        </LanguageProvider>
     )
 }
