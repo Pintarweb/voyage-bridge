@@ -1,45 +1,52 @@
 'use client'
 
-import { FaHotel, FaPlane, FaUmbrellaBeach, FaShip, FaHiking } from 'react-icons/fa'
+import { FaHotel, FaHiking, FaUmbrellaBeach, FaShip, FaPlane, FaGlobeAmericas } from 'react-icons/fa'
 
-type CategoryChipsProps = {
+interface CategoryChipsProps {
     selectedCategory: string
     onSelect: (category: string) => void
+    categories: string[]
 }
 
-const CATEGORIES = [
-    { id: 'Hotel Chain', label: 'Hotels', icon: FaHotel },
-    { id: 'Tour Operator', label: 'Tours', icon: FaHiking },
-    { id: 'DMC', label: 'DMC', icon: FaUmbrellaBeach },
-    { id: 'Cruise Line', label: 'Cruises', icon: FaShip },
-    { id: 'Transport', label: 'Transport', icon: FaPlane },
-]
+const getIcon = (category: string) => {
+    const lower = category.toLowerCase()
+    if (lower.includes('hotel')) return FaHotel
+    if (lower.includes('tour')) return FaHiking
+    if (lower.includes('dmc')) return FaUmbrellaBeach
+    if (lower.includes('cruise')) return FaShip
+    if (lower.includes('transport')) return FaPlane
+    return FaGlobeAmericas
+}
 
-export default function CategoryChips({ selectedCategory, onSelect }: CategoryChipsProps) {
+export default function CategoryChips({ selectedCategory, onSelect, categories }: CategoryChipsProps) {
     return (
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
             <button
                 onClick={() => onSelect('')}
                 className={`flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCategory === ''
-                        ? 'bg-teal-600 text-white shadow-lg shadow-teal-900/20'
+                        ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/25'
                         : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700'
                     }`}
             >
                 All
             </button>
-            {CATEGORIES.map((cat) => (
-                <button
-                    key={cat.id}
-                    onClick={() => onSelect(cat.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCategory === cat.id
-                            ? 'bg-teal-600 text-white shadow-lg shadow-teal-900/20'
-                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700'
-                        }`}
-                >
-                    <cat.icon />
-                    {cat.label}
-                </button>
-            ))}
+
+            {categories.map((category) => {
+                const Icon = getIcon(category)
+                return (
+                    <button
+                        key={category}
+                        onClick={() => onSelect(category)}
+                        className={`flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCategory === category
+                                ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/25'
+                                : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700'
+                            }`}
+                    >
+                        <Icon className="mr-2" />
+                        {category}
+                    </button>
+                )
+            })}
         </div>
     )
 }

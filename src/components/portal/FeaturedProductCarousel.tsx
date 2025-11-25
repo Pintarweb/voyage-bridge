@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { FaArrowRight, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { useCurrency } from '@/context/CurrencyContext'
 
 type Product = {
     id: string
     product_name: string
-    product_description: string
+    description: string
     photo_url_1: string
     city: string
     country_code: string
@@ -17,6 +18,7 @@ type Product = {
 
 export default function FeaturedProductCarousel({ products, onBook }: { products: Product[], onBook: (product: Product) => void }) {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const { convertPrice, symbol } = useCurrency()
 
     // Auto-scroll
     useEffect(() => {
@@ -32,38 +34,40 @@ export default function FeaturedProductCarousel({ products, onBook }: { products
     if (products.length === 0) return null
 
     const currentProduct = products[currentIndex]
+    const agentPrice = currentProduct.agent_price || (currentProduct.suggested_retail_price * 0.8)
 
     return (
-        <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-2xl group">
+        <div className="relative w-full h-[280px] rounded-2xl overflow-hidden shadow-2xl group">
             {/* Background Image */}
             <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out transform hover:scale-105"
+                className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out transform hover:scale-105"
                 style={{ backgroundImage: `url(${currentProduct.photo_url_1 || '/placeholder-image.jpg'})` }}
             >
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
             </div>
 
             {/* Content */}
-            <div className="absolute bottom-0 left-0 p-8 md:p-12 w-full md:w-2/3 space-y-4">
-                <div className="inline-block px-3 py-1 bg-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-full mb-2">
+            <div className="absolute bottom-0 left-0 p-8 w-full md:w-2/3 space-y-2">
+                <div className="inline-block px-3 py-1 bg-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-full mb-1">
                     Featured
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                <h2 className="text-3xl font-bold text-white leading-tight">
                     {currentProduct.product_name}
                 </h2>
-                <p className="text-gray-200 text-lg line-clamp-2">
-                    {currentProduct.product_description}
-                </p>
-                <div className="flex items-center gap-4 pt-4">
+                <div className="flex items-center gap-4 text-sm text-gray-300">
+                    <span>{currentProduct.city}, {currentProduct.country_code}</span>
+                    <span className="text-teal-400 font-bold text-lg">
+                        {symbol} {convertPrice(agentPrice, currentProduct.currency)}
+                    </span>
+                </div>
+
+                <div className="pt-2">
                     <button
                         onClick={() => onBook(currentProduct)}
-                        className="px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-teal-400 hover:text-white transition-colors shadow-lg"
+                        className="px-6 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-teal-500 hover:text-white transition-all shadow-lg flex items-center gap-2"
                     >
-                        Book Now
+                        Book Now <FaArrowRight />
                     </button>
-                    <span className="text-2xl font-bold text-teal-400">
-                        {currentProduct.currency} {currentProduct.agent_price || (currentProduct.suggested_retail_price * 0.8).toFixed(2)}
-                    </span>
                 </div>
             </div>
 
