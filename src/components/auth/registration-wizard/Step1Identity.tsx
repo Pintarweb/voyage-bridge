@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useWizard } from './WizardContext'
 import { COUNTRY_DATA, CURRENCIES } from './constants'
 import TimezoneSelect, { ITimezone } from 'react-timezone-select'
+import CountrySelect from '@/components/ui/CountrySelect'
+import CurrencySelect from '@/components/ui/CurrencySelect'
 
 export default function Step1Identity() {
     const { formData, updateFormData, setStep } = useWizard()
@@ -42,24 +44,34 @@ export default function Step1Identity() {
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }))
         }
+    }
 
-        // Country -> Currency & Timezone Logic
-        if (name === 'country_code') {
-            const country = COUNTRY_DATA[value]
-            if (country) {
-                updateFormData({
-                    country_code: value,
-                    base_currency: country.currency,
-                    timezone: country.timezone
-                })
-                // Clear related errors
-                setErrors(prev => ({
-                    ...prev,
-                    country_code: '',
-                    base_currency: '',
-                    timezone: ''
-                }))
-            }
+    const handleCountryChange = (value: string) => {
+        const country = COUNTRY_DATA[value]
+        if (country) {
+            updateFormData({
+                country_code: value,
+                base_currency: country.currency,
+                timezone: country.timezone
+            })
+            // Clear related errors
+            setErrors(prev => ({
+                ...prev,
+                country_code: '',
+                base_currency: '',
+                timezone: ''
+            }))
+        } else {
+            // Fallback if country data not found (e.g. searching all countries)
+            updateFormData({ country_code: value })
+            if (errors.country_code) setErrors(prev => ({ ...prev, country_code: '' }))
+        }
+    }
+
+    const handleCurrencyChange = (value: string) => {
+        updateFormData({ base_currency: value })
+        if (errors.base_currency) {
+            setErrors(prev => ({ ...prev, base_currency: '' }))
         }
     }
 
@@ -141,34 +153,23 @@ export default function Step1Identity() {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label className="block text-xs font-medium text-gray-300">Country *</label>
-                        <select
-                            name="country_code"
+                        <CountrySelect
                             value={formData.country_code}
-                            onChange={handleChange}
-                            required
-                            className={`mt-1 block w-full rounded-md border ${errors.country_code ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
-                        >
-                            <option value="">Select Country</option>
-                            {Object.entries(COUNTRY_DATA).map(([code, data]) => (
-                                <option key={code} value={code}>{data.name}</option>
-                            ))}
-                        </select>
+                            onChange={handleCountryChange}
+                            theme="dark"
+                            className={errors.country_code ? 'border-red-500' : ''}
+                        />
                         {errors.country_code && <p className="mt-1 text-xs text-red-500">{errors.country_code}</p>}
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-gray-300">Base Currency *</label>
-                        <select
-                            name="base_currency"
+                        <CurrencySelect
                             value={formData.base_currency}
-                            onChange={handleChange}
-                            required
-                            className={`mt-1 block w-full rounded-md border ${errors.base_currency ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
-                        >
-                            <option value="">Select Currency</option>
-                            {CURRENCIES.map((c) => (
-                                <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
-                            ))}
-                        </select>
+                            onChange={handleCurrencyChange}
+                            currencies={CURRENCIES}
+                            theme="dark"
+                            className={errors.base_currency ? 'border-red-500' : ''}
+                        />
                         {errors.base_currency && <p className="mt-1 text-xs text-red-500">{errors.base_currency}</p>}
                     </div>
                 </div>

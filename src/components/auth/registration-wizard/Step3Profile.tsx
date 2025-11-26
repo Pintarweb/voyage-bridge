@@ -7,8 +7,6 @@ import { FaFacebook, FaInstagram, FaTiktok, FaLinkedin, FaTripadvisor, FaWhatsap
 
 export default function Step3Profile() {
     const { formData, updateFormData, setStep } = useWizard()
-    const [otherType, setOtherType] = useState('')
-
     const [errors, setErrors] = useState<Record<string, string>>({})
 
     const validate = () => {
@@ -30,19 +28,6 @@ export default function Step3Profile() {
 
     const handleSupplierTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value
-        if (value === 'Other') {
-            updateFormData({ supplier_type: otherType || 'Other' })
-        } else {
-            updateFormData({ supplier_type: value })
-        }
-        if (errors.supplier_type) {
-            setErrors(prev => ({ ...prev, supplier_type: '' }))
-        }
-    }
-
-    const handleOtherTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value
-        setOtherType(value)
         updateFormData({ supplier_type: value })
         if (errors.supplier_type) {
             setErrors(prev => ({ ...prev, supplier_type: '' }))
@@ -74,7 +59,7 @@ export default function Step3Profile() {
                     <label className="block text-xs font-medium text-gray-300">Supplier Category *</label>
                     <select
                         name="supplier_type"
-                        value={SUPPLIER_TYPES.includes(formData.supplier_type) ? formData.supplier_type : 'Other'}
+                        value={formData.supplier_type}
                         onChange={handleSupplierTypeChange}
                         required
                         className={`mt-1 block w-full rounded-md border ${errors.supplier_type ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
@@ -85,16 +70,6 @@ export default function Step3Profile() {
                         ))}
                     </select>
                     {errors.supplier_type && <p className="mt-1 text-xs text-red-500">{errors.supplier_type}</p>}
-
-                    {(SUPPLIER_TYPES.includes(formData.supplier_type) ? formData.supplier_type === 'Other' : true) && (
-                        <input
-                            type="text"
-                            placeholder="Please specify..."
-                            value={otherType}
-                            onChange={handleOtherTypeChange}
-                            className="mt-2 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                        />
-                    )}
                 </div>
 
                 <div>
@@ -234,32 +209,6 @@ export default function Step3Profile() {
                                 </label>
                             </div>
                         ))}
-                    </div>
-                </div>
-
-                {/* File Uploads - Placeholder for MVP */}
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-300">Logo URL</label>
-                        <input
-                            type="text"
-                            name="logo_url"
-                            value={formData.logo_url}
-                            onChange={handleChange}
-                            placeholder="https://..."
-                            className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-300">Cover Image URL</label>
-                        <input
-                            type="text"
-                            name="cover_image_url"
-                            value={formData.cover_image_url}
-                            onChange={handleChange}
-                            placeholder="https://..."
-                            className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                        />
                     </div>
                 </div>
             </div>
