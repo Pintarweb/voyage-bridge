@@ -8,13 +8,9 @@ export default function PortalLayout({
     children: React.ReactNode
 }) {
     return (
-        <LanguageProvider>
-            <CurrencyProvider>
-                <div className="min-h-screen bg-[#101015]">
-                    <GlobalHeader type="portal" />
-                    <main>{children}</main>
-                </div>
-            </CurrencyProvider>
-        </LanguageProvider>
+        <div className="min-h-screen bg-background">
+            <GlobalHeader type="portal" />
+            <main>{children}</main>
+        </div>
     )
 }

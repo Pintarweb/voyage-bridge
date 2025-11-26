@@ -8,13 +8,9 @@ export default function SupplierLayout({
     children: React.ReactNode
 }) {
     return (
-        <LanguageProvider>
-            <CurrencyProvider>
-                <div className="min-h-screen bg-[#101015]">
-                    <GlobalHeader type="supplier" />
-                    <main>{children}</main>
-                </div>
-            </CurrencyProvider>
-        </LanguageProvider>
+        <div className="min-h-screen bg-background">
+            <GlobalHeader type="supplier" />
+            <main>{children}</main>
+        </div>
     )
 }

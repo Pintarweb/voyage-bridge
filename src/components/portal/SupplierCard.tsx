@@ -53,15 +53,15 @@ export default function SupplierCard({ supplier }: { supplier: Supplier }) {
     }
 
     return (
-        <div className="bg-[#1A1A20] border border-white/10 rounded-xl p-6 hover:border-teal-500/50 transition-all group">
+        <div className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all group shadow-sm hover:shadow-md">
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-teal-400 transition-colors">
+                    <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
                         {supplier.company_name}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span className="px-2 py-1 bg-white/5 rounded border border-white/10">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="px-2 py-1 bg-muted rounded border border-border">
                             {supplier.supplier_type}
                         </span>
                         <span className="flex items-center gap-1">
@@ -70,11 +70,11 @@ export default function SupplierCard({ supplier }: { supplier: Supplier }) {
                         </span>
                     </div>
                 </div>
-                <FaBuilding className="text-2xl text-gray-700" />
+                <FaBuilding className="text-2xl text-muted-foreground/50" />
             </div>
 
             {/* Description */}
-            <p className="text-gray-400 text-sm mb-6 line-clamp-3 min-h-[60px]">
+            <p className="text-muted-foreground text-sm mb-6 line-clamp-3 min-h-[60px]">
                 {supplier.description || 'No description available.'}
             </p>
 
@@ -82,7 +82,7 @@ export default function SupplierCard({ supplier }: { supplier: Supplier }) {
             <button
                 onClick={handleVisitWebsite}
                 disabled={isLoading || !supplier.website_url}
-                className="w-full py-3 bg-teal-500 hover:bg-teal-400 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-all transform hover:-translate-y-0.5 disabled:transform-none shadow-lg disabled:shadow-none flex items-center justify-center gap-2"
+                className="w-full py-3 bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-primary-foreground font-bold rounded-lg transition-all transform hover:-translate-y-0.5 disabled:transform-none shadow-md disabled:shadow-none flex items-center justify-center gap-2"
             >
                 {isLoading ? (
                     <>Processing...</>
@@ -95,7 +95,7 @@ export default function SupplierCard({ supplier }: { supplier: Supplier }) {
             </button>
 
             {!supplier.website_url && (
-                <p className="text-xs text-gray-600 text-center mt-2">
+                <p className="text-xs text-muted-foreground text-center mt-2">
                     Website not available
                 </p>
             )}

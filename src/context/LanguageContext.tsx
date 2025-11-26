@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react'
 
-export type Language = 'en-US' | 'zh-CN' | 'es-ES' | 'fr-FR' | 'de-DE' | 'ja-JP' | 'ko-KR' | 'ar-SA'
+export type Language = 'en-US' | 'zh-CN' | 'es-ES' | 'fr-FR' | 'de-DE' | 'ja-JP' | 'ko-KR' | 'ar-SA' | 'ms-MY' | 'th-TH' | 'vi-VN' | 'id-ID'
 
 interface LanguageContextType {
     language: Language
@@ -20,7 +20,11 @@ const LANGUAGE_NAMES: Record<Language, string> = {
     'de-DE': 'Deutsch',
     'ja-JP': '日本語',
     'ko-KR': '한국어',
-    'ar-SA': 'العربية'
+    'ar-SA': 'العربية',
+    'ms-MY': 'Bahasa Melayu',
+    'th-TH': 'ไทย',
+    'vi-VN': 'Tiếng Việt',
+    'id-ID': 'Bahasa Indonesia'
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
