@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaGlobe, FaUserCircle, FaSignOutAlt, FaBars, FaTimes, FaLanguage } from 'react-icons/fa'
 import { useCurrency } from '@/context/CurrencyContext'
 import { useLanguage } from '@/context/LanguageContext'
@@ -21,10 +21,40 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
     const pathname = usePathname()
     const supabase = createClient()
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut()
-        router.push('/')
+    const [user, setUser] = useState<any>(null)
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser()
+            setUser(user)
+        }
+        getUser()
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null)
+        })
+
+        return () => subscription.unsubscribe()
+    }, [])
+
+
+
+    const t = {
+        'en-US': { whyUs: 'Why Us', about: 'About Us', blog: 'Blog', help: 'Help', logout: 'Logout', login: 'Login' },
+        'zh-CN': { whyUs: '为什么选择我们', about: '关于我们', blog: '博客', help: '帮助', logout: '退出登录', login: '登录' },
+        'ms-MY': { whyUs: 'Kenapa Kami', about: 'Tentang Kami', blog: 'Blog', help: 'Bantuan', logout: 'Log Keluar', login: 'Log Masuk' },
+        'es-ES': { whyUs: 'Por Qué Nosotros', about: 'Sobre Nosotros', blog: 'Blog', help: 'Ayuda', logout: 'Cerrar Sesión', login: 'Iniciar Sesión' },
+        'fr-FR': { whyUs: 'Pourquoi Nous', about: 'À Propos', blog: 'Blog', help: 'Aide', logout: 'Déconnexion', login: 'Connexion' },
+        'de-DE': { whyUs: 'Warum Wir', about: 'Über Uns', blog: 'Blog', help: 'Hilfe', logout: 'Abmelden', login: 'Anmelden' },
+        'ja-JP': { whyUs: '選ばれる理由', about: '会社概要', blog: 'ブログ', help: 'ヘルプ', logout: 'ログアウト', login: 'ログイン' },
+        'ko-KR': { whyUs: '우리를 선택하는 이유', about: '회사 소개', blog: '블로그', help: '도움말', logout: '로그아웃', login: '로그인' },
+        'ar-SA': { whyUs: 'لماذا نحن', about: 'من نحن', blog: 'مدونة', help: 'مساعدة', logout: 'تسجيل الخروج', login: 'تسجيل الدخول' },
+        'th-TH': { whyUs: 'ทำไมต้องเรา', about: 'เกี่ยวกับเรา', blog: 'บล็อก', help: 'ช่วยเหลือ', logout: 'ออกจากระบบ', login: 'เข้าสู่ระบบ' },
+        'vi-VN': { whyUs: 'Tại Sao Chọn Chúng Tôi', about: 'Về Chúng Tôi', blog: 'Blog', help: 'Trợ Giúp', logout: 'Đăng Xuất', login: 'Đăng Nhập' },
+        'id-ID': { whyUs: 'Mengapa Kami', about: 'Tentang Kami', blog: 'Blog', help: 'Bantuan', logout: 'Keluar', login: 'Masuk' }
     }
+
+    const content = t[language as keyof typeof t] || t['en-US']
 
     const getNavLinks = () => {
         switch (type) {
@@ -41,10 +71,10 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
             case 'public':
             default:
                 return [
-                    { label: 'Why Us', href: '/why-us' },
-                    { label: 'About Us', href: '/about' },
-                    { label: 'Blog', href: '/blog' },
-                    { label: 'Help', href: '/help' },
+                    { label: content.whyUs, href: '/why-us' },
+                    { label: content.about, href: '/about' },
+                    { label: content.blog, href: '/blog' },
+                    { label: content.help, href: '/help' },
                 ]
         }
     }
@@ -175,33 +205,13 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
                             </div>
                         </div>
 
-                        {/* User Profile (Only for logged in types) */}
-                        {type !== 'public' && (
-                            <div className="relative">
-                                <button
-                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                    className="flex items-center space-x-2 text-muted-foreground hover:text-foreground focus:outline-none"
-                                >
-                                    <FaUserCircle className="text-2xl" />
-                                </button>
 
-                                {isProfileOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-lg shadow-xl py-1">
-                                        <button
-                                            onClick={() => {/* TODO: Edit Profile */ }}
-                                            className="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted"
-                                        >
-                                            Edit Profile
-                                        </button>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="block w-full text-left px-4 py-2 text-sm text-destructive hover:bg-destructive/10 flex items-center"
-                                        >
-                                            <FaSignOutAlt className="mr-2" /> Logout
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
+
+                        {/* Login Button for Public if NOT logged in */}
+                        {type === 'public' && !user && (
+                            <Link href="/auth/agent" className="text-sm font-medium text-primary hover:text-primary/80">
+                                Login
+                            </Link>
                         )}
                     </div>
 
@@ -278,13 +288,14 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
                                 ))}
                             </div>
                         </div>
-                        {type !== 'public' && (
-                            <button
-                                onClick={handleLogout}
-                                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-destructive hover:bg-destructive/10"
+
+                        {type === 'public' && !user && (
+                            <Link
+                                href="/auth/agent"
+                                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-primary/10"
                             >
-                                Logout
-                            </button>
+                                Login
+                            </Link>
                         )}
                     </div>
                 </div>
