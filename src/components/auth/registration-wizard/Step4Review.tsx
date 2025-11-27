@@ -1,17 +1,127 @@
-'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { useWizard } from './WizardContext'
 import { FaFacebook, FaInstagram, FaTiktok, FaLinkedin, FaTripadvisor, FaWhatsapp } from 'react-icons/fa'
+import { useLanguage } from '@/context/LanguageContext'
 
 export default function Step4Review() {
     const { formData, setStep } = useWizard()
+    const { language } = useLanguage()
     const router = useRouter()
     const supabase = createClient()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
+    const t = {
+        'en-US': {
+            title: 'Review & Submit',
+            identity: 'Identity & Location',
+            legal: 'Legal & Verification',
+            profile: 'Business Profile',
+            edit: 'Edit',
+            labels: {
+                company: 'Company:',
+                country: 'Country:',
+                email: 'Email:',
+                currency: 'Currency:',
+                regNo: 'Reg No:',
+                officialEmail: 'Official Email:',
+                phone: 'Phone:',
+                type: 'Type:',
+                website: 'Website:'
+            },
+            previous: 'Previous',
+            submit: 'Submit & Pay',
+            submitting: 'Submitting...',
+            errors: {
+                failed: 'Registration failed',
+                unexpected: 'An unexpected error occurred'
+            }
+        },
+        'zh-CN': {
+            title: '审查与提交',
+            identity: '身份与位置',
+            legal: '法律与验证',
+            profile: '业务资料',
+            edit: '编辑',
+            labels: {
+                company: '公司：',
+                country: '国家：',
+                email: '电子邮件：',
+                currency: '货币：',
+                regNo: '注册号：',
+                officialEmail: '官方电子邮件：',
+                phone: '电话：',
+                type: '类型：',
+                website: '网站：'
+            },
+            previous: '上一步',
+            submit: '提交并付款',
+            submitting: '提交中...',
+            errors: {
+                failed: '注册失败',
+                unexpected: '发生意外错误'
+            }
+        },
+        'ms-MY': {
+            title: 'Semak & Hantar',
+            identity: 'Identiti & Lokasi',
+            legal: 'Undang-undang & Pengesahan',
+            profile: 'Profil Perniagaan',
+            edit: 'Edit',
+            labels: {
+                company: 'Syarikat:',
+                country: 'Negara:',
+                email: 'Emel:',
+                currency: 'Mata Wang:',
+                regNo: 'No Pendaftaran:',
+                officialEmail: 'Emel Rasmi:',
+                phone: 'Telefon:',
+                type: 'Jenis:',
+                website: 'Laman Web:'
+            },
+            previous: 'Sebelumnya',
+            submit: 'Hantar & Bayar',
+            submitting: 'Sedang menghantar...',
+            errors: {
+                failed: 'Pendaftaran gagal',
+                unexpected: 'Ralat tidak dijangka berlaku'
+            }
+        },
+        'es-ES': {
+            title: 'Revisar y Enviar',
+            identity: 'Identidad y Ubicación',
+            legal: 'Legal y Verificación',
+            profile: 'Perfil de Negocio',
+            edit: 'Editar',
+            labels: {
+                company: 'Empresa:',
+                country: 'País:',
+                email: 'Correo:',
+                currency: 'Moneda:',
+                regNo: 'Nº Reg:',
+                officialEmail: 'Correo Oficial:',
+                phone: 'Teléfono:',
+                type: 'Tipo:',
+                website: 'Sitio Web:'
+            },
+            previous: 'Anterior',
+            submit: 'Enviar y Pagar',
+            submitting: 'Enviando...',
+            errors: {
+                failed: 'Registro fallido',
+                unexpected: 'Ocurrió un error inesperado'
+            }
+        }
+    }
+
+    const getContent = (lang: string) => {
+        const mapping = t[lang as keyof typeof t]
+        return mapping || t['en-US']
+    }
+
+    const content = getContent(language)
 
     const handleSubmit = async () => {
         setLoading(true)
@@ -33,7 +143,7 @@ export default function Step4Review() {
             })
 
             if (authError) throw authError
-            if (!authData.user) throw new Error('Registration failed')
+            if (!authData.user) throw new Error(content.errors.failed)
 
             // 2. Insert Full Profile Data
             const { error: dbError } = await supabase
@@ -81,7 +191,7 @@ export default function Step4Review() {
 
         } catch (err: any) {
             console.error('Registration error:', err)
-            let errorMessage = 'An unexpected error occurred'
+            let errorMessage = content.errors.unexpected
             if (typeof err === 'string') {
                 errorMessage = err
             } else if (err instanceof Error) {
@@ -97,7 +207,7 @@ export default function Step4Review() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
+            <h2 className="text-xl font-semibold text-white">{content.title}</h2>
 
             {error && (
                 <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-md text-sm">
@@ -109,39 +219,39 @@ export default function Step4Review() {
                 {/* Identity Section */}
                 <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
                     <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold text-teal-400">Identity & Location</h3>
-                        <button onClick={() => setStep(1)} className="text-xs text-gray-400 hover:text-white">Edit</button>
+                        <h3 className="font-semibold text-teal-400">{content.identity}</h3>
+                        <button onClick={() => setStep(1)} className="text-xs text-gray-400 hover:text-white">{content.edit}</button>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                        <p><span className="text-gray-500">Company:</span> {formData.company_name}</p>
-                        <p><span className="text-gray-500">Country:</span> {formData.country_code}</p>
-                        <p><span className="text-gray-500">Email:</span> {formData.email}</p>
-                        <p><span className="text-gray-500">Currency:</span> {formData.base_currency}</p>
+                        <p><span className="text-gray-500">{content.labels.company}</span> {formData.company_name}</p>
+                        <p><span className="text-gray-500">{content.labels.country}</span> {formData.country_code}</p>
+                        <p><span className="text-gray-500">{content.labels.email}</span> {formData.email}</p>
+                        <p><span className="text-gray-500">{content.labels.currency}</span> {formData.base_currency}</p>
                     </div>
                 </div>
 
                 {/* Legal Section */}
                 <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
                     <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold text-teal-400">Legal & Verification</h3>
-                        <button onClick={() => setStep(2)} className="text-xs text-gray-400 hover:text-white">Edit</button>
+                        <h3 className="font-semibold text-teal-400">{content.legal}</h3>
+                        <button onClick={() => setStep(2)} className="text-xs text-gray-400 hover:text-white">{content.edit}</button>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                        <p><span className="text-gray-500">Reg No:</span> {formData.company_reg_no}</p>
-                        <p><span className="text-gray-500">Official Email:</span> {formData.contact_email}</p>
-                        <p><span className="text-gray-500">Phone:</span> {formData.phone_number}</p>
+                        <p><span className="text-gray-500">{content.labels.regNo}</span> {formData.company_reg_no}</p>
+                        <p><span className="text-gray-500">{content.labels.officialEmail}</span> {formData.contact_email}</p>
+                        <p><span className="text-gray-500">{content.labels.phone}</span> {formData.phone_number}</p>
                     </div>
                 </div>
 
                 {/* Profile Section */}
                 <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
                     <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold text-teal-400">Business Profile</h3>
-                        <button onClick={() => setStep(3)} className="text-xs text-gray-400 hover:text-white">Edit</button>
+                        <h3 className="font-semibold text-teal-400">{content.profile}</h3>
+                        <button onClick={() => setStep(3)} className="text-xs text-gray-400 hover:text-white">{content.edit}</button>
                     </div>
                     <div className="grid grid-cols-2 gap-2 mb-2">
-                        <p><span className="text-gray-500">Type:</span> {formData.supplier_type}</p>
-                        <p><span className="text-gray-500">Website:</span> {formData.website_url}</p>
+                        <p><span className="text-gray-500">{content.labels.type}</span> {formData.supplier_type}</p>
+                        <p><span className="text-gray-500">{content.labels.website}</span> {formData.website_url}</p>
                     </div>
 
                     {/* Social Icons Display */}
@@ -162,14 +272,14 @@ export default function Step4Review() {
                     onClick={() => setStep(3)}
                     className="rounded-md border border-gray-600 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 focus:outline-none"
                 >
-                    Previous
+                    {content.previous}
                 </button>
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
                     className="rounded-md bg-teal-600 px-8 py-2 text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50"
                 >
-                    {loading ? 'Submitting...' : 'Submit & Pay'}
+                    {loading ? content.submitting : content.submit}
                 </button>
             </div>
         </div>

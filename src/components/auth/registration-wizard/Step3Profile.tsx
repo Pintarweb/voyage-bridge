@@ -1,18 +1,88 @@
-'use client'
-
 import { useWizard } from './WizardContext'
 import { SUPPLIER_TYPES, LANGUAGES } from './constants'
 import { useState } from 'react'
 import { FaFacebook, FaInstagram, FaTiktok, FaLinkedin, FaTripadvisor, FaWhatsapp } from 'react-icons/fa'
+import { useLanguage } from '@/context/LanguageContext'
 
 export default function Step3Profile() {
     const { formData, updateFormData, setStep } = useWizard()
+    const { language } = useLanguage()
     const [errors, setErrors] = useState<Record<string, string>>({})
+
+    const t = {
+        'en-US': {
+            title: 'Business Profile',
+            category: 'Supplier Category',
+            selectCategory: 'Select Category',
+            about: 'About Us (Description)',
+            website: 'Website URL',
+            social: 'Social Media & Contact Links',
+            languages: 'Languages Spoken',
+            previous: 'Previous',
+            next: 'Next: Review & Submit',
+            errors: {
+                category: 'Supplier Category is required',
+                website: 'Website URL is required'
+            }
+        },
+        'zh-CN': {
+            title: '业务资料',
+            category: '供应商类别',
+            selectCategory: '选择类别',
+            about: '关于我们 (描述)',
+            website: '网站 URL',
+            social: '社交媒体与联系链接',
+            languages: '所讲语言',
+            previous: '上一步',
+            next: '下一步：审查与提交',
+            errors: {
+                category: '需要供应商类别',
+                website: '需要网站 URL'
+            }
+        },
+        'ms-MY': {
+            title: 'Profil Perniagaan',
+            category: 'Kategori Pembekal',
+            selectCategory: 'Pilih Kategori',
+            about: 'Tentang Kami (Penerangan)',
+            website: 'URL Laman Web',
+            social: 'Media Sosial & Pautan Kenalan',
+            languages: 'Bahasa Pertuturan',
+            previous: 'Sebelumnya',
+            next: 'Seterusnya: Semak & Hantar',
+            errors: {
+                category: 'Kategori Pembekal diperlukan',
+                website: 'URL Laman Web diperlukan'
+            }
+        },
+        'es-ES': {
+            title: 'Perfil de Negocio',
+            category: 'Categoría de Proveedor',
+            selectCategory: 'Seleccionar Categoría',
+            about: 'Sobre Nosotros (Descripción)',
+            website: 'URL del Sitio Web',
+            social: 'Redes Sociales y Enlaces de Contacto',
+            languages: 'Idiomas Hablados',
+            previous: 'Anterior',
+            next: 'Siguiente: Revisar y Enviar',
+            errors: {
+                category: 'La categoría de proveedor es obligatoria',
+                website: 'La URL del sitio web es obligatoria'
+            }
+        }
+    }
+
+    const getContent = (lang: string) => {
+        const mapping = t[lang as keyof typeof t]
+        return mapping || t['en-US']
+    }
+
+    const content = getContent(language)
 
     const validate = () => {
         const newErrors: Record<string, string> = {}
-        if (!formData.supplier_type) newErrors.supplier_type = 'Supplier Category is required'
-        if (!formData.website_url) newErrors.website_url = 'Website URL is required'
+        if (!formData.supplier_type) newErrors.supplier_type = content.errors.category
+        if (!formData.website_url) newErrors.website_url = content.errors.website
 
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
@@ -53,10 +123,10 @@ export default function Step3Profile() {
     return (
         <form onSubmit={handleNext} className="space-y-6">
             <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-white">Business Profile</h2>
+                <h2 className="text-xl font-semibold text-white">{content.title}</h2>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">Supplier Category *</label>
+                    <label className="block text-xs font-medium text-gray-300">{content.category} *</label>
                     <select
                         name="supplier_type"
                         value={formData.supplier_type}
@@ -64,7 +134,7 @@ export default function Step3Profile() {
                         required
                         className={`mt-1 block w-full rounded-md border ${errors.supplier_type ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
                     >
-                        <option value="">Select Category</option>
+                        <option value="">{content.selectCategory}</option>
                         {SUPPLIER_TYPES.map((type) => (
                             <option key={type} value={type}>{type}</option>
                         ))}
@@ -73,7 +143,7 @@ export default function Step3Profile() {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">About Us (Description)</label>
+                    <label className="block text-xs font-medium text-gray-300">{content.about}</label>
                     <textarea
                         name="description"
                         value={formData.description}
@@ -84,7 +154,7 @@ export default function Step3Profile() {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">Website URL *</label>
+                    <label className="block text-xs font-medium text-gray-300">{content.website} *</label>
                     <input
                         type="url"
                         name="website_url"
@@ -98,7 +168,7 @@ export default function Step3Profile() {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-2">Social Media & Contact Links</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-2">{content.social}</label>
                     <div className="space-y-3">
                         {/* Instagram */}
                         <div className="flex rounded-md shadow-sm">
@@ -193,7 +263,7 @@ export default function Step3Profile() {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-2">Languages Spoken</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-2">{content.languages}</label>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                         {LANGUAGES.map((lang) => (
                             <div key={lang} className="flex items-center">
@@ -219,13 +289,13 @@ export default function Step3Profile() {
                     onClick={() => setStep(2)}
                     className="rounded-md border border-gray-600 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 focus:outline-none"
                 >
-                    Previous
+                    {content.previous}
                 </button>
                 <button
                     type="submit"
                     className="rounded-md bg-teal-600 px-6 py-2 text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                 >
-                    Next: Review & Submit
+                    {content.next}
                 </button>
             </div>
         </form>

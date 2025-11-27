@@ -85,8 +85,6 @@ export default function CreateProductPage() {
                         <FaArrowLeft className="mr-2" />
                         {content.back}
                     </button>
-                    <h1 className="text-3xl font-bold text-foreground">{content.title}</h1>
-                    <p className="mt-2 text-muted-foreground">{content.subtitle}</p>
                 </div>
 
                 <ProductForm onSuccess={() => router.push('/supplier/dashboard')} />
