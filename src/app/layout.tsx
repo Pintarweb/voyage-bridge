@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import Footer from "@/components/layout/Footer";
 
 export default function RootLayout({
   children,
@@ -28,11 +30,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <LanguageProvider>
           <CurrencyProvider>
-            {children}
+            <GlobalHeader />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
           </CurrencyProvider>
         </LanguageProvider>
       </body>

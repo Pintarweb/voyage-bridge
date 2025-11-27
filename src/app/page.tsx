@@ -1,7 +1,5 @@
 'use client'
 
-import GlobalHeader from '@/components/layout/GlobalHeader'
-import Footer from '@/components/layout/Footer'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
 import { FaBuilding, FaGlobeAmericas, FaUserTie, FaMapMarkedAlt, FaHandshake, FaPlaneDeparture } from 'react-icons/fa'
@@ -200,10 +198,7 @@ export default function Home() {
   const content = t[language as keyof typeof t] || t['en-US']
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-      {/* Navbar */}
-      <GlobalHeader type="public" />
-
+    <div className="flex flex-col font-sans">
       {/* Hero Section */}
       <section className="relative w-full py-8 md:py-12 lg:py-16 overflow-hidden flex flex-col items-center justify-center text-center px-4">
         {/* Abstract Tourism Background */}
@@ -295,9 +290,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <Footer />
-    </main>
+    </div>
   )
 }

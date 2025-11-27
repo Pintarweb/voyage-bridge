@@ -8,11 +8,7 @@ import { useCurrency } from '@/context/CurrencyContext'
 import { useLanguage } from '@/context/LanguageContext'
 import { createClient } from '@/utils/supabase/client'
 
-interface GlobalHeaderProps {
-    type: 'portal' | 'supplier' | 'public'
-}
-
-export default function GlobalHeader({ type }: GlobalHeaderProps) {
+export default function GlobalHeader() {
     const { currency, setCurrency, symbol } = useCurrency()
     const { language, setLanguage, languageName } = useLanguage()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -22,6 +18,10 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
     const supabase = createClient()
 
     const [user, setUser] = useState<any>(null)
+
+    // Determine type based on pathname
+    const type = pathname?.startsWith('/portal') ? 'portal' :
+        pathname?.startsWith('/supplier') ? 'supplier' : 'public'
 
     useEffect(() => {
         const getUser = async () => {
@@ -40,18 +40,18 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
 
 
     const t = {
-        'en-US': { whyUs: 'Why Us', about: 'About Us', blog: 'Blog', help: 'Help', logout: 'Logout', login: 'Login' },
-        'zh-CN': { whyUs: '为什么选择我们', about: '关于我们', blog: '博客', help: '帮助', logout: '退出登录', login: '登录' },
-        'ms-MY': { whyUs: 'Kenapa Kami', about: 'Tentang Kami', blog: 'Blog', help: 'Bantuan', logout: 'Log Keluar', login: 'Log Masuk' },
-        'es-ES': { whyUs: 'Por Qué Nosotros', about: 'Sobre Nosotros', blog: 'Blog', help: 'Ayuda', logout: 'Cerrar Sesión', login: 'Iniciar Sesión' },
-        'fr-FR': { whyUs: 'Pourquoi Nous', about: 'À Propos', blog: 'Blog', help: 'Aide', logout: 'Déconnexion', login: 'Connexion' },
-        'de-DE': { whyUs: 'Warum Wir', about: 'Über Uns', blog: 'Blog', help: 'Hilfe', logout: 'Abmelden', login: 'Anmelden' },
-        'ja-JP': { whyUs: '選ばれる理由', about: '会社概要', blog: 'ブログ', help: 'ヘルプ', logout: 'ログアウト', login: 'ログイン' },
-        'ko-KR': { whyUs: '우리를 선택하는 이유', about: '회사 소개', blog: '블로그', help: '도움말', logout: '로그아웃', login: '로그인' },
-        'ar-SA': { whyUs: 'لماذا نحن', about: 'من نحن', blog: 'مدونة', help: 'مساعدة', logout: 'تسجيل الخروج', login: 'تسجيل الدخول' },
-        'th-TH': { whyUs: 'ทำไมต้องเรา', about: 'เกี่ยวกับเรา', blog: 'บล็อก', help: 'ช่วยเหลือ', logout: 'ออกจากระบบ', login: 'เข้าสู่ระบบ' },
-        'vi-VN': { whyUs: 'Tại Sao Chọn Chúng Tôi', about: 'Về Chúng Tôi', blog: 'Blog', help: 'Trợ Giúp', logout: 'Đăng Xuất', login: 'Đăng Nhập' },
-        'id-ID': { whyUs: 'Mengapa Kami', about: 'Tentang Kami', blog: 'Blog', help: 'Bantuan', logout: 'Keluar', login: 'Masuk' }
+        'en-US': { home: 'Home', whyUs: 'Why ArkAlliance?', about: 'About Us', blog: 'Blog', help: 'Help', logout: 'Logout', login: 'Login' },
+        'zh-CN': { home: '首页', whyUs: '为什么选择 ArkAlliance？', about: '关于我们', blog: '博客', help: '帮助', logout: '退出登录', login: '登录' },
+        'ms-MY': { home: 'Laman Utama', whyUs: 'Kenapa ArkAlliance?', about: 'Tentang Kami', blog: 'Blog', help: 'Bantuan', logout: 'Log Keluar', login: 'Log Masuk' },
+        'es-ES': { home: 'Inicio', whyUs: '¿Por Qué ArkAlliance?', about: 'Sobre Nosotros', blog: 'Blog', help: 'Ayuda', logout: 'Cerrar Sesión', login: 'Iniciar Sesión' },
+        'fr-FR': { home: 'Accueil', whyUs: 'Pourquoi ArkAlliance ?', about: 'À Propos', blog: 'Blog', help: 'Aide', logout: 'Déconnexion', login: 'Connexion' },
+        'de-DE': { home: 'Startseite', whyUs: 'Warum ArkAlliance?', about: 'Über Uns', blog: 'Blog', help: 'Hilfe', logout: 'Abmelden', login: 'Anmelden' },
+        'ja-JP': { home: 'ホーム', whyUs: 'ArkAllianceが選ばれる理由', about: '会社概要', blog: 'ブログ', help: 'ヘルプ', logout: 'ログアウト', login: 'ログイン' },
+        'ko-KR': { home: '홈', whyUs: 'ArkAlliance를 선택하는 이유', about: '회사 소개', blog: '블로그', help: '도움말', logout: '로그아웃', login: '로그인' },
+        'ar-SA': { home: 'الرئيسية', whyUs: 'لماذا ArkAlliance؟', about: 'من نحن', blog: 'مدونة', help: 'مساعدة', logout: 'تسجيل الخروج', login: 'تسجيل الدخول' },
+        'th-TH': { home: 'หน้าแรก', whyUs: 'ทำไมต้อง ArkAlliance?', about: 'เกี่ยวกับเรา', blog: 'บล็อก', help: 'ช่วยเหลือ', logout: 'ออกจากระบบ', login: 'เข้าสู่ระบบ' },
+        'vi-VN': { home: 'Trang Chủ', whyUs: 'Tại Sao Chọn ArkAlliance?', about: 'Về Chúng Tôi', blog: 'Blog', help: 'Trợ Giúp', logout: 'Đăng Xuất', login: 'Đăng Nhập' },
+        'id-ID': { home: 'Beranda', whyUs: 'Mengapa ArkAlliance?', about: 'Tentang Kami', blog: 'Blog', help: 'Bantuan', logout: 'Keluar', login: 'Masuk' }
     }
 
     const content = t[language as keyof typeof t] || t['en-US']
@@ -59,18 +59,11 @@ export default function GlobalHeader({ type }: GlobalHeaderProps) {
     const getNavLinks = () => {
         switch (type) {
             case 'portal':
-                return [
-                    { label: 'Search', href: '/portal' },
-                    { label: 'My Bookings', href: '/portal/bookings' },
-                ]
             case 'supplier':
-                return [
-                    { label: 'Dashboard', href: '/supplier/dashboard' },
-                    { label: 'Products', href: '/supplier/products' },
-                ]
             case 'public':
             default:
                 return [
+                    { label: content.home, href: '/' },
                     { label: content.whyUs, href: '/why-us' },
                     { label: content.about, href: '/about' },
                     { label: content.blog, href: '/blog' },

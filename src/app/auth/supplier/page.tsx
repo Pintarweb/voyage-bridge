@@ -163,70 +163,66 @@ export default function SupplierAuthPage() {
     }
 
     return (
-        <main className="min-h-screen flex flex-col">
-            <GlobalHeader type="public" />
-            <div className="flex-grow relative flex items-center justify-center px-4 py-12">
-                <TourismBackground />
+        <div className="flex-grow relative flex items-center justify-center px-4 py-12">
+            <TourismBackground />
 
-                <div className="relative z-10 max-w-md w-full space-y-8">
-                    <div className="text-center">
-                        <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
-                            {content.title}
-                        </h2>
-                        <p className="mt-2 text-sm text-slate-600">
-                            {content.subtitle}
-                        </p>
-                    </div>
+            <div className="relative z-10 max-w-md w-full space-y-8">
+                <div className="text-center">
+                    <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
+                        {content.title}
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-600">
+                        {content.subtitle}
+                    </p>
+                </div>
 
-                    <div className="bg-gray-900/90 backdrop-blur-sm p-8 rounded-xl border border-gray-800 shadow-2xl">
-                        {error && (
-                            <div className="mb-4 bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
-                                {error}
-                            </div>
-                        )}
-
-                        <form onSubmit={handleLogin} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">{content.email}</label>
-                                <input
-                                    type="email"
-                                    required
-                                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-500"
-                                    placeholder="supplier@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">{content.password}</label>
-                                <input
-                                    type="password"
-                                    required
-                                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-500"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
-                            >
-                                {loading ? content.loggingIn : content.signIn}
-                            </button>
-                        </form>
-
-                        <div className="mt-6 text-center text-sm">
-                            <span className="text-gray-400">{content.newSupplier} </span>
-                            <Link href="/auth/register" className="font-medium text-teal-400 hover:text-teal-300">
-                                {content.apply}
-                            </Link>
+                <div className="bg-gray-900/90 backdrop-blur-sm p-8 rounded-xl border border-gray-800 shadow-2xl">
+                    {error && (
+                        <div className="mb-4 bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
+                            {error}
                         </div>
+                    )}
+
+                    <form onSubmit={handleLogin} className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">{content.email}</label>
+                            <input
+                                type="email"
+                                required
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-500"
+                                placeholder="supplier@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">{content.password}</label>
+                            <input
+                                type="password"
+                                required
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-500"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                        >
+                            {loading ? content.loggingIn : content.signIn}
+                        </button>
+                    </form>
+
+                    <div className="mt-6 text-center text-sm">
+                        <span className="text-gray-400">{content.newSupplier} </span>
+                        <Link href="/auth/register" className="font-medium text-teal-400 hover:text-teal-300">
+                            {content.apply}
+                        </Link>
                     </div>
                 </div>
             </div>
-            <Footer />
-        </main>
+        </div>
     )
 }

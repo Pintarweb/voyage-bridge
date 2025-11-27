@@ -63,27 +63,23 @@ export default function RegisterPage() {
     const content = t[language as keyof typeof t] || t['en-US']
 
     return (
-        <main className="min-h-screen flex flex-col">
-            <GlobalHeader type="public" />
-            <div className="flex-grow relative flex items-center justify-center px-4 py-12">
-                <TourismBackground />
+        <div className="flex-grow relative flex items-center justify-center px-4 py-12">
+            <TourismBackground />
 
-                <div className="relative z-10 w-full max-w-4xl space-y-8">
-                    <div className="text-center mb-8">
-                        <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
-                            {content.title}
-                        </h2>
-                        <p className="mt-2 text-sm text-slate-600">
-                            {content.subtitle}
-                        </p>
-                    </div>
+            <div className="relative z-10 w-full max-w-4xl space-y-8">
+                <div className="text-center mb-8">
+                    <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
+                        {content.title}
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-600">
+                        {content.subtitle}
+                    </p>
+                </div>
 
-                    <div className="bg-gray-900/90 backdrop-blur-sm p-6 rounded-xl border border-gray-800 shadow-2xl">
-                        <RegistrationWizard />
-                    </div>
+                <div className="bg-gray-900/90 backdrop-blur-sm p-6 rounded-xl border border-gray-800 shadow-2xl">
+                    <RegistrationWizard />
                 </div>
             </div>
-            <Footer />
-        </main>
+        </div>
     )
 }
