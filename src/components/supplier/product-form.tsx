@@ -259,9 +259,17 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
             if (insertError) throw insertError
 
             onSuccess()
-        } catch (error) {
-            console.error('Error:', error)
-            alert(content.errorCreate)
+        } catch (error: any) {
+            console.error('Error submitting product:', error)
+            console.error('Error type:', typeof error)
+            if (typeof error === 'object') {
+                console.error('Error keys:', Object.keys(error))
+                console.error('Error stringified:', JSON.stringify(error, null, 2))
+                if (error.message) console.error('Error message:', error.message)
+                if (error.details) console.error('Error details:', error.details)
+                if (error.hint) console.error('Error hint:', error.hint)
+            }
+            alert(content.errorCreate + (error.message ? `: ${error.message}` : ''))
         } finally {
             setLoading(false)
         }
