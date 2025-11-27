@@ -476,12 +476,6 @@ export default function Dashboard() {
                                                         <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
                                                             {product.status.toUpperCase()}
                                                         </span>
-                                                        <span className="text-sm font-medium text-foreground">
-                                                            {content.agentPrice}: {product.currency} {product.agent_price}
-                                                        </span>
-                                                    </div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        {content.valid}: {product.validity_start_date} - {product.validity_end_date}
                                                     </div>
                                                 </div>
                                             </div>
@@ -503,7 +497,8 @@ export default function Dashboard() {
                                     </div>
 
                                     {/* Bottom Section: Performance Strip */}
-                                    <div className="bg-muted/30 border-t border-border px-6 py-3 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {/* Bottom Section: Performance Strip */}
+                                    <div className="bg-muted/30 border-t border-border px-6 py-3 grid grid-cols-2 gap-4">
                                         {/* Views + Sparkline */}
                                         <div className="flex items-center space-x-3">
                                             <div className="p-2 bg-muted rounded-full text-blue-500">
@@ -524,19 +519,6 @@ export default function Dashboard() {
                                             </div>
                                         </div>
 
-                                        {/* Conversion */}
-                                        <div className="flex items-center space-x-3">
-                                            <div className="p-2 bg-muted rounded-full text-green-500">
-                                                <FaChartLine />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-muted-foreground uppercase font-medium">{content.conversion}</p>
-                                                <p className="text-lg font-bold text-foreground">
-                                                    {product.view_count > 0 ? ((product.booking_count / product.view_count) * 100).toFixed(1) : 0}%
-                                                </p>
-                                            </div>
-                                        </div>
-
                                         {/* Wishlisted */}
                                         <div className="flex items-center space-x-3">
                                             <div className="p-2 bg-muted rounded-full text-pink-500">
@@ -545,17 +527,6 @@ export default function Dashboard() {
                                             <div>
                                                 <p className="text-xs text-muted-foreground uppercase font-medium">{content.wishlisted}</p>
                                                 <p className="text-lg font-bold text-foreground">{product.wishlist_count || 0}</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Revenue */}
-                                        <div className="flex items-center space-x-3">
-                                            <div className="p-2 bg-muted rounded-full text-yellow-500">
-                                                <FaMoneyBillWave />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-muted-foreground uppercase font-medium">{content.revenue}</p>
-                                                <p className="text-lg font-bold text-foreground">${product.revenue || 0}</p>
                                             </div>
                                         </div>
                                     </div>
