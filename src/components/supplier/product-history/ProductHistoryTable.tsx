@@ -49,10 +49,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'results',
             restore: 'Restore',
             archive: 'Archive',
+            in_location: 'in',
             statusValues: {
                 active: 'ACTIVE',
                 draft: 'DRAFT',
                 archived: 'ARCHIVED'
+            },
+            categoryValues: {
+                'Accommodation': 'Accommodation',
+                'Transportation': 'Transportation',
+                'Land Operator': 'Land Operator',
+                'Airline': 'Airline'
             }
         },
         'zh-CN': {
@@ -72,10 +79,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: '条结果',
             restore: '恢复',
             archive: '归档',
+            in_location: '在',
             statusValues: {
                 active: '活跃',
                 draft: '草稿',
                 archived: '已归档'
+            },
+            categoryValues: {
+                'Accommodation': '住宿',
+                'Transportation': '交通',
+                'Land Operator': '地接社',
+                'Airline': '航空公司'
             }
         },
         'ms-MY': {
@@ -95,10 +109,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'keputusan',
             restore: 'Pulihkan',
             archive: 'Arkib',
+            in_location: 'di',
             statusValues: {
                 active: 'AKTIF',
                 draft: 'DRAF',
                 archived: 'DIARKIBKAN'
+            },
+            categoryValues: {
+                'Accommodation': 'Penginapan',
+                'Transportation': 'Pengangkutan',
+                'Land Operator': 'Operator Darat',
+                'Airline': 'Syarikat Penerbangan'
             }
         },
         'es-ES': {
@@ -118,10 +139,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'resultados',
             restore: 'Restaurar',
             archive: 'Archivar',
+            in_location: 'en',
             statusValues: {
                 active: 'ACTIVO',
                 draft: 'BORRADOR',
                 archived: 'ARCHIVADO'
+            },
+            categoryValues: {
+                'Accommodation': 'Alojamiento',
+                'Transportation': 'Transporte',
+                'Land Operator': 'Operador Terrestre',
+                'Airline': 'Aerolínea'
             }
         },
         'fr-FR': {
@@ -141,10 +169,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'résultats',
             restore: 'Restaurer',
             archive: 'Archiver',
+            in_location: 'à',
             statusValues: {
                 active: 'ACTIF',
                 draft: 'BROUILLON',
                 archived: 'ARCHIVÉ'
+            },
+            categoryValues: {
+                'Accommodation': 'Hébergement',
+                'Transportation': 'Transport',
+                'Land Operator': 'Opérateur Terrestre',
+                'Airline': 'Compagnie Aérienne'
             }
         },
         'de-DE': {
@@ -164,10 +199,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'Ergebnissen',
             restore: 'Wiederherstellen',
             archive: 'Archivieren',
+            in_location: 'in',
             statusValues: {
                 active: 'AKTIV',
                 draft: 'ENTWURF',
                 archived: 'ARCHIVIERT'
+            },
+            categoryValues: {
+                'Accommodation': 'Unterkunft',
+                'Transportation': 'Transport',
+                'Land Operator': 'Landoperator',
+                'Airline': 'Fluggesellschaft'
             }
         },
         'ja-JP': {
@@ -187,10 +229,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: '件の結果',
             restore: '復元',
             archive: 'アーカイブ',
+            in_location: 'で',
             statusValues: {
                 active: 'アクティブ',
                 draft: '下書き',
                 archived: 'アーカイブ済み'
+            },
+            categoryValues: {
+                'Accommodation': '宿泊施設',
+                'Transportation': '交通機関',
+                'Land Operator': 'ランドオペレーター',
+                'Airline': '航空会社'
             }
         },
         'ko-KR': {
@@ -210,10 +259,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: '결과',
             restore: '복원',
             archive: '보관',
+            in_location: '에서',
             statusValues: {
                 active: '활성',
                 draft: '초안',
                 archived: '보관됨'
+            },
+            categoryValues: {
+                'Accommodation': '숙박',
+                'Transportation': '교통',
+                'Land Operator': '랜드 오퍼레이터',
+                'Airline': '항공사'
             }
         },
         'ar-SA': {
@@ -233,10 +289,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'نتائج',
             restore: 'استعادة',
             archive: 'أرشفة',
+            in_location: 'في',
             statusValues: {
                 active: 'نشط',
                 draft: 'مسودة',
                 archived: 'مؤرشف'
+            },
+            categoryValues: {
+                'Accommodation': 'إقامة',
+                'Transportation': 'نقل',
+                'Land Operator': 'مشغل بري',
+                'Airline': 'شركة طيران'
             }
         },
         'th-TH': {
@@ -256,10 +319,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'ผลลัพธ์',
             restore: 'กู้คืน',
             archive: 'เก็บถาวร',
+            in_location: 'ใน',
             statusValues: {
                 active: 'ใช้งานอยู่',
                 draft: 'ร่าง',
                 archived: 'เก็บถาวร'
+            },
+            categoryValues: {
+                'Accommodation': 'ที่พัก',
+                'Transportation': 'การขนส่ง',
+                'Land Operator': 'ผู้ให้บริการทางบก',
+                'Airline': 'สายการบิน'
             }
         },
         'vi-VN': {
@@ -279,10 +349,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'kết quả',
             restore: 'Khôi phục',
             archive: 'Lưu trữ',
+            in_location: 'tại',
             statusValues: {
                 active: 'ĐANG HOẠT ĐỘNG',
                 draft: 'BẢN NHÁP',
                 archived: 'ĐÃ LƯU TRỮ'
+            },
+            categoryValues: {
+                'Accommodation': 'Chỗ ở',
+                'Transportation': 'Vận tải',
+                'Land Operator': 'Nhà điều hành mặt đất',
+                'Airline': 'Hãng hàng không'
             }
         },
         'id-ID': {
@@ -302,10 +379,17 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             results: 'hasil',
             restore: 'Pulihkan',
             archive: 'Arsipkan',
+            in_location: 'di',
             statusValues: {
                 active: 'AKTIF',
                 draft: 'DRAF',
                 archived: 'DIARSIPKAN'
+            },
+            categoryValues: {
+                'Accommodation': 'Akomodasi',
+                'Transportation': 'Transportasi',
+                'Land Operator': 'Operator Darat',
+                'Airline': 'Maskapai Penerbangan'
             }
         }
     }
@@ -317,16 +401,63 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
             {
                 accessorKey: 'product_name',
                 header: content.productName,
-                cell: (info) => <span className="font-medium text-foreground">{info.getValue() as string}</span>,
+                cell: (info) => {
+                    const name = info.getValue() as string;
+                    const product = info.row.original;
+
+                    // Smart Title Logic
+                    const legacyCategories = ['Transport Provider', 'Tour Operator', 'Hotel', 'Airline', 'Land Operator', 'Transportation', 'Accommodation', 'Tours & Activities'];
+                    const hasLegacyPattern = legacyCategories.some(cat => name.toLowerCase().startsWith(cat.toLowerCase() + ' in '));
+
+                    if (hasLegacyPattern) {
+                        const cat = product.product_category?.toLowerCase() || '';
+                        let key = '';
+                        // Map legacy/various categories to the 4 standard ones
+                        if (cat.includes('hotel') || cat.includes('accommodation')) key = 'Accommodation';
+                        else if (cat.includes('transport') || cat.includes('airline')) key = 'Transportation';
+                        else if (cat.includes('land operator')) key = 'Land Operator';
+                        else if (cat.includes('airline')) key = 'Airline';
+
+                        // Fallback to direct lookup
+                        if (!key) {
+                            key = Object.keys(content.categoryValues || {}).find(k => k.toLowerCase() === cat) || '';
+                        }
+
+                        const translatedCategory = key ? content.categoryValues[key as keyof typeof content.categoryValues] : product.product_category;
+                        const city = product.city;
+
+                        return <span className="font-medium text-foreground">{`${translatedCategory} ${content.in_location} ${city}`}</span>;
+                    }
+
+                    return <span className="font-medium text-foreground">{name}</span>;
+                },
             },
             {
                 accessorKey: 'product_category',
                 header: content.category,
+                cell: (info) => {
+                    const category = info.getValue() as string
+                    const cat = category.toLowerCase();
+                    let key = '';
+                    if (cat.includes('hotel') || cat.includes('accommodation')) key = 'Accommodation';
+                    else if (cat.includes('transport') || cat.includes('airline')) key = 'Transportation';
+                    else if (cat.includes('land operator')) key = 'Land Operator';
+                    else if (cat.includes('airline')) key = 'Airline';
+
+                    if (!key) {
+                        key = Object.keys(content.categoryValues || {}).find(k => k.toLowerCase() === cat) || '';
+                    }
+                    return key ? content.categoryValues[key as keyof typeof content.categoryValues] : category
+                }
             },
             {
                 accessorKey: 'city',
                 header: content.location,
-                cell: (info) => `${info.getValue()}, ${info.row.original.country_code}`,
+                cell: (info) => {
+                    const countryCode = info.row.original.country_code;
+                    const countryName = new Intl.DisplayNames([language], { type: 'region' }).of(countryCode);
+                    return `${info.getValue()}, ${countryName} `;
+                },
             },
 
             {
@@ -341,7 +472,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                     const statusText = content.statusValues[status as keyof typeof content.statusValues] || status.toUpperCase()
 
                     return (
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
+                        <span className={`px - 2 py - 1 rounded - full text - xs font - medium ${colorClass} `}>
                             {statusText}
                         </span>
                     )
@@ -376,7 +507,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 },
             },
         ],
-        [onRestore, onArchive, content]
+        [onRestore, onArchive, content, language]
     )
 
     const table = useReactTable({

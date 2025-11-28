@@ -8,9 +8,11 @@ import { useLanguage } from '@/context/LanguageContext'
 
 interface ProductFormProps {
     onSuccess: () => void
+    productId?: string
+    mode?: 'create' | 'edit'
 }
 
-export default function ProductForm({ onSuccess }: ProductFormProps) {
+export default function ProductForm({ onSuccess, productId, mode = 'create' }: ProductFormProps) {
     const [loading, setLoading] = useState(false)
     const [files, setFiles] = useState<File[]>([])
     const [previews, setPreviews] = useState<string[]>([])
@@ -51,11 +53,13 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
                     setCompanyName(data.company_name)
                     setSupplierType(data.supplier_type)
 
-                    // Map supplier type to product category
+                    // Map supplier type to product category (Case-insensitive)
                     let category = ''
-                    if (data.supplier_type === 'Hotel') category = 'Accommodation'
-                    else if (data.supplier_type === 'Transport Provider') category = 'Transportation'
-                    else if (data.supplier_type === 'Tour Operator') category = 'Tours & Activities'
+                    const type = data.supplier_type?.toLowerCase() || ''
+
+                    if (type.includes('hotel')) category = 'Accommodation'
+                    else if (type.includes('transport') || type.includes('airline')) category = 'Transportation'
+                    else if (type.includes('tour') || type.includes('land operator')) category = 'Tours & Activities'
                     else category = 'Tours & Activities' // Default
 
                     setFormData(prev => ({
@@ -69,6 +73,39 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
         fetchSupplierProfile()
     }, [supabase])
 
+    // Load existing product data if editing
+    useEffect(() => {
+        const loadProductData = async () => {
+            if (mode === 'edit' && productId) {
+                const { data: product, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('id', productId)
+                    .single()
+
+                if (product && !error) {
+                    setFormData({
+                        product_name: product.product_name || '',
+                        product_description: product.product_description || '',
+                        product_category: product.product_category || '',
+                        hotel_address: product.hotel_address || '',
+                        hotel_stars: product.hotel_stars || '5',
+                        city: product.city || '',
+                        photo_url_1: '',
+                        description: '',
+                        status: product.status || 'draft'
+                    })
+
+                    // Load existing images as previews
+                    if (product.photo_urls && product.photo_urls.length > 0) {
+                        setPreviews(product.photo_urls)
+                    }
+                }
+            }
+        }
+        loadProductData()
+    }, [mode, productId, supabase])
+
     const t = {
         'en-US': {
             hotelDetails: 'Hotel Details',
@@ -81,6 +118,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
             dragDrop: 'Drag & drop images here, or click to select',
             maxImages: '(Max 5 images, 5MB each)',
             createProduct: 'Create Product',
+            updateProduct: 'Update Product',
             creating: 'Creating...',
             errorMissingFields: 'Please fill in all required fields and upload at least one image.',
             errorUpload: 'Error uploading images',
@@ -97,6 +135,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
             dragDrop: '拖放图片到此处，或点击选择',
             maxImages: '（最多 5 张图片，每张 5MB）',
             createProduct: '创建产品',
+            updateProduct: '更新产品',
             creating: '创建中...',
             errorMissingFields: '请填写所有必填字段并上传至少一张图片。',
             errorUpload: '上传图片时出错',
@@ -113,6 +152,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
             dragDrop: 'Seret & lepas imej di sini, atau klik untuk memilih',
             maxImages: '(Maks 5 imej, 5MB setiap satu)',
             createProduct: 'Cipta Produk',
+            updateProduct: 'Kemas Kini Produk',
             creating: 'Mencipta...',
             errorMissingFields: 'Sila isi semua medan yang diperlukan dan muat naik sekurang-kurangnya satu imej.',
             errorUpload: 'Ralat memuat naik imej',
@@ -129,6 +169,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
             dragDrop: 'Arrastre y suelte imágenes aquí, o haga clic para seleccionar',
             maxImages: '(Máx 5 imágenes, 5MB cada una)',
             createProduct: 'Crear Producto',
+            updateProduct: 'Actualizar Producto',
             creating: 'Creando...',
             errorMissingFields: 'Por favor complete todos los campos requeridos y suba al menos una imagen.',
             errorUpload: 'Error al subir imágenes',
@@ -218,19 +259,36 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
                 finalDescription = `Address: ${formData.hotel_address}\nStars: ${formData.hotel_stars}\n\n${formData.product_description}`
             }
 
-            // Create product record
-            const { error: insertError } = await supabase
-                .from('products')
-                .insert({
-                    supplier_id: user.id,
-                    product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
-                    product_description: finalDescription,
-                    product_category: formData.product_category,
-                    photo_urls: imageUrls, // Save all uploaded image URLs as array
-                    status: 'active'
-                })
+            // Create or Update product record
+            if (mode === 'edit' && productId) {
+                // UPDATE existing product
+                const { error: updateError } = await supabase
+                    .from('products')
+                    .update({
+                        product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
+                        product_description: finalDescription,
+                        product_category: formData.product_category,
+                        photo_urls: imageUrls.length > 0 ? imageUrls : previews, // Use new images or keep existing
+                        status: 'active'
+                    })
+                    .eq('id', productId)
 
-            if (insertError) throw insertError
+                if (updateError) throw updateError
+            } else {
+                // INSERT new product
+                const { error: insertError } = await supabase
+                    .from('products')
+                    .insert({
+                        supplier_id: user.id,
+                        product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
+                        product_description: finalDescription,
+                        product_category: formData.product_category,
+                        photo_urls: imageUrls, // Save all uploaded image URLs as array
+                        status: 'active'
+                    })
+
+                if (insertError) throw insertError
+            }
 
             onSuccess()
         } catch (error: any) {
@@ -390,7 +448,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
                     disabled={loading}
                     className="btn-primary btn-lg"
                 >
-                    {loading ? content.creating : content.createProduct}
+                    {loading ? content.creating : (mode === 'edit' ? content.updateProduct : content.createProduct)}
                 </button>
             </div>
         </form>
