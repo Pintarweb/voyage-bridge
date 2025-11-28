@@ -23,22 +23,13 @@ export async function POST(request: Request) {
             website_url,
             country_code, // Renamed from country, now ISO code
             city,
-            region,
-            continent,
-            currency,
-            agent_price,
-            suggested_retail_price,
-            validity_start_date,
-            validity_end_date,
             photo_url_1,
-            photo_url_2,
-            photo_url_3,
         } = body
 
         // 2. Validate required fields
-        if (!product_name || !country_code || !city || !currency || !agent_price) {
+        if (!product_name || !country_code || !city) {
             return NextResponse.json(
-                { error: 'Missing required fields (Name, Country, City, Currency, Agent Price)' },
+                { error: 'Missing required fields (Name, Country, City)' },
                 { status: 400 }
             )
         }
@@ -54,16 +45,7 @@ export async function POST(request: Request) {
                 website_url,
                 country_code,
                 city,
-                region,
-                continent,
-                currency,
-                agent_price,
-                suggested_retail_price,
-                validity_start_date,
-                validity_end_date,
                 photo_url_1,
-                photo_url_2,
-                photo_url_3,
             })
             .select()
             .single()

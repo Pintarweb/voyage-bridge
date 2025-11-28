@@ -27,23 +27,12 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
         product_name: '',
         product_description: '',
         product_category: '',
-        city: '',
-        country_code: '',
-        // Hotel specific fields
         hotel_address: '',
-        hotel_stars: '4',
-
-        // Hidden/Defaulted fields
-        validity_start_date: new Date().toISOString().split('T')[0],
-        validity_end_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-        agent_price: '0',
-        currency: 'USD',
-        min_pax: 1,
-        max_pax: 100,
-        cancellation_policy: 'Standard',
-        inclusions: [''],
-        exclusions: [''],
-        terms_conditions: 'Standard'
+        hotel_stars: '5',
+        city: '',
+        photo_url_1: '',
+        description: '',
+        status: 'draft'
     })
 
     useEffect(() => {
@@ -71,9 +60,8 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
 
                     setFormData(prev => ({
                         ...prev,
-                        country_code: data.country_code,
-                        city: data.city,
-                        product_category: category
+                        product_category: category,
+                        city: data.city // Auto-populate city
                     }))
                 }
             }
@@ -235,24 +223,10 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
                 .from('products')
                 .insert({
                     supplier_id: user.id,
-                    product_name: formData.product_name || `${formData.product_category} in ${formData.city}`,
+                    product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
                     product_description: finalDescription,
                     product_category: formData.product_category,
-                    city: formData.city,
-                    country_code: formData.country_code,
-                    validity_start_date: formData.validity_start_date,
-                    validity_end_date: formData.validity_end_date,
-                    agent_price: parseFloat(formData.agent_price),
-                    currency: formData.currency,
-                    min_pax: formData.min_pax,
-                    max_pax: formData.max_pax,
-                    cancellation_policy: formData.cancellation_policy,
-                    inclusions: formData.inclusions.filter(i => i),
-                    exclusions: formData.exclusions.filter(e => e),
-                    terms_conditions: formData.terms_conditions,
                     photo_url_1: imageUrls[0] || null,
-                    photo_url_2: imageUrls[1] || null,
-                    photo_url_3: imageUrls[2] || null,
                     status: 'active'
                 })
 

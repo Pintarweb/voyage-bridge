@@ -45,7 +45,17 @@ export default function Dashboard() {
             errorArchive: 'Error archiving product',
             confirmRestore: 'Restore this product? You may need to update the validity dates.',
             errorRestore: 'Error restoring product',
-            loading: 'Loading...'
+            loading: 'Loading...',
+            welcomeBack: 'Welcome back',
+            partner: 'Partner',
+            manageYour: 'Manage your',
+            inventory: 'inventory',
+            trackPerformance: 'and track performance all in one place.',
+            supplierTypes: {
+                'Hotel': 'Hotel',
+                'Transport Provider': 'Transport Provider',
+                'Tour Operator': 'Tour Operator'
+            }
         },
         'zh-CN': {
             title: '库存管理',
@@ -68,11 +78,21 @@ export default function Dashboard() {
             errorArchive: '归档产品时出错',
             confirmRestore: '恢复此产品？您可能需要更新有效期。',
             errorRestore: '恢复产品时出错',
-            loading: '加载中...'
+            loading: '加载中...',
+            welcomeBack: '欢迎回来',
+            partner: '合作伙伴',
+            manageYour: '管理您的',
+            inventory: '库存',
+            trackPerformance: '并在一个地方跟踪绩效。',
+            supplierTypes: {
+                'Hotel': '酒店',
+                'Transport Provider': '交通提供商',
+                'Tour Operator': '旅游运营商'
+            }
         },
         'ms-MY': {
             title: 'Pengurusan Inventori',
-            subtitle: 'Jejak prestasi dan urus penyenaraian aktif anda.',
+            subtitle: 'Jejaki prestasi dan urus senarai aktif anda.',
             createProduct: 'Cipta Produk',
             activeInventory: 'Inventori Aktif',
             productHistory: 'Sejarah Produk (Diarkibkan)',
@@ -91,7 +111,17 @@ export default function Dashboard() {
             errorArchive: 'Ralat mengarkibkan produk',
             confirmRestore: 'Pulihkan produk ini? Anda mungkin perlu mengemas kini tarikh sah.',
             errorRestore: 'Ralat memulihkan produk',
-            loading: 'Memuatkan...'
+            loading: 'Memuatkan...',
+            welcomeBack: 'Selamat kembali',
+            partner: 'Rakan Kongsi',
+            manageYour: 'Urus',
+            inventory: 'inventori',
+            trackPerformance: 'anda dan jejak prestasi semuanya di satu tempat.',
+            supplierTypes: {
+                'Hotel': 'Hotel',
+                'Transport Provider': 'Penyedia Pengangkutan',
+                'Tour Operator': 'Pengendali Pelancongan'
+            }
         },
         'es-ES': {
             title: 'Gestión de Inventario',
@@ -114,7 +144,17 @@ export default function Dashboard() {
             errorArchive: 'Error al archivar el producto',
             confirmRestore: '¿Restaurar este producto? Es posible que deba actualizar las fechas de validez.',
             errorRestore: 'Error al restaurar el producto',
-            loading: 'Cargando...'
+            loading: 'Cargando...',
+            welcomeBack: 'Bienvenido de nuevo',
+            partner: 'Socio',
+            manageYour: 'Administre su',
+            inventory: 'inventario',
+            trackPerformance: 'y rastree el rendimiento todo en un solo lugar.',
+            supplierTypes: {
+                'Hotel': 'Hotel',
+                'Transport Provider': 'Proveedor de Transporte',
+                'Tour Operator': 'Operador Turístico'
+            }
         },
         'fr-FR': {
             title: 'Gestion des Stocks',
@@ -137,7 +177,17 @@ export default function Dashboard() {
             errorArchive: 'Erreur lors de l\'archivage du produit',
             confirmRestore: 'Restaurer ce produit ? Vous devrez peut-être mettre à jour les dates de validité.',
             errorRestore: 'Erreur lors de la restauration du produit',
-            loading: 'Chargement...'
+            loading: 'Chargement...',
+            welcomeBack: 'Bon retour',
+            partner: 'Partenaire',
+            manageYour: 'Gérez votre',
+            inventory: 'inventaire',
+            trackPerformance: 'et suivez les performances au même endroit.',
+            supplierTypes: {
+                'Hotel': 'Hôtel',
+                'Transport Provider': 'Fournisseur de Transport',
+                'Tour Operator': 'Tour Opérateur'
+            }
         },
         'de-DE': {
             title: 'Bestandsverwaltung',
@@ -160,7 +210,17 @@ export default function Dashboard() {
             errorArchive: 'Fehler beim Archivieren des Produkts',
             confirmRestore: 'Dieses Produkt wiederherstellen? Möglicherweise müssen Sie die Gültigkeitsdaten aktualisieren.',
             errorRestore: 'Fehler beim Wiederherstellen des Produkts',
-            loading: 'Laden...'
+            loading: 'Laden...',
+            welcomeBack: 'Willkommen zurück',
+            partner: 'Partner',
+            manageYour: 'Verwalten Sie Ihr',
+            inventory: 'Inventar',
+            trackPerformance: 'und verfolgen Sie die Leistung an einem Ort.',
+            supplierTypes: {
+                'Hotel': 'Hotel',
+                'Transport Provider': 'Transportanbieter',
+                'Tour Operator': 'Reiseveranstalter'
+            }
         },
         'ja-JP': {
             title: '在庫管理',
@@ -183,7 +243,17 @@ export default function Dashboard() {
             errorArchive: '製品のアーカイブエラー',
             confirmRestore: 'この製品を復元しますか？有効期限を更新する必要がある場合があります。',
             errorRestore: '製品の復元エラー',
-            loading: '読み込み中...'
+            loading: '読み込み中...',
+            welcomeBack: 'お帰りなさい',
+            partner: 'パートナー',
+            manageYour: '管理する',
+            inventory: '在庫',
+            trackPerformance: 'そして、一箇所でパフォーマンスを追跡します。',
+            supplierTypes: {
+                'Hotel': 'ホテル',
+                'Transport Provider': '輸送プロバイダー',
+                'Tour Operator': 'ツアーオペレーター'
+            }
         },
         'ko-KR': {
             title: '재고 관리',
@@ -206,7 +276,17 @@ export default function Dashboard() {
             errorArchive: '제품 보관 오류',
             confirmRestore: '이 제품을 복원하시겠습니까? 유효 기간을 업데이트해야 할 수도 있습니다.',
             errorRestore: '제품 복원 오류',
-            loading: '로딩 중...'
+            loading: '로딩 중...',
+            welcomeBack: '환영합니다',
+            partner: '파트너',
+            manageYour: '관리',
+            inventory: '재고',
+            trackPerformance: '한 곳에서 성과를 추적하십시오.',
+            supplierTypes: {
+                'Hotel': '호텔',
+                'Transport Provider': '운송 제공 업체',
+                'Tour Operator': '투어 운영자'
+            }
         },
         'ar-SA': {
             title: 'إدارة المخزون',
@@ -229,7 +309,17 @@ export default function Dashboard() {
             errorArchive: 'خطأ في أرشفة المنتج',
             confirmRestore: 'هل تريد استعادة هذا المنتج؟ قد تحتاج إلى تحديث تواريخ الصلاحية.',
             errorRestore: 'خطأ في استعادة المنتج',
-            loading: 'جار التحميل...'
+            loading: 'جار التحميل...',
+            welcomeBack: 'مرحبًا بعودتك',
+            partner: 'شريك',
+            manageYour: 'إدارة',
+            inventory: 'المخزون',
+            trackPerformance: 'وتتبع الأداء في مكان واحد.',
+            supplierTypes: {
+                'Hotel': 'فندق',
+                'Transport Provider': 'مقدم النقل',
+                'Tour Operator': 'منظم رحلات'
+            }
         },
         'th-TH': {
             title: 'การจัดการสินค้าคงคลัง',
@@ -252,7 +342,17 @@ export default function Dashboard() {
             errorArchive: 'ข้อผิดพลาดในการเก็บถาวรผลิตภัณฑ์',
             confirmRestore: 'กู้คืนผลิตภัณฑ์นี้หรือไม่ คุณอาจต้องอัปเดตวันที่ใช้งานได้',
             errorRestore: 'ข้อผิดพลาดในการกู้คืนผลิตภัณฑ์',
-            loading: 'กำลังโหลด...'
+            loading: 'กำลังโหลด...',
+            welcomeBack: 'ยินดีต้อนรับกลับ',
+            partner: 'พาร์ทเนอร์',
+            manageYour: 'จัดการ',
+            inventory: 'สินค้าคงคลัง',
+            trackPerformance: 'และติดตามประสิทธิภาพได้ในที่เดียว',
+            supplierTypes: {
+                'Hotel': 'โรงแรม',
+                'Transport Provider': 'ผู้ให้บริการขนส่ง',
+                'Tour Operator': 'ผู้ประกอบการท่องเที่ยว'
+            }
         },
         'vi-VN': {
             title: 'Quản lý Kho hàng',
@@ -275,7 +375,17 @@ export default function Dashboard() {
             errorArchive: 'Lỗi khi lưu trữ sản phẩm',
             confirmRestore: 'Khôi phục sản phẩm này? Bạn có thể cần cập nhật ngày hiệu lực.',
             errorRestore: 'Lỗi khi khôi phục sản phẩm',
-            loading: 'Đang tải...'
+            loading: 'Đang tải...',
+            welcomeBack: 'Chào mừng trở lại',
+            partner: 'Đối tác',
+            manageYour: 'Quản lý',
+            inventory: 'kho hàng',
+            trackPerformance: 'và theo dõi hiệu suất tất cả ở một nơi.',
+            supplierTypes: {
+                'Hotel': 'Khách sạn',
+                'Transport Provider': 'Nhà cung cấp vận tải',
+                'Tour Operator': 'Nhà điều hành tour'
+            }
         },
         'id-ID': {
             title: 'Manajemen Inventaris',
@@ -298,28 +408,21 @@ export default function Dashboard() {
             errorArchive: 'Kesalahan mengarsipkan produk',
             confirmRestore: 'Pulihkan produk ini? Anda mungkin perlu memperbarui tanggal berlaku.',
             errorRestore: 'Kesalahan memulihkan produk',
-            loading: 'Memuat...'
+            loading: 'Memuat...',
+            welcomeBack: 'Selamat kembali',
+            partner: 'Mitra',
+            manageYour: 'Kelola',
+            inventory: 'inventaris',
+            trackPerformance: 'dan lacak kinerja semuanya di satu tempat.',
+            supplierTypes: {
+                'Hotel': 'Hotel',
+                'Transport Provider': 'Penyedia Transportasi',
+                'Tour Operator': 'Operator Tur'
+            }
         }
     }
 
     const content = t[language as keyof typeof t] || t['en-US']
-
-    useEffect(() => {
-        const checkUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) {
-                router.push('/auth/register')
-            } else {
-                setUser(user)
-                await Promise.all([
-                    fetchProducts(user.id),
-                    fetchSupplier(user.id)
-                ])
-            }
-            setLoading(false)
-        }
-        checkUser()
-    }, [router, supabase])
 
     const fetchSupplier = async (userId: string) => {
         const { data, error } = await supabase
@@ -389,25 +492,57 @@ export default function Dashboard() {
     return (
         <div className="text-foreground">
             <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                {/* Welcome Banner */}
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 p-8 shadow-lg mb-8">
+                    <div className="relative z-10">
+                        <h1 className="text-3xl font-bold text-white mb-2">
+                            {content.welcomeBack}, {supplier?.company_name || content.partner}! 👋
+                        </h1>
+                        <p className="text-blue-100 text-lg">
+                            {content.manageYour} {supplier?.supplier_type ? (content.supplierTypes[supplier.supplier_type as keyof typeof content.supplierTypes] || supplier.supplier_type).toLowerCase() : content.inventory} {content.trackPerformance}
+                        </p>
+                    </div>
+                    {/* Decorative circles */}
+                    <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
+                    <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
+                </div>
+
                 <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-foreground">{content.title}</h1>
-                        <p className="mt-2 text-muted-foreground">{content.subtitle}</p>
+                        <h2 className="text-2xl font-bold text-foreground">{content.title}</h2>
+                        <p className="mt-1 text-muted-foreground">{content.subtitle}</p>
 
                         {supplier && (
-                            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                            <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
                                 {supplier.supplier_type && (
-                                    <div className="flex items-center gap-2 bg-muted px-3 py-1 rounded-full">
-                                        <FaTag className="text-primary" />
-                                        <span className="font-medium text-foreground">{supplier.supplier_type}</span>
+                                    <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
+                                        <FaTag className="text-primary h-3 w-3" />
+                                        <span className="font-medium text-primary">
+                                            {content.supplierTypes[supplier.supplier_type as keyof typeof content.supplierTypes] || supplier.supplier_type}
+                                        </span>
                                     </div>
                                 )}
-                                {supplier.city && (
-                                    <div className="flex items-center gap-2 bg-muted px-3 py-1 rounded-full">
-                                        <FaMapMarkerAlt className="text-primary" />
+
+                                {supplier.supplier_type === 'Hotel' && supplier.country_code ? (
+                                    <div className="flex items-center gap-2 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
+                                        <img
+                                            src={`https://flagcdn.com/w40/${supplier.country_code.toLowerCase()}.png`}
+                                            srcSet={`https://flagcdn.com/w80/${supplier.country_code.toLowerCase()}.png 2x`}
+                                            width="24"
+                                            height="16"
+                                            alt={supplier.country_code}
+                                            className="rounded-sm object-cover"
+                                        />
+                                        <span className="font-medium text-orange-700 dark:text-orange-400">
+                                            {new Intl.DisplayNames([language], { type: 'region' }).of(supplier.country_code)}
+                                        </span>
+                                    </div>
+                                ) : supplier.city ? (
+                                    <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-full border border-border">
+                                        <FaMapMarkerAlt className="text-muted-foreground h-3 w-3" />
                                         <span className="font-medium text-foreground">{supplier.city}</span>
                                     </div>
-                                )}
+                                ) : null}
                             </div>
                         )}
                     </div>
@@ -496,7 +631,6 @@ export default function Dashboard() {
                                         </div>
                                     </div>
 
-                                    {/* Bottom Section: Performance Strip */}
                                     {/* Bottom Section: Performance Strip */}
                                     <div className="bg-muted/30 border-t border-border px-6 py-3 grid grid-cols-2 gap-4">
                                         {/* Views + Sparkline */}

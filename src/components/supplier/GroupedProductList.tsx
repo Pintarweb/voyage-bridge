@@ -9,8 +9,6 @@ type Product = {
     product_category: string
     city: string
     country_code: string
-    suggested_retail_price: number
-    currency: string
     status: string
 }
 
@@ -80,7 +78,7 @@ export default function GroupedProductList({ products, groupingType }: GroupedPr
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase">Product</th>
                                                 <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase">Category</th>
-                                                <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase">Price</th>
+
                                                 <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase">Status</th>
                                             </tr>
                                         </thead>
@@ -89,13 +87,11 @@ export default function GroupedProductList({ products, groupingType }: GroupedPr
                                                 <tr key={product.id} className="hover:bg-white/5">
                                                     <td className="px-6 py-4 text-white">{product.product_name}</td>
                                                     <td className="px-6 py-4 text-gray-400 text-sm">{product.product_category}</td>
-                                                    <td className="px-6 py-4 text-gray-400 text-sm">
-                                                        {product.currency} {product.suggested_retail_price}
-                                                    </td>
+
                                                     <td className="px-6 py-4">
                                                         <span className={`px-2 py-1 rounded text-xs font-bold ${product.status === 'active'
-                                                                ? 'bg-green-500/10 text-green-400'
-                                                                : 'bg-gray-500/10 text-gray-400'
+                                                            ? 'bg-green-500/10 text-green-400'
+                                                            : 'bg-gray-500/10 text-gray-400'
                                                             }`}>
                                                             {product.status}
                                                         </span>
@@ -193,7 +189,7 @@ export default function GroupedProductList({ products, groupingType }: GroupedPr
                                                             <tr>
                                                                 <th className="px-4 py-2 text-left text-xs font-bold text-gray-400 uppercase">Product</th>
                                                                 <th className="px-4 py-2 text-left text-xs font-bold text-gray-400 uppercase">Category</th>
-                                                                <th className="px-4 py-2 text-left text-xs font-bold text-gray-400 uppercase">Price</th>
+
                                                                 <th className="px-4 py-2 text-left text-xs font-bold text-gray-400 uppercase">Status</th>
                                                             </tr>
                                                         </thead>
@@ -202,13 +198,11 @@ export default function GroupedProductList({ products, groupingType }: GroupedPr
                                                                 <tr key={product.id} className="hover:bg-white/5">
                                                                     <td className="px-4 py-3 text-white text-sm">{product.product_name}</td>
                                                                     <td className="px-4 py-3 text-gray-400 text-xs">{product.product_category}</td>
-                                                                    <td className="px-4 py-3 text-gray-400 text-xs">
-                                                                        {product.currency} {product.suggested_retail_price}
-                                                                    </td>
+
                                                                     <td className="px-4 py-3">
                                                                         <span className={`px-2 py-0.5 rounded text-xs font-bold ${product.status === 'active'
-                                                                                ? 'bg-green-500/10 text-green-400'
-                                                                                : 'bg-gray-500/10 text-gray-400'
+                                                                            ? 'bg-green-500/10 text-green-400'
+                                                                            : 'bg-gray-500/10 text-gray-400'
                                                                             }`}>
                                                                             {product.status}
                                                                         </span>
