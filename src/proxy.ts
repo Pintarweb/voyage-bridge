@@ -83,6 +83,9 @@ export async function updateSession(request: NextRequest) {
             // Not a supplier, redirect to portal (which will handle agent check)
             return NextResponse.redirect(new URL('/portal', request.url))
         }
+
+        // Supplier exists in DB, allow access
+        return response
     }
 
     return response

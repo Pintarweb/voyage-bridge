@@ -452,6 +452,29 @@ export default function Dashboard() {
         }
     }
 
+    useEffect(() => {
+        const initializeDashboard = async () => {
+            try {
+                const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser()
+
+                if (userError || !currentUser) {
+                    router.push('/auth/supplier')
+                    return
+                }
+
+                setUser(currentUser)
+                await fetchSupplier(currentUser.id)
+                await fetchProducts(currentUser.id)
+            } catch (error) {
+                console.error('Error initializing dashboard:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        initializeDashboard()
+    }, [router, supabase])
+
     const handleArchive = async (id: string) => {
         if (!confirm(content.confirmArchive)) return
 

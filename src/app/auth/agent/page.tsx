@@ -508,7 +508,7 @@ export default function AgentAuthPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                                className="w-full btn-primary btn-md"
                             >
                                 {loading ? content.loggingIn : content.login}
                             </button>
@@ -627,7 +627,7 @@ export default function AgentAuthPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50 mt-4"
+                                className="w-full btn-primary btn-md mt-4"
                             >
                                 {loading ? content.creatingAccount : content.registerAgency}
                             </button>

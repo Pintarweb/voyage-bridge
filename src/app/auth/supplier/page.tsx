@@ -149,11 +149,28 @@ export default function SupplierAuthPage() {
         setError('')
 
         try {
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                 email,
                 password
             })
-            if (error) throw error
+
+            if (authError) throw authError
+
+            // Check if user is a registered supplier
+            const { data: supplier, error: supplierError } = await supabase
+                .from('suppliers')
+                .select('id')
+                .eq('id', authData.user.id)
+                .single()
+
+            if (supplierError || !supplier) {
+                // Not a registered supplier
+                await supabase.auth.signOut()
+                alert('You are not a registered supplier. Please register first.')
+                router.push('/')
+                return
+            }
+
             router.push('/supplier/dashboard')
         } catch (err: any) {
             setError(err.message)
@@ -209,7 +226,7 @@ export default function SupplierAuthPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
+                            className="w-full btn-primary btn-lg"
                         >
                             {loading ? content.loggingIn : content.signIn}
                         </button>

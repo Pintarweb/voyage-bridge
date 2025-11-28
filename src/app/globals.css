@@ -100,3 +100,192 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Global Button Styles */
+button,
+.btn {
+  @apply font-medium rounded-lg transition-all duration-200 ease-in-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* Primary Button */
+button.btn-primary,
+.btn-primary {
+  @apply bg-primary text-primary-foreground;
+  @apply hover:opacity-90 active:opacity-95;
+  @apply focus:ring-primary;
+  @apply shadow-sm hover:shadow-md;
+}
+
+/* Secondary Button */
+button.btn-secondary,
+.btn-secondary {
+  @apply bg-secondary text-secondary-foreground;
+  @apply hover:opacity-90 active:opacity-95;
+  @apply focus:ring-secondary;
+  @apply shadow-sm hover:shadow-md;
+}
+
+/* Destructive/Danger Button */
+button.btn-destructive,
+.btn-destructive {
+  @apply bg-destructive text-destructive-foreground;
+  @apply hover:opacity-90 active:opacity-95;
+  @apply focus:ring-destructive;
+  @apply shadow-sm hover:shadow-md;
+}
+
+/* Outline Button */
+button.btn-outline,
+.btn-outline {
+  @apply bg-transparent border-2 border-border text-foreground;
+  @apply hover:bg-muted active:bg-muted/80;
+  @apply focus:ring-primary;
+}
+
+/* Ghost Button */
+button.btn-ghost,
+.btn-ghost {
+  @apply bg-transparent text-foreground;
+  @apply hover:bg-muted active:bg-muted/80;
+  @apply focus:ring-primary;
+}
+
+/* Button Sizes */
+button.btn-sm,
+.btn-sm {
+  @apply px-3 py-1.5 text-sm;
+}
+
+button.btn-md,
+.btn-md {
+  @apply px-4 py-2 text-base;
+}
+
+button.btn-lg,
+.btn-lg {
+  @apply px-6 py-3 text-lg;
+}
+
+/* Default button size if no size class is specified */
+button:not([class*="btn-"]),
+.btn:not([class*="btn-"]) {
+  @apply px-4 py-2 text-base;
+}
+
+/* Global Form Styles */
+form {
+  @apply space-y-6;
+}
+
+/* Form Container - Vibrant Card Style */
+.form-container {
+  @apply bg-gradient-to-br from-white to-blue-50/50;
+  @apply border-2 border-primary/20;
+  @apply rounded-xl shadow-lg;
+  @apply p-6 md:p-8;
+  @apply backdrop-blur-sm;
+}
+
+/* Form Group */
+.form-group {
+  @apply space-y-2;
+}
+
+/* Form Labels */
+form label,
+.form-label {
+  @apply block text-sm font-semibold text-foreground;
+  @apply mb-2;
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+select,
+textarea {
+  @apply w-full px-4 py-2.5 rounded-lg;
+  @apply bg-white border-2 border-border;
+  @apply text-foreground placeholder-muted-foreground;
+  @apply transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary;
+  @apply hover:border-primary/50;
+  @apply disabled:bg-muted disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+/* Textarea specific */
+textarea {
+  @apply resize-y min-h-[100px];
+}
+
+/* Select specific */
+select {
+  @apply bg-white cursor-pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* Checkbox and Radio */
+input[type="checkbox"],
+input[type="radio"] {
+  @apply w-4 h-4 rounded border-2 border-border;
+  @apply text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  @apply cursor-pointer;
+  @apply transition-colors duration-200;
+}
+
+input[type="radio"] {
+  @apply rounded-full;
+}
+
+/* File Input */
+input[type="file"] {
+  @apply block w-full text-sm text-foreground;
+  @apply file:mr-4 file:py-2 file:px-4;
+  @apply file:rounded-lg file:border-0;
+  @apply file:text-sm file:font-semibold;
+  @apply file:bg-primary file:text-primary-foreground;
+  @apply file:cursor-pointer;
+  @apply hover:file:opacity-90;
+  @apply cursor-pointer;
+}
+
+/* Input Error State */
+input.error,
+select.error,
+textarea.error {
+  @apply border-destructive focus:ring-destructive focus:border-destructive;
+}
+
+/* Input Success State */
+input.success,
+select.success,
+textarea.success {
+  @apply border-green-500 focus:ring-green-500 focus:border-green-500;
+}
+
+/* Form Error Message */
+.form-error {
+  @apply text-sm text-destructive mt-1;
+}
+
+/* Form Success Message */
+.form-success {
+  @apply text-sm text-green-600 mt-1;
+}
+
+/* Form Helper Text */
+.form-helper {
+  @apply text-sm text-muted-foreground mt-1;
+}

@@ -387,7 +387,7 @@ export default function Step1Identity() {
             <div className="flex justify-end">
                 <button
                     type="submit"
-                    className="rounded-md bg-teal-600 px-6 py-2 text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                    className="btn-primary btn-md"
                 >
                     {content.next}
                 </button>
