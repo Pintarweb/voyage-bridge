@@ -226,7 +226,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
                     product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
                     product_description: finalDescription,
                     product_category: formData.product_category,
-                    photo_url_1: imageUrls[0] || null,
+                    photo_urls: imageUrls, // Save all uploaded image URLs as array
                     status: 'active'
                 })
 
@@ -251,22 +251,22 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Context Header */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm animate-fade-in-up">
+            {/* Context Header - Vibrant Gradient */}
+            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-blue-50/50 border-2 border-primary/20 p-6 shadow-lg backdrop-blur-sm animate-fade-in-up">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                            <FaBuilding className="text-teal-500" />
+                            <FaBuilding className="text-primary" />
                             {companyName || 'Your Company'}
                         </h2>
                         <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
-                                <FaTag className="text-teal-400" />
-                                <span>{formData.product_category || 'Category'}</span>
+                                <FaTag className="text-primary" />
+                                <span className="font-medium">{supplierType || 'Category'}</span>
                             </div>
-                            <div className="hidden md:block w-px h-4 bg-gray-700"></div>
+                            <div className="hidden md:block w-px h-4 bg-border"></div>
                             <div className="flex items-center gap-1">
-                                <FaMapMarkerAlt className="text-teal-400" />
+                                <FaMapMarkerAlt className="text-primary" />
                                 <span>
                                     {formData.city ? `${formData.city}, ` : ''}
                                     {supplierCountry || 'Location'}
@@ -279,8 +279,8 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
 
             {/* Hotel Specific Fields */}
             {isHotel && (
-                <div className="bg-card rounded-lg border border-border p-6 shadow-sm space-y-6 animate-fade-in-up">
-                    <h3 className="text-lg font-medium text-teal-400 flex items-center gap-2">
+                <div className="bg-gradient-to-br from-white to-blue-50/50 border-2 border-primary/20 rounded-xl p-6 shadow-lg backdrop-blur-sm space-y-6 animate-fade-in-up">
+                    <h3 className="text-lg font-medium text-primary flex items-center gap-2">
                         <FaHotel /> {content.hotelDetails}
                     </h3>
 
@@ -347,12 +347,10 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
                 >
                     <div className="space-y-1 text-center">
                         <FaCloudUploadAlt className="mx-auto h-12 w-12 text-gray-400" />
-                        <div className="flex text-sm text-gray-400">
-                            <label className="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary">
-                                <span>Upload a file</span>
-                                <input {...getInputProps()} />
-                            </label>
-                            <p className="pl-1">or drag and drop</p>
+                        <input {...getInputProps()} />
+                        <div className="text-sm text-gray-400">
+                            <span className="font-medium text-primary">Upload a file</span>
+                            <span className="pl-1">or drag and drop</span>
                         </div>
                         <p className="text-xs text-gray-500">
                             PNG, JPG, GIF up to 5MB
@@ -390,7 +388,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-primary btn-lg"
                 >
                     {loading ? content.creating : content.createProduct}
                 </button>

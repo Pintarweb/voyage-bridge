@@ -119,7 +119,7 @@ function WizardContent() {
             {/* Stepper UI */}
             <div className="mb-8">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-teal-400">{stepText}</span>
+                    <span className="text-sm font-medium text-primary">{stepText}</span>
                     <span className="text-sm text-gray-400">
                         {currentStep === 1 && content.step1}
                         {currentStep === 2 && content.step2}
@@ -129,7 +129,7 @@ function WizardContent() {
                 </div>
                 <div className="w-full bg-gray-700 rounded-full h-2.5">
                     <div
-                        className="bg-secondary h-2.5 rounded-full transition-all duration-300 ease-in-out"
+                        className="bg-primary h-2.5 rounded-full transition-all duration-300 ease-in-out"
                         style={{ width: `${(currentStep / totalSteps) * 100}%` }}
                     ></div>
                 </div>
