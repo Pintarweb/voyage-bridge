@@ -200,12 +200,7 @@ export default function GlobalHeader() {
 
 
 
-                        {/* Login Button for Public if NOT logged in */}
-                        {type === 'public' && !user && (
-                            <Link href="/auth/agent" className="text-sm font-medium text-primary hover:text-primary/80">
-                                Login
-                            </Link>
-                        )}
+
                     </div>
 
                     {/* Mobile Menu Button */}

@@ -25,9 +25,10 @@ interface ProductHistoryTableProps {
     products: Product[]
     onRestore: (id: string) => void
     onArchive: (id: string) => void
+    supplierType?: string
 }
 
-export default function ProductHistoryTable({ products, onRestore, onArchive }: ProductHistoryTableProps) {
+export default function ProductHistoryTable({ products, onRestore, onArchive, supplierType }: ProductHistoryTableProps) {
     const [globalFilter, setGlobalFilter] = useState('')
     const { language } = useLanguage()
 
@@ -60,6 +61,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'Transportation',
                 'Land Operator': 'Land Operator',
                 'Airline': 'Airline'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'zh-CN': {
@@ -90,6 +103,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': '交通',
                 'Land Operator': '地接社',
                 'Airline': '航空公司'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'ms-MY': {
@@ -120,6 +145,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'Pengangkutan',
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Syarikat Penerbangan'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'es-ES': {
@@ -150,6 +187,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'Transporte',
                 'Land Operator': 'Operador Terrestre',
                 'Airline': 'Aerolínea'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'fr-FR': {
@@ -180,6 +229,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'Transport',
                 'Land Operator': 'Opérateur Terrestre',
                 'Airline': 'Compagnie Aérienne'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'de-DE': {
@@ -210,6 +271,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'Transport',
                 'Land Operator': 'Landoperator',
                 'Airline': 'Fluggesellschaft'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'ja-JP': {
@@ -240,6 +313,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': '交通機関',
                 'Land Operator': 'ランドオペレーター',
                 'Airline': '航空会社'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'ko-KR': {
@@ -270,6 +355,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': '교통',
                 'Land Operator': '랜드 오퍼레이터',
                 'Airline': '항공사'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'ar-SA': {
@@ -300,6 +397,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'نقل',
                 'Land Operator': 'مشغل بري',
                 'Airline': 'شركة طيران'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'th-TH': {
@@ -330,6 +439,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'การขนส่ง',
                 'Land Operator': 'ผู้ให้บริการทางบก',
                 'Airline': 'สายการบิน'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'vi-VN': {
@@ -360,6 +481,18 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'Vận tải',
                 'Land Operator': 'Nhà điều hành mặt đất',
                 'Airline': 'Hãng hàng không'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'id-ID': {
@@ -390,11 +523,29 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 'Transportation': 'Transportasi',
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Maskapai Penerbangan'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapura',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         }
     }
 
     const content = t[language as keyof typeof t] || t['en-US']
+
+    // Helper for city translation
+    const translateCity = (city: string) => {
+        const cityMap = content.cityTranslations as Record<string, string> | undefined;
+        return cityMap?.[city] || city;
+    }
 
     const columns = useMemo<ColumnDef<Product>[]>(
         () => [
@@ -405,26 +556,28 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                     const name = info.getValue() as string;
                     const product = info.row.original;
 
-                    // Smart Title Logic
+                    // Smart Title Logic using Supplier Type
                     const legacyCategories = ['Transport Provider', 'Tour Operator', 'Hotel', 'Airline', 'Land Operator', 'Transportation', 'Accommodation', 'Tours & Activities'];
                     const hasLegacyPattern = legacyCategories.some(cat => name.toLowerCase().startsWith(cat.toLowerCase() + ' in '));
 
                     if (hasLegacyPattern) {
-                        const cat = product.product_category?.toLowerCase() || '';
+                        const type = supplierType || 'Supplier';
                         let key = '';
-                        // Map legacy/various categories to the 4 standard ones
-                        if (cat.includes('hotel') || cat.includes('accommodation')) key = 'Accommodation';
-                        else if (cat.includes('transport') || cat.includes('airline')) key = 'Transportation';
-                        else if (cat.includes('land operator')) key = 'Land Operator';
-                        else if (cat.includes('airline')) key = 'Airline';
+                        const lowerType = type.toLowerCase();
 
-                        // Fallback to direct lookup
+                        // Normalize supplier type
+                        if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Accommodation';
+                        else if (lowerType.includes('airline')) key = 'Airline';
+                        else if (lowerType.includes('transport')) key = 'Transportation';
+                        else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
+
+                        // Try direct lookup if no key found
                         if (!key) {
-                            key = Object.keys(content.categoryValues || {}).find(k => k.toLowerCase() === cat) || '';
+                            key = Object.keys(content.categoryValues || {}).find(k => k.toLowerCase() === lowerType) || '';
                         }
 
-                        const translatedCategory = key ? content.categoryValues[key as keyof typeof content.categoryValues] : product.product_category;
-                        const city = product.city;
+                        const translatedCategory = key ? content.categoryValues[key as keyof typeof content.categoryValues] : type;
+                        const city = translateCity(product.city);
 
                         return <span className="font-medium text-foreground">{`${translatedCategory} ${content.in_location} ${city}`}</span>;
                     }
@@ -436,18 +589,19 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 accessorKey: 'product_category',
                 header: content.category,
                 cell: (info) => {
-                    const category = info.getValue() as string
-                    const cat = category.toLowerCase();
+                    const type = supplierType || 'Supplier';
+                    const lowerType = type.toLowerCase();
                     let key = '';
-                    if (cat.includes('hotel') || cat.includes('accommodation')) key = 'Accommodation';
-                    else if (cat.includes('transport') || cat.includes('airline')) key = 'Transportation';
-                    else if (cat.includes('land operator')) key = 'Land Operator';
-                    else if (cat.includes('airline')) key = 'Airline';
+
+                    if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Accommodation';
+                    else if (lowerType.includes('airline')) key = 'Airline';
+                    else if (lowerType.includes('transport')) key = 'Transportation';
+                    else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
 
                     if (!key) {
-                        key = Object.keys(content.categoryValues || {}).find(k => k.toLowerCase() === cat) || '';
+                        key = Object.keys(content.categoryValues || {}).find(k => k.toLowerCase() === lowerType) || '';
                     }
-                    return key ? content.categoryValues[key as keyof typeof content.categoryValues] : category
+                    return key ? content.categoryValues[key as keyof typeof content.categoryValues] : type
                 }
             },
             {
@@ -456,7 +610,8 @@ export default function ProductHistoryTable({ products, onRestore, onArchive }: 
                 cell: (info) => {
                     const countryCode = info.row.original.country_code;
                     const countryName = new Intl.DisplayNames([language], { type: 'region' }).of(countryCode);
-                    return `${info.getValue()}, ${countryName} `;
+                    const city = translateCity(info.getValue() as string);
+                    return `${city}, ${countryName} `;
                 },
             },
 

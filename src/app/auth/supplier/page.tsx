@@ -193,7 +193,7 @@ export default function SupplierAuthPage() {
                     </p>
                 </div>
 
-                <div className="bg-gray-900/90 backdrop-blur-sm p-8 rounded-xl border border-gray-800 shadow-2xl">
+                <div className="bg-gradient-to-br from-orange-400 to-yellow-400 backdrop-blur-sm p-8 rounded-xl border border-orange-300 shadow-2xl">
                     {error && (
                         <div className="mb-4 bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
                             {error}
@@ -202,22 +202,22 @@ export default function SupplierAuthPage() {
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">{content.email}</label>
+                            <label className="block text-sm font-bold text-slate-900 mb-1">{content.email}</label>
                             <input
                                 type="email"
                                 required
-                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-500"
+                                className="w-full px-3 py-2 bg-white/90 border border-white/50 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent text-slate-900 placeholder-slate-500"
                                 placeholder="supplier@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">{content.password}</label>
+                            <label className="block text-sm font-bold text-slate-900 mb-1">{content.password}</label>
                             <input
                                 type="password"
                                 required
-                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-500"
+                                className="w-full px-3 py-2 bg-white/90 border border-white/50 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent text-slate-900 placeholder-slate-500"
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -226,15 +226,15 @@ export default function SupplierAuthPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full btn-primary btn-lg"
+                            className="w-full bg-slate-900 text-white hover:bg-slate-800 font-bold py-3 px-4 rounded-lg transition-colors shadow-lg"
                         >
                             {loading ? content.loggingIn : content.signIn}
                         </button>
                     </form>
 
                     <div className="mt-6 text-center text-sm">
-                        <span className="text-gray-400">{content.newSupplier} </span>
-                        <Link href="/auth/register" className="font-medium text-teal-400 hover:text-teal-300">
+                        <span className="text-slate-900 font-medium">{content.newSupplier} </span>
+                        <Link href="/auth/register" className="font-bold text-blue-700 hover:text-blue-800 underline decoration-2 underline-offset-2">
                             {content.apply}
                         </Link>
                     </div>

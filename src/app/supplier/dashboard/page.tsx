@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import ProductHistoryTable, { Product } from '@/components/supplier/product-history/ProductHistoryTable'
-import { FaPlus, FaEye, FaHeart, FaMoneyBillWave, FaChartLine, FaMapMarkerAlt, FaTag } from 'react-icons/fa'
+import { FaPlus, FaEye, FaHeart, FaMoneyBillWave, FaChartLine, FaMapMarkerAlt, FaTag, FaBox, FaArchive, FaTrashRestore, FaSignOutAlt } from 'react-icons/fa'
 import { LineChart, Line, ResponsiveContainer } from 'recharts'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -19,6 +19,10 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true)
     const [products, setProducts] = useState<any[]>([]) // Using any for now to include analytics fields
     const [activeTab, setActiveTab] = useState<'active' | 'history'>('active')
+    const [productToArchive, setProductToArchive] = useState<string | null>(null)
+    const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false)
+    const [productToRestore, setProductToRestore] = useState<string | null>(null)
+    const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false)
     const router = useRouter()
     const supabase = createClient()
     const { language } = useLanguage()
@@ -47,7 +51,10 @@ export default function Dashboard() {
             cancel: 'Cancel',
             confirmArchiveAction: 'Yes, Archive',
             errorArchive: 'Error archiving product',
-            confirmRestore: 'Restore this product? You may need to update the validity dates.',
+            confirmRestore: 'Restore this product?',
+            restoreModalTitle: 'Restore Product',
+            restoreModalMessage: 'This product will be moved back to your active inventory as a draft. You can then edit and publish it.',
+            confirmRestoreAction: 'Yes, Restore',
             errorRestore: 'Error restoring product',
             loading: 'Loading...',
             welcomeBack: 'Welcome back',
@@ -72,6 +79,18 @@ export default function Dashboard() {
                 'active': 'ACTIVE',
                 'draft': 'DRAFT',
                 'archived': 'ARCHIVED'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             }
         },
         'zh-CN': {
@@ -97,7 +116,10 @@ export default function Dashboard() {
             cancel: '取消',
             confirmArchiveAction: '是的，归档',
             errorArchive: '归档产品时出错',
-            confirmRestore: '恢复此产品？您可能需要更新有效期。',
+            confirmRestore: '恢复此产品？',
+            restoreModalTitle: '恢复产品',
+            restoreModalMessage: '此产品将作为草稿移回您的活动库存。然后您可以编辑并发布它。',
+            confirmRestoreAction: '是的，恢复',
             errorRestore: '恢复产品时出错',
             loading: '加载中...',
             welcomeBack: '欢迎回来',
@@ -117,6 +139,18 @@ export default function Dashboard() {
                 'Transportation': '交通',
                 'Land Operator': '地接社',
                 'Airline': '航空公司'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': '活跃',
@@ -147,7 +181,10 @@ export default function Dashboard() {
             cancel: 'Batal',
             confirmArchiveAction: 'Ya, Arkibkan',
             errorArchive: 'Ralat mengarkibkan produk',
-            confirmRestore: 'Pulihkan produk ini? Anda mungkin perlu mengemas kini tarikh sah.',
+            confirmRestore: 'Pulihkan produk ini?',
+            restoreModalTitle: 'Pulihkan Produk',
+            restoreModalMessage: 'Produk ini akan dipindahkan kembali ke inventori aktif anda sebagai draf. Anda kemudian boleh menyunting dan menerbitkannya.',
+            confirmRestoreAction: 'Ya, Pulihkan',
             errorRestore: 'Ralat memulihkan produk',
             loading: 'Memuatkan...',
             welcomeBack: 'Selamat kembali',
@@ -167,6 +204,18 @@ export default function Dashboard() {
                 'Transportation': 'Pengangkutan',
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Syarikat Penerbangan'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'AKTIF',
@@ -197,7 +246,10 @@ export default function Dashboard() {
             cancel: 'Cancelar',
             confirmArchiveAction: 'Sí, Archivar',
             errorArchive: 'Error al archivar el producto',
-            confirmRestore: '¿Restaurar este producto? Es posible que deba actualizar las fechas de validez.',
+            confirmRestore: '¿Restaurar este producto?',
+            restoreModalTitle: 'Restaurar Producto',
+            restoreModalMessage: 'Este producto se moverá de nuevo a su inventario activo como borrador. Luego puede editarlo y publicarlo.',
+            confirmRestoreAction: 'Sí, Restaurar',
             errorRestore: 'Error al restaurar el producto',
             loading: 'Cargando...',
             welcomeBack: 'Bienvenido de nuevo',
@@ -217,6 +269,18 @@ export default function Dashboard() {
                 'Transportation': 'Transporte',
                 'Land Operator': 'Operador Terrestre',
                 'Airline': 'Aerolínea'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'ACTIVO',
@@ -247,7 +311,10 @@ export default function Dashboard() {
             cancel: 'Annuler',
             confirmArchiveAction: 'Oui, Archiver',
             errorArchive: 'Erreur lors de l\'archivage du produit',
-            confirmRestore: 'Restaurer ce produit ? Vous devrez peut-être mettre à jour les dates de validité.',
+            confirmRestore: 'Restaurer ce produit ?',
+            restoreModalTitle: 'Restaurer le Produit',
+            restoreModalMessage: 'Ce produit sera déplacé vers votre inventaire actif en tant que brouillon. Vous pourrez ensuite le modifier et le publier.',
+            confirmRestoreAction: 'Oui, Restaurer',
             errorRestore: 'Erreur lors de la restauration du produit',
             loading: 'Chargement...',
             welcomeBack: 'Bon retour',
@@ -267,6 +334,18 @@ export default function Dashboard() {
                 'Transportation': 'Transport',
                 'Land Operator': 'Opérateur Terrestre',
                 'Airline': 'Compagnie Aérienne'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'ACTIF',
@@ -297,7 +376,10 @@ export default function Dashboard() {
             cancel: 'Abbrechen',
             confirmArchiveAction: 'Ja, Archivieren',
             errorArchive: 'Fehler beim Archivieren des Produkts',
-            confirmRestore: 'Dieses Produkt wiederherstellen? Möglicherweise müssen Sie die Gültigkeitsdaten aktualisieren.',
+            confirmRestore: 'Dieses Produkt wiederherstellen?',
+            restoreModalTitle: 'Produkt Wiederherstellen',
+            restoreModalMessage: 'Dieses Produkt wird als Entwurf in Ihren aktiven Bestand zurückverschoben. Sie können es dann bearbeiten und veröffentlichen.',
+            confirmRestoreAction: 'Ja, Wiederherstellen',
             errorRestore: 'Fehler beim Wiederherstellen des Produkts',
             loading: 'Laden...',
             welcomeBack: 'Willkommen zurück',
@@ -317,6 +399,18 @@ export default function Dashboard() {
                 'Transportation': 'Transport',
                 'Land Operator': 'Landoperator',
                 'Airline': 'Fluggesellschaft'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'AKTIV',
@@ -347,7 +441,10 @@ export default function Dashboard() {
             cancel: 'キャンセル',
             confirmArchiveAction: 'はい、アーカイブ',
             errorArchive: '製品のアーカイブエラー',
-            confirmRestore: 'この製品を復元しますか？有効期限を更新する必要がある場合があります。',
+            confirmRestore: 'この製品を復元しますか？',
+            restoreModalTitle: '製品を復元',
+            restoreModalMessage: 'この製品は下書きとしてアクティブな在庫に戻されます。その後、編集して公開できます。',
+            confirmRestoreAction: 'はい、復元',
             errorRestore: '製品の復元エラー',
             loading: '読み込み中...',
             welcomeBack: 'お帰りなさい',
@@ -367,6 +464,18 @@ export default function Dashboard() {
                 'Transportation': '交通',
                 'Land Operator': 'ランドオペレーター',
                 'Airline': '航空会社'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'アクティブ',
@@ -397,7 +506,10 @@ export default function Dashboard() {
             cancel: '취소',
             confirmArchiveAction: '예, 보관',
             errorArchive: '제품 보관 오류',
-            confirmRestore: '이 제품을 복원하시겠습니까? 유효 기간을 업데이트해야 할 수도 있습니다.',
+            confirmRestore: '이 제품을 복원하시겠습니까?',
+            restoreModalTitle: '제품 복원',
+            restoreModalMessage: '이 제품은 초안으로 활성 재고로 다시 이동됩니다. 그런 다음 편집하고 게시할 수 있습니다.',
+            confirmRestoreAction: '예, 복원',
             errorRestore: '제품 복원 오류',
             loading: '로딩 중...',
             welcomeBack: '환영합니다',
@@ -417,6 +529,18 @@ export default function Dashboard() {
                 'Transportation': '운송',
                 'Land Operator': '랜드 오퍼레이터',
                 'Airline': '항공사'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': '활성',
@@ -447,7 +571,10 @@ export default function Dashboard() {
             cancel: 'إلغاء',
             confirmArchiveAction: 'نعم، أرشفة',
             errorArchive: 'خطأ في أرشفة المنتج',
-            confirmRestore: 'هل تريد استعادة هذا المنتج؟ قد تحتاج إلى تحديث تواريخ الصلاحية.',
+            confirmRestore: 'هل تريد استعادة هذا المنتج؟',
+            restoreModalTitle: 'استعادة المنتج',
+            restoreModalMessage: 'سيتم نقل هذا المنتج مرة أخرى إلى مخزونك النشط كمسودة. يمكنك بعد ذلك تعديله ونشره.',
+            confirmRestoreAction: 'نعم، استعادة',
             errorRestore: 'خطأ في استعادة المنتج',
             loading: 'جار التحميل...',
             welcomeBack: 'مرحبًا بعودتك',
@@ -467,6 +594,18 @@ export default function Dashboard() {
                 'Transportation': 'النقل',
                 'Land Operator': 'مشغل بري',
                 'Airline': 'شركة طيران'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'نشط',
@@ -497,7 +636,10 @@ export default function Dashboard() {
             cancel: 'ยกเลิก',
             confirmArchiveAction: 'ใช่ เก็บถาวร',
             errorArchive: 'ข้อผิดพลาดในการเก็บถาวรผลิตภัณฑ์',
-            confirmRestore: 'กู้คืนผลิตภัณฑ์นี้หรือไม่ คุณอาจต้องอัปเดตวันที่ใช้งานได้',
+            confirmRestore: 'กู้คืนผลิตภัณฑ์นี้หรือไม่',
+            restoreModalTitle: 'กู้คืนผลิตภัณฑ์',
+            restoreModalMessage: 'ผลิตภัณฑ์นี้จะถูกย้ายกลับไปยังสินค้าคงคลังที่ใช้งานอยู่ของคุณเป็นฉบับร่าง จากนั้นคุณสามารถแก้ไขและเผยแพร่ได้',
+            confirmRestoreAction: 'ใช่ กู้คืน',
             errorRestore: 'ข้อผิดพลาดในการกู้คืนผลิตภัณฑ์',
             loading: 'กำลังโหลด...',
             welcomeBack: 'ยินดีต้อนรับกลับ',
@@ -517,6 +659,18 @@ export default function Dashboard() {
                 'Transportation': 'การขนส่ง',
                 'Land Operator': 'ผู้ให้บริการทางบก',
                 'Airline': 'สายการบิน'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'ใช้งานอยู่',
@@ -547,7 +701,10 @@ export default function Dashboard() {
             cancel: 'Hủy',
             confirmArchiveAction: 'Có, Lưu trữ',
             errorArchive: 'Lỗi khi lưu trữ sản phẩm',
-            confirmRestore: 'Khôi phục sản phẩm này? Bạn có thể cần cập nhật ngày hiệu lực.',
+            confirmRestore: 'Khôi phục sản phẩm này?',
+            restoreModalTitle: 'Khôi phục Sản phẩm',
+            restoreModalMessage: 'Sản phẩm này sẽ được chuyển lại vào kho hàng đang hoạt động của bạn dưới dạng bản nháp. Sau đó bạn có thể chỉnh sửa và xuất bản nó.',
+            confirmRestoreAction: 'Có, Khôi phục',
             errorRestore: 'Lỗi khi khôi phục sản phẩm',
             loading: 'Đang tải...',
             welcomeBack: 'Chào mừng trở lại',
@@ -567,6 +724,18 @@ export default function Dashboard() {
                 'Transportation': 'Vận tải',
                 'Land Operator': 'Nhà điều hành mặt đất',
                 'Airline': 'Hãng hàng không'
+            },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapore',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
             },
             statusValues: {
                 'active': 'ĐANG HOẠT ĐỘNG',
@@ -597,7 +766,10 @@ export default function Dashboard() {
             cancel: 'Batal',
             confirmArchiveAction: 'Ya, Arsipkan',
             errorArchive: 'Kesalahan mengarsipkan produk',
-            confirmRestore: 'Pulihkan produk ini? Anda mungkin perlu memperbarui tanggal berlaku.',
+            confirmRestore: 'Pulihkan produk ini?',
+            restoreModalTitle: 'Pulihkan Produk',
+            restoreModalMessage: 'Produk ini akan dipindahkan kembali ke inventaris aktif Anda sebagai draf. Anda kemudian dapat mengedit dan mempublikasikannya.',
+            confirmRestoreAction: 'Ya, Pulihkan',
             errorRestore: 'Kesalahan memulihkan produk',
             loading: 'Memuat...',
             welcomeBack: 'Selamat kembali',
@@ -618,6 +790,18 @@ export default function Dashboard() {
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Maskapai Penerbangan'
             },
+            cityTranslations: {
+                'Kuala Lumpur': 'Kuala Lumpur',
+                'Tokyo': 'Tokyo',
+                'Osaka': 'Osaka',
+                'Seoul': 'Seoul',
+                'Bangkok': 'Bangkok',
+                'Singapore': 'Singapura',
+                'Paris': 'Paris',
+                'London': 'London',
+                'New York': 'New York',
+                'Dubai': 'Dubai'
+            },
             statusValues: {
                 'active': 'AKTIF',
                 'draft': 'DRAF',
@@ -628,300 +812,369 @@ export default function Dashboard() {
 
     const content = t[language as keyof typeof t] || t['en-US']
 
-    const fetchSupplier = async (userId: string) => {
-        const { data, error } = await supabase
-            .from('suppliers')
-            .select('*')
-            .eq('id', userId)
-            .single()
-
-        if (error) {
-            console.error('Error fetching supplier:', error)
-        } else {
-            setSupplier(data)
-        }
+    // Helper for city translation
+    const translateCity = (city: string) => {
+        const cityMap = content.cityTranslations as Record<string, string> | undefined;
+        return cityMap?.[city] || city;
     }
 
-    const fetchProducts = async (userId: string) => {
-        const { data, error } = await supabase
-            .from('products')
-            .select('*')
-            .eq('supplier_id', userId)
-            .order('created_at', { ascending: false })
-
-        if (error) {
-            console.error('Error fetching products:', error)
-        } else {
-            setProducts(data || [])
-        }
+    const handleLogout = async () => {
+        await supabase.auth.signOut()
+        router.push('/')
     }
 
     useEffect(() => {
-        const initializeDashboard = async () => {
+        const fetchData = async () => {
             try {
-                const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser()
-
-                if (userError || !currentUser) {
+                // Get current user
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) {
                     router.push('/auth/supplier')
                     return
                 }
 
-                setUser(currentUser)
-                await fetchSupplier(currentUser.id)
-                await fetchProducts(currentUser.id)
+                // Get supplier profile
+                const { data: supplierData } = await supabase
+                    .from('suppliers')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .single()
+
+                if (supplierData) {
+                    setSupplier(supplierData)
+                }
+
+                // Get products
+                const { data: productsData, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('supplier_id', user.id)
+                    .order('created_at', { ascending: false })
+
+                if (error) throw error
+
+                if (productsData) {
+                    setProducts(productsData)
+                }
             } catch (error) {
-                console.error('Error initializing dashboard:', error)
+                console.error('Error fetching data:', error)
             } finally {
                 setLoading(false)
             }
         }
 
-        initializeDashboard()
-    }, [router, supabase])
+        fetchData()
+    }, [router])
 
-    const handleArchive = async (id: string) => {
-        if (!confirm(content.confirmArchive)) return
+    const handleArchive = async (productId: string) => {
+        setProductToArchive(productId)
+        setIsArchiveModalOpen(true)
+    }
 
-        const { error } = await supabase
-            .from('products')
-            .update({ status: 'archived', is_archived: true, archived_at: new Date().toISOString() })
-            .eq('id', id)
+    const confirmArchive = async () => {
+        if (!productToArchive) return
 
-        if (error) {
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ status: 'archived' })
+                .eq('id', productToArchive)
+
+            if (error) throw error
+
+            // Update local state
+            setProducts(products.map(p =>
+                p.id === productToArchive ? { ...p, status: 'archived' } : p
+            ))
+            setIsArchiveModalOpen(false)
+            setProductToArchive(null)
+        } catch (error) {
+            console.error('Error archiving product:', error)
             alert(content.errorArchive)
-        } else {
-            fetchProducts(user.id)
         }
     }
 
-    const handleRestore = async (id: string) => {
-        if (!confirm(content.confirmRestore)) return
+    const handleRestore = async (productId: string) => {
+        setProductToRestore(productId)
+        setIsRestoreModalOpen(true)
+    }
 
-        const { error } = await supabase
-            .from('products')
-            .update({ status: 'active', is_archived: false, archived_at: null })
-            .eq('id', id)
+    const confirmRestore = async () => {
+        if (!productToRestore) return
 
-        if (error) {
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ status: 'draft' }) // Restore to draft
+                .eq('id', productToRestore)
+
+            if (error) throw error
+
+            // Update local state
+            setProducts(products.map(p =>
+                p.id === productToRestore ? { ...p, status: 'draft' } : p
+            ))
+            setIsRestoreModalOpen(false)
+            setProductToRestore(null)
+            setActiveTab('active') // Switch to active tab to show restored product
+        } catch (error) {
+            console.error('Error restoring product:', error)
             alert(content.errorRestore)
-        } else {
-            fetchProducts(user.id)
         }
     }
 
-    if (loading) {
-        return <div className="min-h-screen bg-background text-foreground flex items-center justify-center">{content.loading}</div>
-    }
-
-    const activeProducts = products.filter(p => p.status === 'active' || p.status === 'draft')
+    const activeProducts = products.filter(p => p.status !== 'archived')
     const historyProducts = products.filter(p => p.status === 'archived')
 
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+        )
+    }
+
     return (
-        <div className="text-foreground">
-            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                {/* Welcome Banner */}
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 p-8 shadow-lg mb-8">
-                    <div className="relative z-10">
-                        <h1 className="text-3xl font-bold text-white mb-2">
-                            {content.welcomeBack}, {supplier?.company_name || content.partner}! 👋
+        <div className="min-h-screen bg-background">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Welcome Section */}
+                <div className="mb-8 flex justify-between items-start">
+                    <div>
+                        <h1 className="text-3xl font-bold text-foreground">
+                            {content.welcomeBack}, {supplier?.company_name || content.partner}
                         </h1>
-                        <p className="text-blue-100 text-lg">
-                            {content.manageYour} {supplier?.supplier_type ? (
-                                (() => {
-                                    const type = supplier.supplier_type;
-                                    // Try direct lookup first
-                                    let translated = content.supplierTypes[type as keyof typeof content.supplierTypes];
+                        <p className="mt-2 text-muted-foreground">
+                            {content.manageYour} {(() => {
+                                const type = supplier?.supplier_type || 'Supplier';
+                                let key = '';
+                                const lowerType = type.toLowerCase();
 
-                                    // If not found, try case-insensitive lookup
-                                    if (!translated) {
-                                        const key = Object.keys(content.supplierTypes).find(k => k.toLowerCase() === type.toLowerCase());
-                                        if (key) translated = content.supplierTypes[key as keyof typeof content.supplierTypes];
-                                    }
+                                // Normalize supplier type
+                                if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Hotel';
+                                else if (lowerType.includes('airline')) key = 'Airline';
+                                else if (lowerType.includes('transport')) key = 'Transportation';
+                                else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
 
-                                    return (translated || type).toLowerCase();
-                                })()
-                            ) : content.inventory} {content.trackPerformance}
+                                // Try direct lookup if no key found
+                                if (!key) {
+                                    key = Object.keys(content.supplierTypes).find(k => k.toLowerCase() === lowerType) || '';
+                                }
+
+                                return key ? content.supplierTypes[key as keyof typeof content.supplierTypes] : type;
+                            })()} {content.inventory} {content.trackPerformance}
                         </p>
                     </div>
-                    {/* Decorative circles */}
-                    <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-                    <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-                </div>
-
-                <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h2 className="text-2xl font-bold text-foreground">{content.title}</h2>
-                        <p className="mt-1 text-muted-foreground">{content.subtitle}</p>
-
-                        {supplier && (
-                            <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
-                                {supplier.supplier_type && (
-                                    <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
-                                        <FaTag className="text-primary h-3 w-3" />
-                                        <span className="font-medium text-primary">
-                                            {content.supplierTypes[supplier.supplier_type as keyof typeof content.supplierTypes] || supplier.supplier_type}
-                                        </span>
-                                    </div>
-                                )}
-
-                                {supplier.supplier_type === 'Hotel' && supplier.country_code ? (
-                                    <div className="flex items-center gap-2 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
-                                        <img
-                                            src={`https://flagcdn.com/w40/${supplier.country_code.toLowerCase()}.png`}
-                                            srcSet={`https://flagcdn.com/w80/${supplier.country_code.toLowerCase()}.png 2x`}
-                                            width="24"
-                                            height="16"
-                                            alt={supplier.country_code}
-                                            className="rounded-sm object-cover"
-                                        />
-                                        <span className="font-medium text-orange-700 dark:text-orange-400">
-                                            {new Intl.DisplayNames([language], { type: 'region' }).of(supplier.country_code)}
-                                        </span>
-                                    </div>
-                                ) : supplier.city ? (
-                                    <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-full border border-border">
-                                        <FaMapMarkerAlt className="text-muted-foreground h-3 w-3" />
-                                        <span className="font-medium text-foreground">{supplier.city}</span>
-                                    </div>
-                                ) : null}
-                            </div>
-                        )}
-                    </div>
-
                     <button
-                        onClick={() => router.push('/supplier/dashboard/products/create')}
-                        className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                        onClick={handleLogout}
+                        className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
                     >
-                        <FaPlus className="mr-2" />
-                        {content.createProduct}
+                        <FaSignOutAlt className="mr-2" />
+                        Logout
                     </button>
                 </div>
 
-                {/* Tabs */}
-                <div className="border-b border-border mb-6">
-                    <nav className="-mb-px flex space-x-8">
-                        <button
-                            onClick={() => setActiveTab('active')}
-                            className={`${activeTab === 'active'
-                                ? 'border-primary text-primary'
-                                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
-                        >
-                            {content.activeInventory} ({activeProducts.length})
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('history')}
-                            className={`${activeTab === 'history'
-                                ? 'border-primary text-primary'
-                                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
-                        >
-                            {content.productHistory} ({historyProducts.length})
-                        </button>
-                    </nav>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+                    <div className="bg-card overflow-hidden shadow rounded-lg border border-border">
+                        <div className="p-5">
+                            <div className="flex items-center">
+                                <div className="flex-shrink-0">
+                                    <FaBox className="h-6 w-6 text-primary" />
+                                </div>
+                                <div className="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt className="text-sm font-medium text-muted-foreground truncate">{content.activeInventory}</dt>
+                                        <dd className="text-lg font-medium text-foreground">{activeProducts.length}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-card overflow-hidden shadow rounded-lg border border-border">
+                        <div className="p-5">
+                            <div className="flex items-center">
+                                <div className="flex-shrink-0">
+                                    <FaEye className="h-6 w-6 text-blue-500" />
+                                </div>
+                                <div className="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt className="text-sm font-medium text-muted-foreground truncate">{content.views}</dt>
+                                        <dd className="text-lg font-medium text-foreground">
+                                            {activeProducts.reduce((acc, curr) => acc + (curr.view_count || 0), 0)}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-card overflow-hidden shadow rounded-lg border border-border">
+                        <div className="p-5">
+                            <div className="flex items-center">
+                                <div className="flex-shrink-0">
+                                    <FaHeart className="h-6 w-6 text-pink-500" />
+                                </div>
+                                <div className="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt className="text-sm font-medium text-muted-foreground truncate">{content.wishlisted}</dt>
+                                        <dd className="text-lg font-medium text-foreground">
+                                            {activeProducts.reduce((acc, curr) => acc + (curr.wishlist_count || 0), 0)}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+                {/* Tabs */}
+                <div className="flex space-x-1 bg-muted/50 p-1 rounded-lg w-fit mb-6">
+                    <button
+                        onClick={() => setActiveTab('active')}
+                        className={`
+                            px-4 py-2 text-sm font-medium rounded-md transition-all duration-200
+                            ${activeTab === 'active'
+                                ? 'bg-background text-foreground shadow-sm'
+                                : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                            }
+                        `}
+                    >
+                        {content.activeInventory}
+                        <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${activeTab === 'active' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                            }`}>
+                            {activeProducts.length}
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('history')}
+                        className={`
+                            px-4 py-2 text-sm font-medium rounded-md transition-all duration-200
+                            ${activeTab === 'history'
+                                ? 'bg-background text-foreground shadow-sm'
+                                : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                            }
+                        `}
+                    >
+                        {content.productHistory}
+                        <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${activeTab === 'history' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                            }`}>
+                            {historyProducts.length}
+                        </span>
+                    </button>
+                </div>
+
+                {/* Content */}
                 {activeTab === 'active' ? (
-                    <div className="space-y-6">
-                        {activeProducts.length === 0 ? (
-                            <div className="text-center py-12 bg-card rounded-lg border border-border">
-                                <p className="text-muted-foreground">{content.noActiveProducts}</p>
-                                <button
-                                    onClick={() => router.push('/supplier/dashboard/products/create')}
-                                    className="mt-4 text-primary hover:text-primary/80 font-medium"
-                                >
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {/* Create New Card - Only show if no products */}
+                        {activeProducts.length === 0 && (
+                            <button
+                                onClick={() => router.push('/supplier/dashboard/products/create')}
+                                className="relative block w-full border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors group bg-muted/20"
+                            >
+                                <FaPlus className="mx-auto h-12 w-12 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <span className="mt-2 block text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                                     {content.createFirstProduct}
-                                </button>
-                            </div>
-                        ) : (
-                            activeProducts.map((product) => (
-                                <div key={product.id} className="bg-card rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm">
-                                    {/* Top Section: Details */}
-                                    <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center">
-                                        <div className="flex items-start space-x-4">
-                                            {product.photo_urls && product.photo_urls[0] ? (
-                                                <img src={product.photo_urls[0]} alt={product.product_name} className="w-20 h-20 object-cover rounded-md" />
-                                            ) : (
-                                                <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground">No Img</div>
-                                            )}
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-foreground">{product.product_name}</h3>
-                                                <p className="text-sm text-muted-foreground">
-                                                    {product.city}, {product.country_code} • {(() => {
-                                                        const cat = product.product_category;
-                                                        // Try direct lookup
-                                                        let translated = content.categoryValues[cat as keyof typeof content.categoryValues];
+                                </span>
+                            </button>
+                        )}
 
-                                                        // If not found, try case-insensitive lookup
-                                                        if (!translated && cat) {
-                                                            const key = Object.keys(content.categoryValues).find(k => k.toLowerCase() === cat.toLowerCase());
-                                                            if (key) translated = content.categoryValues[key as keyof typeof content.categoryValues];
-                                                        }
+                        {activeProducts.map((product) => (
+                            <div key={product.id} className="bg-card rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm flex flex-col">
+                                {/* Top Section: Details */}
+                                <div className="p-6 flex flex-col md:flex-row justify-between items-start flex-grow">
+                                    <div className="flex items-start space-x-4 w-full">
+                                        {product.photo_urls && product.photo_urls[0] ? (
+                                            <img src={product.photo_urls[0]} alt={product.product_name} className="w-20 h-20 object-cover rounded-md flex-shrink-0" />
+                                        ) : (
+                                            <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground flex-shrink-0">No Img</div>
+                                        )}
+                                        <div className="flex-grow min-w-0">
+                                            <h3 className="text-lg font-semibold text-foreground truncate" title={product.product_name}>
+                                                {(() => {
+                                                    // Smart Title Logic using Supplier Type
+                                                    const type = supplier?.supplier_type || 'Supplier';
+                                                    let key = '';
+                                                    const lowerType = type.toLowerCase();
 
-                                                        return translated || cat;
-                                                    })()}
-                                                </p>
-                                                <div className="mt-2 flex flex-col space-y-1">
-                                                    <div className="flex items-center space-x-2">
-                                                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                                                            {product.status.toUpperCase()}
-                                                        </span>
-                                                    </div>
+                                                    // Normalize supplier type
+                                                    if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Hotel';
+                                                    else if (lowerType.includes('airline')) key = 'Airline';
+                                                    else if (lowerType.includes('transport')) key = 'Transportation';
+                                                    else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
+
+                                                    // Try direct lookup if no key found
+                                                    if (!key) {
+                                                        key = Object.keys(content.supplierTypes).find(k => k.toLowerCase() === lowerType) || '';
+                                                    }
+
+                                                    const translatedType = key ? content.supplierTypes[key as keyof typeof content.supplierTypes] : type;
+                                                    const translatedCity = translateCity(product.city);
+                                                    return `${translatedType} ${content.in_location} ${translatedCity}`;
+                                                })()}
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground truncate">
+                                                {translateCity(product.city)}, {new Intl.DisplayNames([language], { type: 'region' }).of(product.country_code)}
+                                            </p>
+                                            <div className="mt-2 flex flex-col space-y-1">
+                                                <div className="flex items-center space-x-2">
+                                                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                                                        {content.statusValues[product.status as keyof typeof content.statusValues] || product.status.toUpperCase()}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="mt-4 md:mt-0 flex space-x-3">
-                                            <button
-                                                className="px-3 py-1.5 border border-border rounded text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                                                onClick={() => alert(content.editComingSoon)}
-                                            >
-                                                {content.edit}
-                                            </button>
-                                            <button
-                                                className="px-3 py-1.5 border border-border rounded text-sm text-red-500 hover:bg-red-500/10 hover:border-red-500 transition-colors"
-                                                onClick={() => handleArchive(product.id)}
-                                            >
-                                                {content.archive}
-                                            </button>
+                                    </div>
+                                    <div className="mt-4 md:mt-0 flex flex-col space-y-2 ml-4 flex-shrink-0">
+                                        <button
+                                            className="px-3 py-1.5 border border-blue-500 rounded text-sm text-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-colors w-full text-center"
+                                            onClick={() => router.push(`/supplier/dashboard/products/edit/${product.id}`)}
+                                        >
+                                            {content.edit}
+                                        </button>
+                                        <button
+                                            className="px-3 py-1.5 border border-border rounded text-sm text-red-500 hover:bg-red-500/10 hover:border-red-500 transition-colors w-full text-center"
+                                            onClick={() => handleArchive(product.id)}
+                                        >
+                                            {content.archive}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Bottom Section: Performance Strip */}
+                                <div className="bg-muted/30 border-t border-border px-6 py-3 grid grid-cols-2 gap-4">
+                                    {/* Views + Sparkline */}
+                                    <div className="flex items-center space-x-3">
+                                        <div className="p-2 bg-muted rounded-full text-blue-500">
+                                            <FaEye />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-muted-foreground uppercase font-medium">{content.views}</p>
+                                            <div className="flex items-center space-x-2">
+                                                <span className="text-lg font-bold text-foreground">{product.view_count || 0}</span>
+                                                <div className="w-16 h-8">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <LineChart data={MOCK_SPARK_DATA}>
+                                                            <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                                                        </LineChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {/* Bottom Section: Performance Strip */}
-                                    <div className="bg-muted/30 border-t border-border px-6 py-3 grid grid-cols-2 gap-4">
-                                        {/* Views + Sparkline */}
-                                        <div className="flex items-center space-x-3">
-                                            <div className="p-2 bg-muted rounded-full text-blue-500">
-                                                <FaEye />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-muted-foreground uppercase font-medium">{content.views}</p>
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="text-lg font-bold text-foreground">{product.view_count || 0}</span>
-                                                    <div className="w-16 h-8">
-                                                        <ResponsiveContainer width="100%" height="100%">
-                                                            <LineChart data={MOCK_SPARK_DATA}>
-                                                                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} />
-                                                            </LineChart>
-                                                        </ResponsiveContainer>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    {/* Wishlisted */}
+                                    <div className="flex items-center space-x-3">
+                                        <div className="p-2 bg-muted rounded-full text-pink-500">
+                                            <FaHeart />
                                         </div>
-
-                                        {/* Wishlisted */}
-                                        <div className="flex items-center space-x-3">
-                                            <div className="p-2 bg-muted rounded-full text-pink-500">
-                                                <FaHeart />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-muted-foreground uppercase font-medium">{content.wishlisted}</p>
-                                                <p className="text-lg font-bold text-foreground">{product.wishlist_count || 0}</p>
-                                            </div>
+                                        <div>
+                                            <p className="text-xs text-muted-foreground uppercase font-medium">{content.wishlisted}</p>
+                                            <p className="text-lg font-bold text-foreground">{product.wishlist_count || 0}</p>
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        )}
+                            </div>
+                        ))}
                     </div>
                 ) : (
                     /* History Tab */
@@ -930,7 +1183,83 @@ export default function Dashboard() {
                             products={historyProducts}
                             onRestore={handleRestore}
                             onArchive={() => { }}
+                            supplierType={supplier?.supplier_type}
                         />
+                    </div>
+                )}
+
+                {/* Floating Action Button */}
+                <button
+                    onClick={() => router.push('/supplier/dashboard/products/create')}
+                    className="fixed bottom-8 right-8 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg hover:bg-primary/90 transition-all duration-200 flex items-center space-x-2 z-50 animate-bounce-subtle"
+                >
+                    <FaPlus className="h-4 w-4" />
+                    <span className="font-medium">Create Your Winning Product Now</span>
+                </button>
+
+                {/* Archive Confirmation Modal */}
+                {isArchiveModalOpen && (
+                    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                        <div className="bg-card rounded-xl shadow-2xl max-w-md w-full border border-border overflow-hidden transform transition-all scale-100">
+                            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 p-6 border-b border-border">
+                                <h3 className="text-xl font-bold text-foreground flex items-center">
+                                    <FaArchive className="mr-2 text-red-500" />
+                                    {content.archiveModalTitle}
+                                </h3>
+                            </div>
+                            <div className="p-6">
+                                <p className="text-muted-foreground mb-6">
+                                    {content.archiveModalMessage}
+                                </p>
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={() => setIsArchiveModalOpen(false)}
+                                        className="px-4 py-2 rounded-lg text-muted-foreground hover:bg-muted transition-colors font-medium"
+                                    >
+                                        {content.cancel}
+                                    </button>
+                                    <button
+                                        onClick={confirmArchive}
+                                        className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors shadow-md font-medium"
+                                    >
+                                        {content.confirmArchiveAction}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Restore Confirmation Modal */}
+                {isRestoreModalOpen && (
+                    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                        <div className="bg-card rounded-xl shadow-2xl max-w-md w-full border border-border overflow-hidden transform transition-all scale-100">
+                            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-6 border-b border-border">
+                                <h3 className="text-xl font-bold text-foreground flex items-center">
+                                    <FaTrashRestore className="mr-2 text-green-500" />
+                                    {content.restoreModalTitle}
+                                </h3>
+                            </div>
+                            <div className="p-6">
+                                <p className="text-muted-foreground mb-6">
+                                    {content.restoreModalMessage}
+                                </p>
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={() => setIsRestoreModalOpen(false)}
+                                        className="px-4 py-2 rounded-lg text-muted-foreground hover:bg-muted transition-colors font-medium"
+                                    >
+                                        {content.cancel}
+                                    </button>
+                                    <button
+                                        onClick={confirmRestore}
+                                        className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors shadow-md font-medium"
+                                    >
+                                        {content.confirmRestoreAction}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
             </main>

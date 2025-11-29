@@ -77,13 +77,24 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
     useEffect(() => {
         const loadProductData = async () => {
             if (mode === 'edit' && productId) {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) return
+
                 const { data: product, error } = await supabase
                     .from('products')
                     .select('*')
                     .eq('id', productId)
+                    .eq('supplier_id', user.id) // Enforce ownership
                     .single()
 
-                if (product && !error) {
+                if (error || !product) {
+                    console.error('Error loading product:', error)
+                    alert('Product not found or access denied')
+                    onSuccess() // Redirect back
+                    return
+                }
+
+                if (product) {
                     setFormData({
                         product_name: product.product_name || '',
                         product_description: product.product_description || '',
@@ -104,7 +115,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             }
         }
         loadProductData()
-    }, [mode, productId, supabase])
+    }, [mode, productId, supabase, onSuccess])
 
     const t = {
         'en-US': {
