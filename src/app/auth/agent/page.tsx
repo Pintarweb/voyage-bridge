@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import PhoneInput, { Country } from 'react-phone-number-input'
@@ -43,7 +43,7 @@ const CITY_TO_COUNTRY: Record<string, string> = {
     'cairo': 'EG', 'johannesburg': 'ZA', 'cape town': 'ZA', 'lagos': 'NG', 'nairobi': 'KE'
 }
 
-export default function AgentAuthPage() {
+function AgentAuthContent() {
     const searchParams = useSearchParams()
     const [activeTab, setActiveTab] = useState<'login' | 'register'>(
         searchParams.get('tab') === 'register' ? 'register' : 'login'
@@ -130,11 +130,11 @@ export default function AgentAuthPage() {
             creatingAccount: 'Sedang Membuat Akaun...',
             registerAgency: 'Daftar Agensi',
             agencyName: 'Nama Agensi',
-            licenseNumber: 'Nombor Lesen',
+            licenseNumber: 'Nomor Lesen',
             websiteUrl: 'URL Laman Web',
             address: 'Alamat',
             city: 'Bandar',
-            phoneNumber: 'Nombor Telefon',
+            phoneNumber: 'Nomor Telefon',
             secureNetwork: 'Rangkaian Selamat.',
             licenseUsage: 'Lesen anda digunakan untuk tujuan pengesahan sahaja.',
             licenseTooltip: 'Diterima: IATA, MOTAC, atau Lesen Kerajaan Tempatan',
@@ -636,5 +636,13 @@ export default function AgentAuthPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function AgentAuthPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AgentAuthContent />
+        </Suspense>
     )
 }

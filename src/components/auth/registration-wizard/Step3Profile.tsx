@@ -23,6 +23,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'Supplier Category is required',
                 website: 'Website URL is required'
+            },
+            languageOptions: {
+                'English': 'English',
+                'Mandarin': 'Mandarin',
+                'Malay': 'Malay',
+                'Tamil': 'Tamil',
+                'Japanese': 'Japanese',
+                'Korean': 'Korean',
+                'Arabic': 'Arabic',
+                'French': 'French',
+                'Spanish': 'Spanish',
+                'German': 'German',
             }
         },
         'zh-CN': {
@@ -38,6 +50,18 @@ export default function Step3Profile() {
             errors: {
                 category: '需要供应商类别',
                 website: '需要网站 URL'
+            },
+            languageOptions: {
+                'English': '英语',
+                'Mandarin': '普通话',
+                'Malay': '马来语',
+                'Tamil': '泰米尔语',
+                'Japanese': '日语',
+                'Korean': '韩语',
+                'Arabic': '阿拉伯语',
+                'French': '法语',
+                'Spanish': '西班牙语',
+                'German': '德语',
             }
         },
         'ms-MY': {
@@ -53,6 +77,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'Kategori Pembekal diperlukan',
                 website: 'URL Laman Web diperlukan'
+            },
+            languageOptions: {
+                'English': 'Bahasa Inggeris',
+                'Mandarin': 'Mandarin',
+                'Malay': 'Bahasa Melayu',
+                'Tamil': 'Tamil',
+                'Japanese': 'Jepun',
+                'Korean': 'Korea',
+                'Arabic': 'Arab',
+                'French': 'Perancis',
+                'Spanish': 'Sepanyol',
+                'German': 'Jerman',
             }
         },
         'es-ES': {
@@ -68,6 +104,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'La categoría de proveedor es obligatoria',
                 website: 'La URL del sitio web es obligatoria'
+            },
+            languageOptions: {
+                'English': 'Inglés',
+                'Mandarin': 'Mandarín',
+                'Malay': 'Malayo',
+                'Tamil': 'Tamil',
+                'Japanese': 'Japonés',
+                'Korean': 'Coreano',
+                'Arabic': 'Árabe',
+                'French': 'Francés',
+                'Spanish': 'Español',
+                'German': 'Alemán',
             }
         },
         'fr-FR': {
@@ -83,6 +131,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'La catégorie de fournisseur est requise',
                 website: 'L\'URL du site web est requise'
+            },
+            languageOptions: {
+                'English': 'Anglais',
+                'Mandarin': 'Mandarin',
+                'Malay': 'Malais',
+                'Tamil': 'Tamoul',
+                'Japanese': 'Japonais',
+                'Korean': 'Coréen',
+                'Arabic': 'Arabe',
+                'French': 'Français',
+                'Spanish': 'Espagnol',
+                'German': 'Allemand',
             }
         },
         'de-DE': {
@@ -98,6 +158,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'Lieferantenkategorie ist erforderlich',
                 website: 'Webseiten-URL ist erforderlich'
+            },
+            languageOptions: {
+                'English': 'Englisch',
+                'Mandarin': 'Mandarin',
+                'Malay': 'Malaiisch',
+                'Tamil': 'Tamilisch',
+                'Japanese': 'Japanisch',
+                'Korean': 'Koreanisch',
+                'Arabic': 'Arabisch',
+                'French': 'Französisch',
+                'Spanish': 'Spanisch',
+                'German': 'Deutsch',
             }
         },
         'ja-JP': {
@@ -113,6 +185,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'サプライヤーカテゴリは必須です',
                 website: 'ウェブサイトURLは必須です'
+            },
+            languageOptions: {
+                'English': '英語',
+                'Mandarin': '中国語（北京語）',
+                'Malay': 'マレー語',
+                'Tamil': 'タミル語',
+                'Japanese': '日本語',
+                'Korean': '韓国語',
+                'Arabic': 'アラビア語',
+                'French': 'フランス語',
+                'Spanish': 'スペイン語',
+                'German': 'ドイツ語',
             }
         },
         'ko-KR': {
@@ -128,6 +212,18 @@ export default function Step3Profile() {
             errors: {
                 category: '공급업체 카테고리는 필수입니다',
                 website: '웹사이트 URL은 필수입니다'
+            },
+            languageOptions: {
+                'English': '영어',
+                'Mandarin': '중국어(만다린)',
+                'Malay': '말레이어',
+                'Tamil': '타밀어',
+                'Japanese': '일본어',
+                'Korean': '한국어',
+                'Arabic': '아랍어',
+                'French': '프랑스어',
+                'Spanish': '스페인어',
+                'German': '독일어',
             }
         },
         'ar-SA': {
@@ -143,6 +239,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'فئة المورد مطلوبة',
                 website: 'رابط الموقع مطلوب'
+            },
+            languageOptions: {
+                'English': 'الإنجليزية',
+                'Mandarin': 'الماندرين',
+                'Malay': 'الملايو',
+                'Tamil': 'التاميلية',
+                'Japanese': 'اليابانية',
+                'Korean': 'الكورية',
+                'Arabic': 'العربية',
+                'French': 'الفرنسية',
+                'Spanish': 'الإسبانية',
+                'German': 'الألمانية',
             }
         },
         'th-TH': {
@@ -158,6 +266,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'จำเป็นต้องมีหมวดหมู่ซัพพลายเออร์',
                 website: 'จำเป็นต้องมี URL เว็บไซต์'
+            },
+            languageOptions: {
+                'English': 'อังกฤษ',
+                'Mandarin': 'จีนกลาง',
+                'Malay': 'มลายู',
+                'Tamil': 'ทมิฬ',
+                'Japanese': 'ญี่ปุ่น',
+                'Korean': 'เกาหลี',
+                'Arabic': 'อาหรับ',
+                'French': 'ฝรั่งเศส',
+                'Spanish': 'สเปน',
+                'German': 'เยอรมัน',
             }
         },
         'vi-VN': {
@@ -173,6 +293,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'Danh mục nhà cung cấp là bắt buộc',
                 website: 'URL trang web là bắt buộc'
+            },
+            languageOptions: {
+                'English': 'Tiếng Anh',
+                'Mandarin': 'Tiếng Quan Thoại',
+                'Malay': 'Tiếng Mã Lai',
+                'Tamil': 'Tiếng Tamil',
+                'Japanese': 'Tiếng Nhật',
+                'Korean': 'Tiếng Hàn',
+                'Arabic': 'Tiếng Ả Rập',
+                'French': 'Tiếng Pháp',
+                'Spanish': 'Tiếng Tây Ban Nha',
+                'German': 'Tiếng Đức',
             }
         },
         'id-ID': {
@@ -188,6 +320,18 @@ export default function Step3Profile() {
             errors: {
                 category: 'Kategori Pemasok diperlukan',
                 website: 'URL Situs Web diperlukan'
+            },
+            languageOptions: {
+                'English': 'Inggris',
+                'Mandarin': 'Mandarin',
+                'Malay': 'Melayu',
+                'Tamil': 'Tamil',
+                'Japanese': 'Jepang',
+                'Korean': 'Korea',
+                'Arabic': 'Arab',
+                'French': 'Prancis',
+                'Spanish': 'Spanyol',
+                'German': 'Jerman',
             }
         }
     }
@@ -395,7 +539,7 @@ export default function Step3Profile() {
                                     className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-teal-600 focus:ring-teal-500"
                                 />
                                 <label htmlFor={`lang-${lang}`} className="ml-2 text-xs text-gray-300">
-                                    {lang}
+                                    {content.languageOptions[lang as keyof typeof content.languageOptions] || lang}
                                 </label>
                             </div>
                         ))}
@@ -407,13 +551,13 @@ export default function Step3Profile() {
                 <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="rounded-md border border-gray-600 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 focus:outline-none"
+                    className="rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200"
                 >
                     {content.previous}
                 </button>
                 <button
                     type="submit"
-                    className="btn-primary btn-md"
+                    className="btn-primary btn-md font-bold shadow-lg"
                 >
                     {content.next}
                 </button>

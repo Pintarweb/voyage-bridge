@@ -409,51 +409,51 @@ export default function Step4Review() {
 
             <div className="space-y-6 text-sm text-gray-300">
                 {/* Identity Section */}
-                <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <div className="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-lg border border-orange-400/50 shadow-lg">
                     <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold text-teal-400">{content.identity}</h3>
-                        <button onClick={() => setStep(1)} className="text-xs text-gray-400 hover:text-white">{content.edit}</button>
+                        <h3 className="font-bold text-white text-lg">{content.identity}</h3>
+                        <button onClick={() => setStep(1)} className="text-xs font-bold text-white/80 hover:text-white underline">{content.edit}</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                        <p><span className="text-gray-500">{content.labels.company}</span> {formData.company_name}</p>
-                        <p><span className="text-gray-500">{content.labels.country}</span> {formData.country_code}</p>
-                        <p><span className="text-gray-500">{content.labels.email}</span> {formData.email}</p>
-                        <p><span className="text-gray-500">{content.labels.currency}</span> {formData.base_currency}</p>
+                    <div className="grid grid-cols-2 gap-2 font-bold text-white">
+                        <p><span className="text-white/80">{content.labels.company}</span> {formData.company_name}</p>
+                        <p><span className="text-white/80">{content.labels.country}</span> {formData.country_code}</p>
+                        <p><span className="text-white/80">{content.labels.email}</span> {formData.email}</p>
+                        <p><span className="text-white/80">{content.labels.currency}</span> {formData.base_currency}</p>
                     </div>
                 </div>
 
                 {/* Legal Section */}
-                <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <div className="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-lg border border-orange-400/50 shadow-lg">
                     <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold text-teal-400">{content.legal}</h3>
-                        <button onClick={() => setStep(2)} className="text-xs text-gray-400 hover:text-white">{content.edit}</button>
+                        <h3 className="font-bold text-white text-lg">{content.legal}</h3>
+                        <button onClick={() => setStep(2)} className="text-xs font-bold text-white/80 hover:text-white underline">{content.edit}</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                        <p><span className="text-gray-500">{content.labels.regNo}</span> {formData.company_reg_no}</p>
+                    <div className="grid grid-cols-2 gap-2 font-bold text-white">
+                        <p><span className="text-white/80">{content.labels.regNo}</span> {formData.company_reg_no}</p>
 
-                        <p><span className="text-gray-500">{content.labels.phone}</span> {formData.phone_number}</p>
+                        <p><span className="text-white/80">{content.labels.phone}</span> {formData.phone_number}</p>
                     </div>
                 </div>
 
                 {/* Profile Section */}
-                <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <div className="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-lg border border-orange-400/50 shadow-lg">
                     <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold text-teal-400">{content.profile}</h3>
-                        <button onClick={() => setStep(3)} className="text-xs text-gray-400 hover:text-white">{content.edit}</button>
+                        <h3 className="font-bold text-white text-lg">{content.profile}</h3>
+                        <button onClick={() => setStep(3)} className="text-xs font-bold text-white/80 hover:text-white underline">{content.edit}</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 mb-2">
-                        <p><span className="text-gray-500">{content.labels.type}</span> {formData.supplier_type}</p>
-                        <p><span className="text-gray-500">{content.labels.website}</span> {formData.website_url}</p>
+                    <div className="grid grid-cols-2 gap-2 mb-2 font-bold text-white">
+                        <p><span className="text-white/80">{content.labels.type}</span> {formData.supplier_type}</p>
+                        <p><span className="text-white/80">{content.labels.website}</span> {formData.website_url}</p>
                     </div>
 
                     {/* Social Icons Display */}
                     <div className="flex space-x-3 mt-2">
-                        {formData.social_facebook && <FaFacebook className="text-blue-500" title="Facebook" />}
-                        {formData.social_instagram && <FaInstagram className="text-pink-500" title="Instagram" />}
-                        {formData.social_tiktok && <FaTiktok className="text-white" title="TikTok" />}
-                        {formData.social_linkedin && <FaLinkedin className="text-blue-400" title="LinkedIn" />}
-                        {formData.social_tripadvisor && <FaTripadvisor className="text-green-500" title="TripAdvisor" />}
-                        {formData.whatsapp_business_url && <FaWhatsapp className="text-green-400" title="WhatsApp" />}
+                        {formData.social_facebook && <FaFacebook className="text-white hover:text-blue-200" title="Facebook" />}
+                        {formData.social_instagram && <FaInstagram className="text-white hover:text-pink-200" title="Instagram" />}
+                        {formData.social_tiktok && <FaTiktok className="text-white hover:text-gray-200" title="TikTok" />}
+                        {formData.social_linkedin && <FaLinkedin className="text-white hover:text-blue-200" title="LinkedIn" />}
+                        {formData.social_tripadvisor && <FaTripadvisor className="text-white hover:text-green-200" title="TripAdvisor" />}
+                        {formData.whatsapp_business_url && <FaWhatsapp className="text-white hover:text-green-200" title="WhatsApp" />}
                     </div>
                 </div>
             </div>
@@ -462,14 +462,14 @@ export default function Step4Review() {
                 <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="rounded-md border border-gray-600 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 focus:outline-none"
+                    className="rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200"
                 >
                     {content.previous}
                 </button>
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="btn-primary btn-md"
+                    className="btn-primary btn-md font-bold shadow-lg"
                 >
                     {loading ? content.submitting : content.submit}
                 </button>
