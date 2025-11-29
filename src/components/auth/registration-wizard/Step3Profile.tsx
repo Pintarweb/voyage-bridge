@@ -69,6 +69,126 @@ export default function Step3Profile() {
                 category: 'La categoría de proveedor es obligatoria',
                 website: 'La URL del sitio web es obligatoria'
             }
+        },
+        'fr-FR': {
+            title: 'Profil d\'entreprise',
+            category: 'Catégorie de fournisseur',
+            selectCategory: 'Sélectionner une catégorie',
+            about: 'À propos de nous (Description)',
+            website: 'URL du site web',
+            social: 'Réseaux sociaux et liens de contact',
+            languages: 'Langues parlées',
+            previous: 'Précédent',
+            next: 'Suivant : Réviser et soumettre',
+            errors: {
+                category: 'La catégorie de fournisseur est requise',
+                website: 'L\'URL du site web est requise'
+            }
+        },
+        'de-DE': {
+            title: 'Unternehmensprofil',
+            category: 'Lieferantenkategorie',
+            selectCategory: 'Kategorie auswählen',
+            about: 'Über uns (Beschreibung)',
+            website: 'Webseiten-URL',
+            social: 'Soziale Medien & Kontaktlinks',
+            languages: 'Gesprochene Sprachen',
+            previous: 'Zurück',
+            next: 'Weiter: Überprüfen & Absenden',
+            errors: {
+                category: 'Lieferantenkategorie ist erforderlich',
+                website: 'Webseiten-URL ist erforderlich'
+            }
+        },
+        'ja-JP': {
+            title: 'ビジネスプロフィール',
+            category: 'サプライヤーカテゴリ',
+            selectCategory: 'カテゴリを選択',
+            about: '私たちについて（説明）',
+            website: 'ウェブサイトURL',
+            social: 'ソーシャルメディアと連絡先リンク',
+            languages: '対応言語',
+            previous: '戻る',
+            next: '次へ：確認して送信',
+            errors: {
+                category: 'サプライヤーカテゴリは必須です',
+                website: 'ウェブサイトURLは必須です'
+            }
+        },
+        'ko-KR': {
+            title: '비즈니스 프로필',
+            category: '공급업체 카테고리',
+            selectCategory: '카테고리 선택',
+            about: '회사 소개 (설명)',
+            website: '웹사이트 URL',
+            social: '소셜 미디어 및 연락처 링크',
+            languages: '사용 언어',
+            previous: '이전',
+            next: '다음: 검토 및 제출',
+            errors: {
+                category: '공급업체 카테고리는 필수입니다',
+                website: '웹사이트 URL은 필수입니다'
+            }
+        },
+        'ar-SA': {
+            title: 'ملف الشركة',
+            category: 'فئة المورد',
+            selectCategory: 'اختر الفئة',
+            about: 'معلومات عنا (الوصف)',
+            website: 'رابط الموقع الإلكتروني',
+            social: 'وسائل التواصل الاجتماعي وروابط الاتصال',
+            languages: 'اللغات المتحدث بها',
+            previous: 'سابق',
+            next: 'التالي: المراجعة والإرسال',
+            errors: {
+                category: 'فئة المورد مطلوبة',
+                website: 'رابط الموقع مطلوب'
+            }
+        },
+        'th-TH': {
+            title: 'โปรไฟล์ธุรกิจ',
+            category: 'หมวดหมู่ซัพพลายเออร์',
+            selectCategory: 'เลือกหมวดหมู่',
+            about: 'เกี่ยวกับเรา (คำอธิบาย)',
+            website: 'URL เว็บไซต์',
+            social: 'โซเชียลมีเดียและลิงก์ติดต่อ',
+            languages: 'ภาษาที่พูด',
+            previous: 'ก่อนหน้า',
+            next: 'ถัดไป: ตรวจสอบและส่ง',
+            errors: {
+                category: 'จำเป็นต้องมีหมวดหมู่ซัพพลายเออร์',
+                website: 'จำเป็นต้องมี URL เว็บไซต์'
+            }
+        },
+        'vi-VN': {
+            title: 'Hồ sơ doanh nghiệp',
+            category: 'Danh mục nhà cung cấp',
+            selectCategory: 'Chọn danh mục',
+            about: 'Về chúng tôi (Mô tả)',
+            website: 'URL trang web',
+            social: 'Mạng xã hội & Liên kết liên hệ',
+            languages: 'Ngôn ngữ sử dụng',
+            previous: 'Trước',
+            next: 'Tiếp theo: Xem lại & Gửi',
+            errors: {
+                category: 'Danh mục nhà cung cấp là bắt buộc',
+                website: 'URL trang web là bắt buộc'
+            }
+        },
+        'id-ID': {
+            title: 'Profil Bisnis',
+            category: 'Kategori Pemasok',
+            selectCategory: 'Pilih Kategori',
+            about: 'Tentang Kami (Deskripsi)',
+            website: 'URL Situs Web',
+            social: 'Media Sosial & Tautan Kontak',
+            languages: 'Bahasa yang Digunakan',
+            previous: 'Sebelumnya',
+            next: 'Berikutnya: Tinjau & Kirim',
+            errors: {
+                category: 'Kategori Pemasok diperlukan',
+                website: 'URL Situs Web diperlukan'
+            }
         }
     }
 

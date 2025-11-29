@@ -122,12 +122,215 @@ export default function Step1Identity() {
                 postcode: 'El código postal es obligatorio',
                 timezone: 'La zona horaria es obligatoria'
             }
+        },
+        'fr-FR': {
+            title: 'Identité et Localisation',
+            email: 'Adresse E-mail',
+            password: 'Mot de passe',
+            companyName: 'Nom Légal de la Société',
+            tradingName: 'Nom Commercial (Optionnel)',
+            country: 'Pays',
+            currency: 'Devise de Base',
+            address: 'Adresse Ligne 1',
+            city: 'Ville',
+            postcode: 'Code Postal',
+            timezone: 'Fuseau Horaire',
+            next: 'Suivant : Légal et Vérification',
+            errors: {
+                email: 'L\'e-mail est requis',
+                password: 'Le mot de passe est requis',
+                passwordLength: 'Le mot de passe doit contenir au moins 6 caractères',
+                companyName: 'Le nom de la société est requis',
+                country: 'Le pays est requis',
+                currency: 'La devise est requise',
+                address: 'L\'adresse est requise',
+                city: 'La ville est requise',
+                postcode: 'Le code postal est requis',
+                timezone: 'Le fuseau horaire est requis'
+            }
+        },
+        'de-DE': {
+            title: 'Identität & Standort',
+            email: 'E-Mail-Adresse',
+            password: 'Passwort',
+            companyName: 'Rechtlicher Firmenname',
+            tradingName: 'Handelsname (Optional)',
+            country: 'Land',
+            currency: 'Basiswährung',
+            address: 'Adresszeile 1',
+            city: 'Stadt',
+            postcode: 'Postleitzahl',
+            timezone: 'Zeitzone',
+            next: 'Weiter: Rechtliches & Verifizierung',
+            errors: {
+                email: 'E-Mail ist erforderlich',
+                password: 'Passwort ist erforderlich',
+                passwordLength: 'Passwort muss mindestens 6 Zeichen lang sein',
+                companyName: 'Firmenname ist erforderlich',
+                country: 'Land ist erforderlich',
+                currency: 'Währung ist erforderlich',
+                address: 'Adresse ist erforderlich',
+                city: 'Stadt ist erforderlich',
+                postcode: 'Postleitzahl ist erforderlich',
+                timezone: 'Zeitzone ist erforderlich'
+            }
+        },
+        'ja-JP': {
+            title: '身元と場所',
+            email: 'メールアドレス',
+            password: 'パスワード',
+            companyName: '会社正式名称',
+            tradingName: '屋号（任意）',
+            country: '国',
+            currency: '基本通貨',
+            address: '住所1',
+            city: '市区町村',
+            postcode: '郵便番号',
+            timezone: 'タイムゾーン',
+            next: '次へ：法務と確認',
+            errors: {
+                email: 'メールアドレスは必須です',
+                password: 'パスワードは必須です',
+                passwordLength: 'パスワードは6文字以上である必要があります',
+                companyName: '会社名は必須です',
+                country: '国は必須です',
+                currency: '通貨は必須です',
+                address: '住所は必須です',
+                city: '市区町村は必須です',
+                postcode: '郵便番号は必須です',
+                timezone: 'タイムゾーンは必須です'
+            }
+        },
+        'ko-KR': {
+            title: '신원 및 위치',
+            email: '이메일 주소',
+            password: '비밀번호',
+            companyName: '회사 법적 이름',
+            tradingName: '상호 (선택 사항)',
+            country: '국가',
+            currency: '기본 통화',
+            address: '주소 1',
+            city: '도시',
+            postcode: '우편번호',
+            timezone: '시간대',
+            next: '다음: 법률 및 확인',
+            errors: {
+                email: '이메일은 필수입니다',
+                password: '비밀번호는 필수입니다',
+                passwordLength: '비밀번호는 6자 이상이어야 합니다',
+                companyName: '회사 이름은 필수입니다',
+                country: '국가는 필수입니다',
+                currency: '통화는 필수입니다',
+                address: '주소는 필수입니다',
+                city: '도시는 필수입니다',
+                postcode: '우편번호는 필수입니다',
+                timezone: '시간대는 필수입니다'
+            }
+        },
+        'ar-SA': {
+            title: 'الهوية والموقع',
+            email: 'عنوان البريد الإلكتروني',
+            password: 'كلمة المرور',
+            companyName: 'الاسم القانوني للشركة',
+            tradingName: 'الاسم التجاري (اختياري)',
+            country: 'البلد',
+            currency: 'العملة الأساسية',
+            address: 'سطر العنوان 1',
+            city: 'المدينة',
+            postcode: 'الرمز البريدي',
+            timezone: 'المنطقة الزمنية',
+            next: 'التالي: القانوني والتحقق',
+            errors: {
+                email: 'البريد الإلكتروني مطلوب',
+                password: 'كلمة المرور مطلوبة',
+                passwordLength: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
+                companyName: 'اسم الشركة مطلوب',
+                country: 'البلد مطلوب',
+                currency: 'العملة مطلوبة',
+                address: 'العنوان مطلوب',
+                city: 'المدينة مطلوبة',
+                postcode: 'الرمز البريدي مطلوب',
+                timezone: 'المنطقة الزمنية مطلوبة'
+            }
+        },
+        'th-TH': {
+            title: 'ตัวตนและที่ตั้ง',
+            email: 'ที่อยู่อีเมล',
+            password: 'รหัสผ่าน',
+            companyName: 'ชื่อนิติบุคคลของบริษัท',
+            tradingName: 'ชื่อทางการค้า (ไม่บังคับ)',
+            country: 'ประเทศ',
+            currency: 'สกุลเงินหลัก',
+            address: 'ที่อยู่บรรทัดที่ 1',
+            city: 'เมือง',
+            postcode: 'รหัสไปรษณีย์',
+            timezone: 'เขตเวลา',
+            next: 'ถัดไป: กฎหมายและการตรวจสอบ',
+            errors: {
+                email: 'จำเป็นต้องมีอีเมล',
+                password: 'จำเป็นต้องมีรหัสผ่าน',
+                passwordLength: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
+                companyName: 'จำเป็นต้องมีชื่อบริษัท',
+                country: 'จำเป็นต้องมีประเทศ',
+                currency: 'จำเป็นต้องมีสกุลเงิน',
+                address: 'จำเป็นต้องมีที่อยู่',
+                city: 'จำเป็นต้องมีเมือง',
+                postcode: 'จำเป็นต้องมีรหัสไปรษณีย์',
+                timezone: 'จำเป็นต้องมีเขตเวลา'
+            }
+        },
+        'vi-VN': {
+            title: 'Danh tính & Vị trí',
+            email: 'Địa chỉ Email',
+            password: 'Mật khẩu',
+            companyName: 'Tên pháp lý công ty',
+            tradingName: 'Tên giao dịch (Tùy chọn)',
+            country: 'Quốc gia',
+            currency: 'Tiền tệ cơ sở',
+            address: 'Địa chỉ dòng 1',
+            city: 'Thành phố',
+            postcode: 'Mã bưu chính',
+            timezone: 'Múi giờ',
+            next: 'Tiếp theo: Pháp lý & Xác minh',
+            errors: {
+                email: 'Email là bắt buộc',
+                password: 'Mật khẩu là bắt buộc',
+                passwordLength: 'Mật khẩu phải có ít nhất 6 ký tự',
+                companyName: 'Tên công ty là bắt buộc',
+                country: 'Quốc gia là bắt buộc',
+                currency: 'Tiền tệ là bắt buộc',
+                address: 'Địa chỉ là bắt buộc',
+                city: 'Thành phố là bắt buộc',
+                postcode: 'Mã bưu chính là bắt buộc',
+                timezone: 'Múi giờ là bắt buộc'
+            }
+        },
+        'id-ID': {
+            title: 'Identitas & Lokasi',
+            email: 'Alamat Email',
+            password: 'Kata Sandi',
+            companyName: 'Nama Resmi Perusahaan',
+            tradingName: 'Nama Dagang (Opsional)',
+            country: 'Negara',
+            currency: 'Mata Uang Dasar',
+            address: 'Alamat Baris 1',
+            city: 'Kota',
+            postcode: 'Kode Pos',
+            timezone: 'Zona Waktu',
+            next: 'Berikutnya: Hukum & Verifikasi',
+            errors: {
+                email: 'Email diperlukan',
+                password: 'Kata sandi diperlukan',
+                passwordLength: 'Kata sandi harus minimal 6 karakter',
+                companyName: 'Nama Perusahaan diperlukan',
+                country: 'Negara diperlukan',
+                currency: 'Mata uang diperlukan',
+                address: 'Alamat diperlukan',
+                city: 'Kota diperlukan',
+                postcode: 'Kode Pos diperlukan',
+                timezone: 'Zona waktu diperlukan'
+            }
         }
-        // ... (I will implement a fallback mechanism for other languages to keep the file size manageable 
-        // while ensuring the structure supports them. For now, I will use English for the rest to avoid huge token usage 
-        // in one go, or I can add them if I'm confident. Let's stick to these major ones and English fallback for others 
-        // effectively by using the `|| t['en-US']` logic, but the user might complain if their specific language isn't there.
-        // I'll add a comment that other languages use English fallback for this step to be safe, or add them all.)
     }
 
     // Helper to get content with fallback

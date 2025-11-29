@@ -79,6 +79,126 @@ export default function Step2Legal() {
                 phone: 'El número de teléfono es obligatorio',
                 phoneInvalid: 'Número de teléfono no válido para el país seleccionado'
             }
+        },
+        'fr-FR': {
+            title: 'Légal et Vérification',
+            regCountry: 'Pays d\'enregistrement :',
+            regNo: 'Numéro d\'enregistrement',
+            licenseNo: 'Numéro de licence',
+            taxId: 'Numéro de TVA / ID fiscal',
+            phone: 'Téléphone d\'assistance',
+            previous: 'Précédent',
+            next: 'Suivant : Profil d\'entreprise',
+            errors: {
+                regNo: 'Le numéro d\'enregistrement est requis',
+                phone: 'Le numéro de téléphone est requis',
+                phoneInvalid: 'Numéro de téléphone invalide pour le pays sélectionné'
+            }
+        },
+        'de-DE': {
+            title: 'Rechtliches & Verifizierung',
+            regCountry: 'Registrierungsland:',
+            regNo: 'Registrierungsnummer',
+            licenseNo: 'Lizenznummer',
+            taxId: 'Steuer-ID / USt-IdNr.',
+            phone: 'Support-Telefon',
+            previous: 'Zurück',
+            next: 'Weiter: Unternehmensprofil',
+            errors: {
+                regNo: 'Registrierungsnummer ist erforderlich',
+                phone: 'Telefonnummer ist erforderlich',
+                phoneInvalid: 'Ungültige Telefonnummer für das ausgewählte Land'
+            }
+        },
+        'ja-JP': {
+            title: '法務と確認',
+            regCountry: '登録国：',
+            regNo: '登録番号',
+            licenseNo: 'ライセンス番号',
+            taxId: '納税者番号 / VAT番号',
+            phone: 'サポート電話番号',
+            previous: '戻る',
+            next: '次へ：ビジネスプロフィール',
+            errors: {
+                regNo: '登録番号は必須です',
+                phone: '電話番号は必須です',
+                phoneInvalid: '選択された国の電話番号が無効です'
+            }
+        },
+        'ko-KR': {
+            title: '법률 및 확인',
+            regCountry: '등록 국가:',
+            regNo: '등록 번호',
+            licenseNo: '면허 번호',
+            taxId: '납세자 번호 / VAT 번호',
+            phone: '지원 전화',
+            previous: '이전',
+            next: '다음: 비즈니스 프로필',
+            errors: {
+                regNo: '등록 번호는 필수입니다',
+                phone: '전화번호는 필수입니다',
+                phoneInvalid: '선택한 국가의 전화번호가 유효하지 않습니다'
+            }
+        },
+        'ar-SA': {
+            title: 'القانوني والتحقق',
+            regCountry: 'بلد التسجيل:',
+            regNo: 'رقم التسجيل',
+            licenseNo: 'رقم الترخيص',
+            taxId: 'الرقم الضريبي / رقم ضريبة القيمة المضافة',
+            phone: 'هاتف الدعم',
+            previous: 'سابق',
+            next: 'التالي: ملف الشركة',
+            errors: {
+                regNo: 'رقم التسجيل مطلوب',
+                phone: 'رقم الهاتف مطلوب',
+                phoneInvalid: 'رقم الهاتف غير صالح للبلد المحدد'
+            }
+        },
+        'th-TH': {
+            title: 'กฎหมายและการตรวจสอบ',
+            regCountry: 'ประเทศที่จดทะเบียน:',
+            regNo: 'หมายเลขจดทะเบียน',
+            licenseNo: 'หมายเลขใบอนุญาต',
+            taxId: 'เลขประจำตัวผู้เสียภาษี / หมายเลข VAT',
+            phone: 'โทรศัพท์ฝ่ายสนับสนุน',
+            previous: 'ก่อนหน้า',
+            next: 'ถัดไป: โปรไฟล์ธุรกิจ',
+            errors: {
+                regNo: 'จำเป็นต้องมีหมายเลขจดทะเบียน',
+                phone: 'จำเป็นต้องมีหมายเลขโทรศัพท์',
+                phoneInvalid: 'หมายเลขโทรศัพท์ไม่ถูกต้องสำหรับประเทศที่เลือก'
+            }
+        },
+        'vi-VN': {
+            title: 'Pháp lý & Xác minh',
+            regCountry: 'Quốc gia đăng ký:',
+            regNo: 'Số đăng ký',
+            licenseNo: 'Số giấy phép',
+            taxId: 'Mã số thuế / Số VAT',
+            phone: 'Điện thoại hỗ trợ',
+            previous: 'Trước',
+            next: 'Tiếp theo: Hồ sơ doanh nghiệp',
+            errors: {
+                regNo: 'Số đăng ký là bắt buộc',
+                phone: 'Số điện thoại là bắt buộc',
+                phoneInvalid: 'Số điện thoại không hợp lệ cho quốc gia đã chọn'
+            }
+        },
+        'id-ID': {
+            title: 'Hukum & Verifikasi',
+            regCountry: 'Negara Pendaftaran:',
+            regNo: 'Nomor Pendaftaran',
+            licenseNo: 'Nomor Lisensi',
+            taxId: 'NPWP / Nomor PPN',
+            phone: 'Telepon Dukungan',
+            previous: 'Sebelumnya',
+            next: 'Berikutnya: Profil Bisnis',
+            errors: {
+                regNo: 'Nomor Pendaftaran diperlukan',
+                phone: 'Nomor Telepon diperlukan',
+                phoneInvalid: 'Nomor telepon tidak valid untuk negara yang dipilih'
+            }
         }
     }
 
@@ -92,7 +212,7 @@ export default function Step2Legal() {
     const validate = () => {
         const newErrors: Record<string, string> = {}
         if (!formData.company_reg_no) newErrors.company_reg_no = content.errors.regNo
-        if (!formData.contact_email) newErrors.contact_email = content.errors.email
+
         if (!formData.phone_number) {
             newErrors.phone_number = content.errors.phone
         } else if (!isValidPhoneNumber(formData.phone_number)) {
@@ -174,18 +294,7 @@ export default function Step2Legal() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.email} *</label>
-                        <input
-                            type="email"
-                            name="contact_email"
-                            value={formData.contact_email}
-                            onChange={handleChange}
-                            required
-                            className={`mt-1 block w-full rounded-md border ${errors.contact_email ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
-                        />
-                        {errors.contact_email && <p className="mt-1 text-xs text-red-500">{errors.contact_email}</p>}
-                    </div>
+
                     <div>
                         <label className="block text-xs font-medium text-gray-300">{content.phone} *</label>
                         <div className={`mt-1 text-black phone-input-container ${errors.phone_number ? 'border-red-500' : ''}`}>
@@ -209,7 +318,7 @@ export default function Step2Legal() {
                 <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="rounded-md border border-gray-600 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 focus:outline-none"
+                    className="rounded-md border-2 border-slate-600 bg-slate-800 px-6 py-2 text-sm font-bold text-white hover:bg-slate-700 hover:border-slate-500 focus:outline-none transition-all shadow-md"
                 >
                     {content.previous}
                 </button>

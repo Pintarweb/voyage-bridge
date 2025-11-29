@@ -119,24 +119,24 @@ function WizardContent() {
             {/* Stepper UI */}
             <div className="mb-8">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-primary">{stepText}</span>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm font-bold text-slate-900">{stepText}</span>
+                    <span className="text-sm font-bold text-slate-800">
                         {currentStep === 1 && content.step1}
                         {currentStep === 2 && content.step2}
                         {currentStep === 3 && content.step3}
                         {currentStep === 4 && content.step4}
                     </span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2.5">
+                <div className="w-full bg-white/30 rounded-full h-2.5 backdrop-blur-sm">
                     <div
-                        className="bg-primary h-2.5 rounded-full transition-all duration-300 ease-in-out"
+                        className="bg-slate-900 h-2.5 rounded-full transition-all duration-300 ease-in-out shadow-sm"
                         style={{ width: `${(currentStep / totalSteps) * 100}%` }}
                     ></div>
                 </div>
             </div>
 
             {/* Step Content */}
-            <div className="bg-gray-900 p-8 rounded-xl border border-gray-800 shadow-xl">
+            <div className="">
                 {renderStep()}
             </div>
         </div>

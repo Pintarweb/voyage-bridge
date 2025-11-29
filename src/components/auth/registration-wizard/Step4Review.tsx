@@ -26,7 +26,7 @@ export default function Step4Review() {
                 email: 'Email:',
                 currency: 'Currency:',
                 regNo: 'Reg No:',
-                officialEmail: 'Official Email:',
+
                 phone: 'Phone:',
                 type: 'Type:',
                 website: 'Website:'
@@ -51,7 +51,7 @@ export default function Step4Review() {
                 email: '电子邮件：',
                 currency: '货币：',
                 regNo: '注册号：',
-                officialEmail: '官方电子邮件：',
+
                 phone: '电话：',
                 type: '类型：',
                 website: '网站：'
@@ -76,7 +76,7 @@ export default function Step4Review() {
                 email: 'Emel:',
                 currency: 'Mata Wang:',
                 regNo: 'No Pendaftaran:',
-                officialEmail: 'Emel Rasmi:',
+
                 phone: 'Telefon:',
                 type: 'Jenis:',
                 website: 'Laman Web:'
@@ -101,7 +101,7 @@ export default function Step4Review() {
                 email: 'Correo:',
                 currency: 'Moneda:',
                 regNo: 'Nº Reg:',
-                officialEmail: 'Correo Oficial:',
+
                 phone: 'Teléfono:',
                 type: 'Tipo:',
                 website: 'Sitio Web:'
@@ -112,6 +112,198 @@ export default function Step4Review() {
             errors: {
                 failed: 'Registro fallido',
                 unexpected: 'Ocurrió un error inesperado'
+            }
+        },
+        'fr-FR': {
+            title: 'Réviser et soumettre',
+            identity: 'Identité et localisation',
+            legal: 'Légal et vérification',
+            profile: 'Profil d\'entreprise',
+            edit: 'Modifier',
+            labels: {
+                company: 'Entreprise :',
+                country: 'Pays :',
+                email: 'Email :',
+                currency: 'Devise :',
+                regNo: 'N° d\'enregistrement :',
+                phone: 'Téléphone :',
+                type: 'Type :',
+                website: 'Site web :'
+            },
+            previous: 'Précédent',
+            submit: 'Soumettre et payer',
+            submitting: 'Soumission...',
+            errors: {
+                failed: 'L\'inscription a échoué',
+                unexpected: 'Une erreur inattendue s\'est produite'
+            }
+        },
+        'de-DE': {
+            title: 'Überprüfen & Absenden',
+            identity: 'Identität & Standort',
+            legal: 'Rechtliches & Verifizierung',
+            profile: 'Unternehmensprofil',
+            edit: 'Bearbeiten',
+            labels: {
+                company: 'Firma:',
+                country: 'Land:',
+                email: 'E-Mail:',
+                currency: 'Währung:',
+                regNo: 'Reg.-Nr.:',
+                phone: 'Telefon:',
+                type: 'Typ:',
+                website: 'Webseite:'
+            },
+            previous: 'Zurück',
+            submit: 'Absenden & Bezahlen',
+            submitting: 'Wird gesendet...',
+            errors: {
+                failed: 'Registrierung fehlgeschlagen',
+                unexpected: 'Ein unerwarteter Fehler ist aufgetreten'
+            }
+        },
+        'ja-JP': {
+            title: '確認して送信',
+            identity: '身元と場所',
+            legal: '法務と確認',
+            profile: 'ビジネスプロフィール',
+            edit: '編集',
+            labels: {
+                company: '会社名:',
+                country: '国:',
+                email: 'メール:',
+                currency: '通貨:',
+                regNo: '登録番号:',
+                phone: '電話:',
+                type: 'タイプ:',
+                website: 'ウェブサイト:'
+            },
+            previous: '戻る',
+            submit: '送信して支払う',
+            submitting: '送信中...',
+            errors: {
+                failed: '登録に失敗しました',
+                unexpected: '予期しないエラーが発生しました'
+            }
+        },
+        'ko-KR': {
+            title: '검토 및 제출',
+            identity: '신원 및 위치',
+            legal: '법률 및 확인',
+            profile: '비즈니스 프로필',
+            edit: '편집',
+            labels: {
+                company: '회사:',
+                country: '국가:',
+                email: '이메일:',
+                currency: '통화:',
+                regNo: '등록 번호:',
+                phone: '전화:',
+                type: '유형:',
+                website: '웹사이트:'
+            },
+            previous: '이전',
+            submit: '제출 및 결제',
+            submitting: '제출 중...',
+            errors: {
+                failed: '등록 실패',
+                unexpected: '예기치 않은 오류가 발생했습니다'
+            }
+        },
+        'ar-SA': {
+            title: 'المراجعة والإرسال',
+            identity: 'الهوية والموقع',
+            legal: 'القانوني والتحقق',
+            profile: 'ملف الشركة',
+            edit: 'تعديل',
+            labels: {
+                company: 'الشركة:',
+                country: 'البلد:',
+                email: 'البريد الإلكتروني:',
+                currency: 'العملة:',
+                regNo: 'رقم التسجيل:',
+                phone: 'الهاتف:',
+                type: 'النوع:',
+                website: 'الموقع الإلكتروني:'
+            },
+            previous: 'سابق',
+            submit: 'إرسال ودفع',
+            submitting: 'جاري الإرسال...',
+            errors: {
+                failed: 'فشل التسجيل',
+                unexpected: 'حدث خطأ غير متوقع'
+            }
+        },
+        'th-TH': {
+            title: 'ตรวจสอบและส่ง',
+            identity: 'ตัวตนและที่ตั้ง',
+            legal: 'กฎหมายและการตรวจสอบ',
+            profile: 'โปรไฟล์ธุรกิจ',
+            edit: 'แก้ไข',
+            labels: {
+                company: 'บริษัท:',
+                country: 'ประเทศ:',
+                email: 'อีเมล:',
+                currency: 'สกุลเงิน:',
+                regNo: 'เลขทะเบียน:',
+                phone: 'โทรศัพท์:',
+                type: 'ประเภท:',
+                website: 'เว็บไซต์:'
+            },
+            previous: 'ก่อนหน้า',
+            submit: 'ส่งและชำระเงิน',
+            submitting: 'กำลังส่ง...',
+            errors: {
+                failed: 'การลงทะเบียนล้มเหลว',
+                unexpected: 'เกิดข้อผิดพลาดที่ไม่คาดคิด'
+            }
+        },
+        'vi-VN': {
+            title: 'Xem lại & Gửi',
+            identity: 'Danh tính & Vị trí',
+            legal: 'Pháp lý & Xác minh',
+            profile: 'Hồ sơ doanh nghiệp',
+            edit: 'Chỉnh sửa',
+            labels: {
+                company: 'Công ty:',
+                country: 'Quốc gia:',
+                email: 'Email:',
+                currency: 'Tiền tệ:',
+                regNo: 'Số đăng ký:',
+                phone: 'Điện thoại:',
+                type: 'Loại:',
+                website: 'Trang web:'
+            },
+            previous: 'Trước',
+            submit: 'Gửi & Thanh toán',
+            submitting: 'Đang gửi...',
+            errors: {
+                failed: 'Đăng ký thất bại',
+                unexpected: 'Đã xảy ra lỗi không mong muốn'
+            }
+        },
+        'id-ID': {
+            title: 'Tinjau & Kirim',
+            identity: 'Identitas & Lokasi',
+            legal: 'Hukum & Verifikasi',
+            profile: 'Profil Bisnis',
+            edit: 'Edit',
+            labels: {
+                company: 'Perusahaan:',
+                country: 'Negara:',
+                email: 'Email:',
+                currency: 'Mata Uang:',
+                regNo: 'No Reg:',
+                phone: 'Telepon:',
+                type: 'Tipe:',
+                website: 'Situs Web:'
+            },
+            previous: 'Sebelumnya',
+            submit: 'Kirim & Bayar',
+            submitting: 'Sedang mengirim...',
+            errors: {
+                failed: 'Pendaftaran gagal',
+                unexpected: 'Terjadi kesalahan yang tidak terduga'
             }
         }
     }
@@ -162,7 +354,7 @@ export default function Step4Review() {
                     company_reg_no: formData.company_reg_no,
                     license_no: formData.license_no,
                     tax_id: formData.tax_id,
-                    contact_email: formData.contact_email,
+
                     phone_number: formData.phone_number,
 
                     supplier_type: formData.supplier_type,
@@ -238,7 +430,7 @@ export default function Step4Review() {
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <p><span className="text-gray-500">{content.labels.regNo}</span> {formData.company_reg_no}</p>
-                        <p><span className="text-gray-500">{content.labels.officialEmail}</span> {formData.contact_email}</p>
+
                         <p><span className="text-gray-500">{content.labels.phone}</span> {formData.phone_number}</p>
                     </div>
                 </div>
