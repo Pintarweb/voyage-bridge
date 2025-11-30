@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { FaCloudUploadAlt, FaTrash, FaPlus, FaTimes, FaHotel, FaMapMarkerAlt, FaTag, FaBuilding, FaDownload } from 'react-icons/fa'
+import { FaCloudUploadAlt, FaTimes, FaHotel, FaMapMarkerAlt, FaTag, FaBuilding, FaDownload } from 'react-icons/fa'
 import { createClient } from '@/utils/supabase/client'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -133,7 +133,17 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             creating: 'Creating...',
             errorMissingFields: 'Please fill in all required fields and upload at least one image.',
             errorUpload: 'Error uploading images',
-            errorCreate: 'Error creating product'
+            errorCreate: 'Error creating product',
+            yourCompany: 'Your Company',
+            category: 'Category',
+            location: 'Location',
+            city: 'City',
+            uploadImage: 'Upload Image',
+            createWinningProduct: 'Create Your Winning Product Now',
+            placeholderHotelName: 'e.g. Grand Hyatt Kuala Lumpur',
+            placeholderAddress: 'Full street address',
+            remove: 'Remove',
+            download: 'Download'
         },
         'zh-CN': {
             hotelDetails: '酒店详情',
@@ -150,7 +160,17 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             creating: '创建中...',
             errorMissingFields: '请填写所有必填字段并上传至少一张图片。',
             errorUpload: '上传图片时出错',
-            errorCreate: '创建产品时出错'
+            errorCreate: '创建产品时出错',
+            yourCompany: '您的公司',
+            category: '类别',
+            location: '位置',
+            city: '城市',
+            uploadImage: '上传图片',
+            createWinningProduct: '立即创建您的致胜产品',
+            placeholderHotelName: '例如：吉隆坡君悦酒店',
+            placeholderAddress: '完整街道地址',
+            remove: '移除',
+            download: '下载'
         },
         'ms-MY': {
             hotelDetails: 'Butiran Hotel',
@@ -167,7 +187,17 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             creating: 'Mencipta...',
             errorMissingFields: 'Sila isi semua medan yang diperlukan dan muat naik sekurang-kurangnya satu imej.',
             errorUpload: 'Ralat memuat naik imej',
-            errorCreate: 'Ralat mencipta produk'
+            errorCreate: 'Ralat mencipta produk',
+            yourCompany: 'Syarikat Anda',
+            category: 'Kategori',
+            location: 'Lokasi',
+            city: 'Bandar',
+            uploadImage: 'Muat Naik Imej',
+            createWinningProduct: 'Cipta Produk Menang Anda Sekarang',
+            placeholderHotelName: 'cth. Grand Hyatt Kuala Lumpur',
+            placeholderAddress: 'Alamat penuh',
+            remove: 'Buang',
+            download: 'Muat Turun'
         },
         'es-ES': {
             hotelDetails: 'Detalles del Hotel',
@@ -184,7 +214,17 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             creating: 'Creando...',
             errorMissingFields: 'Por favor complete todos los campos requeridos y suba al menos una imagen.',
             errorUpload: 'Error al subir imágenes',
-            errorCreate: 'Error al crear el producto'
+            errorCreate: 'Error al crear el producto',
+            yourCompany: 'Su Empresa',
+            category: 'Categoría',
+            location: 'Ubicación',
+            city: 'Ciudad',
+            uploadImage: 'Subir Imagen',
+            createWinningProduct: 'Cree Su Producto Ganador Ahora',
+            placeholderHotelName: 'ej. Grand Hyatt Kuala Lumpur',
+            placeholderAddress: 'Dirección completa',
+            remove: 'Eliminar',
+            download: 'Descargar'
         }
     }
 
@@ -203,11 +243,13 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         setPreviews(prev => [...prev, ...newPreviews])
     }, [files])
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
         onDrop,
         accept: { 'image/*': [] },
-        maxSize: 5242880 // 5MB
+        maxSize: 5242880, // 5MB
+        noClick: false
     })
+
 
     const removeFile = (index: number) => {
         const newFiles = [...files]
@@ -309,9 +351,10 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             }
 
             onSuccess()
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error submitting product:', error)
-            alert(content.errorCreate + (error.message ? `: ${error.message}` : ''))
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+            alert(content.errorCreate + (errorMessage ? `: ${errorMessage}` : ''))
         } finally {
             setLoading(false)
         }
@@ -328,23 +371,25 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                             <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
                                 <FaBuilding className="text-yellow-300" />
                             </div>
-                            {companyName || 'Your Company'}
+                            {companyName || content.yourCompany}
                         </h2>
-                        <div className="flex flex-wrap items-center gap-6 mt-4 text-blue-100">
+                        <div className="flex flex-wrap items-center gap-6 mt-4 text-white">
                             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
                                 <FaTag className="text-cyan-300" />
-                                <span className="font-medium">{supplierType || 'Category'}</span>
+                                <span className="font-medium">{supplierType || content.category}</span>
                             </div>
                             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                                <img
-                                    src={getFlagUrl(supplierCountry)}
-                                    alt={supplierCountry}
-                                    className="w-6 h-4 object-cover rounded-sm"
-                                />
+                                {supplierCountry && (
+                                    <img
+                                        src={getFlagUrl(supplierCountry)}
+                                        alt={supplierCountry}
+                                        className="w-6 h-4 object-cover rounded-sm"
+                                    />
+                                )}
                                 <FaMapMarkerAlt className="text-pink-300" />
                                 <span>
                                     {formData.city ? `${formData.city}, ` : ''}
-                                    {supplierCountry || 'Location'}
+                                    {supplierCountry || content.location}
                                 </span>
                             </div>
                         </div>
@@ -366,29 +411,29 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
 
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-white mb-2">{content.hotelName}</label>
+                                <label className="block text-sm font-medium !text-white mb-2">{content.hotelName}</label>
                                 <input
                                     type="text"
                                     value={formData.product_name}
                                     onChange={e => setFormData({ ...formData, product_name: e.target.value })}
                                     className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
-                                    placeholder="e.g. Grand Hyatt Kuala Lumpur"
+                                    placeholder={content.placeholderHotelName}
                                 />
                             </div>
 
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium text-white mb-2">{content.hotelAddress}</label>
+                                    <label className="block text-sm font-medium !text-white mb-2">{content.hotelAddress}</label>
                                     <input
                                         type="text"
                                         value={formData.hotel_address}
                                         onChange={e => setFormData({ ...formData, hotel_address: e.target.value })}
                                         className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
-                                        placeholder="Full street address"
+                                        placeholder={content.placeholderAddress}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-white mb-2">City</label>
+                                    <label className="block text-sm font-medium !text-white mb-2">{content.city}</label>
                                     <input
                                         type="text"
                                         value={formData.city}
@@ -397,7 +442,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-white mb-2">{content.hotelStars}</label>
+                                    <label className="block text-sm font-medium !text-white mb-2">{content.hotelStars}</label>
                                     <select
                                         value={formData.hotel_stars}
                                         onChange={e => setFormData({ ...formData, hotel_stars: e.target.value })}
@@ -445,11 +490,22 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     className={`mt-1 flex justify-center px-6 pt-10 pb-10 border-2 border-dashed rounded-xl transition-all duration-200 ${isDragActive ? 'border-white bg-white/20' : 'border-white/20 hover:border-white/40 hover:bg-white/5'
                         }`}
                 >
+                    <input {...getInputProps()} />
                     <div className="space-y-2 text-center">
                         <FaCloudUploadAlt className="mx-auto h-16 w-16 text-blue-200" />
                         <div className="text-lg text-white font-medium">
                             {content.dragDrop}
                         </div>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                open();
+                            }}
+                            className="mt-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
+                        >
+                            {content.uploadImage}
+                        </button>
                         <p className="text-sm text-blue-200">
                             {content.maxImages}
                         </p>
@@ -466,14 +522,14 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                     alt={`Preview ${index + 1}`}
                                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                 />
-                                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                <div className="absolute top-2 right-2 flex gap-2 transition-all">
                                     <a
                                         href={preview}
                                         download={`image-${index + 1}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="p-2 bg-blue-500/80 hover:bg-blue-500 text-white rounded-full backdrop-blur-sm"
-                                        title="Download"
+                                        title={content.download}
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <FaDownload size={14} />
@@ -482,7 +538,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                         type="button"
                                         onClick={() => removeFile(index)}
                                         className="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full backdrop-blur-sm"
-                                        title="Remove"
+                                        title={content.remove}
                                     >
                                         <FaTimes size={14} />
                                     </button>
@@ -499,7 +555,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     disabled={loading}
                     className="px-8 py-4 bg-gradient-to-r from-blue-900 to-blue-400 text-white font-bold rounded-full shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100 animate-heartbeat border-2 border-white/20"
                 >
-                    {loading ? content.creating : 'Create Your Winning Product Now'}
+                    {loading ? content.creating : content.createWinningProduct}
                 </button>
             </div>
         </form>
