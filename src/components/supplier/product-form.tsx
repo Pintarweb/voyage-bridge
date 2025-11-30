@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { FaCloudUploadAlt, FaTrash, FaPlus, FaTimes, FaHotel, FaMapMarkerAlt, FaTag, FaBuilding } from 'react-icons/fa'
+import { FaCloudUploadAlt, FaTrash, FaPlus, FaTimes, FaHotel, FaMapMarkerAlt, FaTag, FaBuilding, FaDownload } from 'react-icons/fa'
 import { createClient } from '@/utils/supabase/client'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -99,8 +99,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                         product_name: product.product_name || '',
                         product_description: product.product_description || '',
                         product_category: product.product_category || '',
-                        hotel_address: product.hotel_address || '',
-                        hotel_stars: product.hotel_stars || '5',
+                        hotel_address: product.address || product.hotel_address || '',
+                        hotel_stars: product.star_rating ? String(product.star_rating) : (product.hotel_stars || '5'),
                         city: product.city || '',
                         photo_url_1: '',
                         description: '',
@@ -223,6 +223,11 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
     const isHotel = formData.product_category === 'Accommodation' || formData.product_category === 'Hotel'
     const isTransport = formData.product_category === 'Transportation'
 
+    const getFlagUrl = (countryCode: string) => {
+        if (!countryCode) return ''
+        return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
@@ -270,18 +275,24 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                 finalDescription = `Address: ${formData.hotel_address}\nStars: ${formData.hotel_stars}\n\n${formData.product_description}`
             }
 
+            const productData = {
+                product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
+                product_description: finalDescription,
+                product_category: formData.product_category,
+                photo_urls: imageUrls.length > 0 ? imageUrls : previews,
+                status: 'active',
+                city: formData.city,
+                country_code: supplierCountry,
+                star_rating: isHotel ? parseInt(formData.hotel_stars) : null,
+                address: isHotel ? formData.hotel_address : null
+            }
+
             // Create or Update product record
             if (mode === 'edit' && productId) {
                 // UPDATE existing product
                 const { error: updateError } = await supabase
                     .from('products')
-                    .update({
-                        product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
-                        product_description: finalDescription,
-                        product_category: formData.product_category,
-                        photo_urls: imageUrls.length > 0 ? imageUrls : previews, // Use new images or keep existing
-                        status: 'active'
-                    })
+                    .update(productData)
                     .eq('id', productId)
 
                 if (updateError) throw updateError
@@ -290,12 +301,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                 const { error: insertError } = await supabase
                     .from('products')
                     .insert({
-                        supplier_id: user.id,
-                        product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
-                        product_description: finalDescription,
-                        product_category: formData.product_category,
-                        photo_urls: imageUrls, // Save all uploaded image URLs as array
-                        status: 'active'
+                        ...productData,
+                        supplier_id: user.id
                     })
 
                 if (insertError) throw insertError
@@ -304,14 +311,6 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             onSuccess()
         } catch (error: any) {
             console.error('Error submitting product:', error)
-            console.error('Error type:', typeof error)
-            if (typeof error === 'object') {
-                console.error('Error keys:', Object.keys(error))
-                console.error('Error stringified:', JSON.stringify(error, null, 2))
-                if (error.message) console.error('Error message:', error.message)
-                if (error.details) console.error('Error details:', error.details)
-                if (error.hint) console.error('Error hint:', error.hint)
-            }
             alert(content.errorCreate + (error.message ? `: ${error.message}` : ''))
         } finally {
             setLoading(false)
@@ -321,21 +320,28 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
     return (
         <form onSubmit={handleSubmit} className="space-y-8">
             {/* Context Header - Vibrant Gradient */}
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-blue-50/50 border-2 border-primary/20 p-6 shadow-lg backdrop-blur-sm animate-fade-in-up">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
+                <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
+                <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <div>
-                        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                            <FaBuilding className="text-primary" />
+                        <h2 className="text-3xl font-bold text-white flex items-center gap-3">
+                            <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                                <FaBuilding className="text-yellow-300" />
+                            </div>
                             {companyName || 'Your Company'}
                         </h2>
-                        <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                                <FaTag className="text-primary" />
+                        <div className="flex flex-wrap items-center gap-6 mt-4 text-blue-100">
+                            <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                                <FaTag className="text-cyan-300" />
                                 <span className="font-medium">{supplierType || 'Category'}</span>
                             </div>
-                            <div className="hidden md:block w-px h-4 bg-border"></div>
-                            <div className="flex items-center gap-1">
-                                <FaMapMarkerAlt className="text-primary" />
+                            <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                                <img
+                                    src={getFlagUrl(supplierCountry)}
+                                    alt={supplierCountry}
+                                    className="w-6 h-4 object-cover rounded-sm"
+                                />
+                                <FaMapMarkerAlt className="text-pink-300" />
                                 <span>
                                     {formData.city ? `${formData.city}, ` : ''}
                                     {supplierCountry || 'Location'}
@@ -348,45 +354,63 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
 
             {/* Hotel Specific Fields */}
             {isHotel && (
-                <div className="bg-gradient-to-br from-white to-blue-50/50 border-2 border-primary/20 rounded-xl p-6 shadow-lg backdrop-blur-sm space-y-6 animate-fade-in-up">
-                    <h3 className="text-lg font-medium text-primary flex items-center gap-2">
-                        <FaHotel /> {content.hotelDetails}
-                    </h3>
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10 space-y-6">
+                    <div className="absolute left-0 bottom-0 h-64 w-64 translate-x-[-50%] translate-y-[50%] rounded-full bg-white/5 blur-3xl"></div>
+                    <div className="relative">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                                <FaHotel className="text-yellow-300" />
+                            </div>
+                            {content.hotelDetails}
+                        </h3>
 
-                    <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">{content.hotelName}</label>
-                        <input
-                            type="text"
-                            value={formData.product_name}
-                            onChange={e => setFormData({ ...formData, product_name: e.target.value })}
-                            className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-input rounded-md bg-background text-foreground p-2"
-                            placeholder="e.g. Grand Hyatt Kuala Lumpur"
-                        />
-                    </div>
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium text-white mb-2">{content.hotelName}</label>
+                                <input
+                                    type="text"
+                                    value={formData.product_name}
+                                    onChange={e => setFormData({ ...formData, product_name: e.target.value })}
+                                    className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                    placeholder="e.g. Grand Hyatt Kuala Lumpur"
+                                />
+                            </div>
 
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                        <div className="sm:col-span-2">
-                            <label className="block text-sm font-medium text-foreground mb-2">{content.hotelAddress}</label>
-                            <input
-                                type="text"
-                                value={formData.hotel_address}
-                                onChange={e => setFormData({ ...formData, hotel_address: e.target.value })}
-                                className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-input rounded-md bg-background text-foreground p-2"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-foreground mb-2">{content.hotelStars}</label>
-                            <select
-                                value={formData.hotel_stars}
-                                onChange={e => setFormData({ ...formData, hotel_stars: e.target.value })}
-                                className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-input rounded-md bg-background text-foreground p-2.5"
-                            >
-                                <option value="5">5 Stars</option>
-                                <option value="4">4 Stars</option>
-                                <option value="3">3 Stars</option>
-                                <option value="2">2 Stars</option>
-                                <option value="1">1 Star</option>
-                            </select>
+                            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                <div className="sm:col-span-2">
+                                    <label className="block text-sm font-medium text-white mb-2">{content.hotelAddress}</label>
+                                    <input
+                                        type="text"
+                                        value={formData.hotel_address}
+                                        onChange={e => setFormData({ ...formData, hotel_address: e.target.value })}
+                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                        placeholder="Full street address"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-white mb-2">City</label>
+                                    <input
+                                        type="text"
+                                        value={formData.city}
+                                        onChange={e => setFormData({ ...formData, city: e.target.value })}
+                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-white mb-2">{content.hotelStars}</label>
+                                    <select
+                                        value={formData.hotel_stars}
+                                        onChange={e => setFormData({ ...formData, hotel_stars: e.target.value })}
+                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all [&>option]:text-black"
+                                    >
+                                        <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                                        <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                                        <option value="3">⭐⭐⭐ 3 Stars</option>
+                                        <option value="2">⭐⭐ 2 Stars</option>
+                                        <option value="1">⭐ 1 Star</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -394,37 +418,39 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
 
             {/* Product Description for Non-Hotel/Airline */}
             {!isHotel && !isTransport && (
-                <div className="bg-card rounded-lg border border-border p-6 shadow-sm animate-fade-in-up">
-                    <label className="block text-sm font-medium text-foreground mb-2">{content.productDescription}</label>
-                    <textarea
-                        rows={4}
-                        value={formData.product_description}
-                        onChange={e => setFormData({ ...formData, product_description: e.target.value })}
-                        className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-input rounded-md bg-background text-foreground p-2"
-                        placeholder={content.descriptionPlaceholder}
-                    />
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
+                    <div className="relative">
+                        <label className="block text-lg font-bold text-white mb-4">{content.productDescription}</label>
+                        <textarea
+                            rows={6}
+                            value={formData.product_description}
+                            onChange={e => setFormData({ ...formData, product_description: e.target.value })}
+                            className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                            placeholder={content.descriptionPlaceholder}
+                        />
+                    </div>
                 </div>
             )}
 
             {/* Media Upload */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-                <h3 className="text-lg font-medium text-foreground mb-4">{content.media}</h3>
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                    <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                        <FaCloudUploadAlt className="text-cyan-300" />
+                    </div>
+                    {content.media}
+                </h3>
                 <div
                     {...getRootProps()}
-                    className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${isDragActive ? 'border-primary bg-primary/10' : 'border-gray-600 hover:border-gray-500'
+                    className={`mt-1 flex justify-center px-6 pt-10 pb-10 border-2 border-dashed rounded-xl transition-all duration-200 ${isDragActive ? 'border-white bg-white/20' : 'border-white/20 hover:border-white/40 hover:bg-white/5'
                         }`}
                 >
-                    <div className="space-y-1 text-center">
-                        <FaCloudUploadAlt className="mx-auto h-12 w-12 text-gray-400" />
-                        <input {...getInputProps()} />
-                        <div className="text-sm text-gray-400">
-                            <span className="font-medium text-primary">Upload a file</span>
-                            <span className="pl-1">or drag and drop</span>
+                    <div className="space-y-2 text-center">
+                        <FaCloudUploadAlt className="mx-auto h-16 w-16 text-blue-200" />
+                        <div className="text-lg text-white font-medium">
+                            {content.dragDrop}
                         </div>
-                        <p className="text-xs text-gray-500">
-                            PNG, JPG, GIF up to 5MB
-                        </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm text-blue-200">
                             {content.maxImages}
                         </p>
                     </div>
@@ -432,34 +458,48 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
 
                 {/* Previews */}
                 {previews.length > 0 && (
-                    <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+                    <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
                         {previews.map((preview, index) => (
-                            <div key={index} className="relative group aspect-square rounded-lg overflow-hidden bg-gray-800">
+                            <div key={index} className="relative group aspect-square rounded-xl overflow-hidden bg-black/20 border border-white/10 shadow-lg">
                                 <img
                                     src={preview}
                                     alt={`Preview ${index + 1}`}
-                                    className="h-full w-full object-cover"
+                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                 />
-                                <button
-                                    type="button"
-                                    onClick={() => removeFile(index)}
-                                    className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                    <FaTimes size={12} />
-                                </button>
+                                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                    <a
+                                        href={preview}
+                                        download={`image-${index + 1}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-2 bg-blue-500/80 hover:bg-blue-500 text-white rounded-full backdrop-blur-sm"
+                                        title="Download"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <FaDownload size={14} />
+                                    </a>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeFile(index)}
+                                        className="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full backdrop-blur-sm"
+                                        title="Remove"
+                                    >
+                                        <FaTimes size={14} />
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
                 )}
             </div>
 
-            <div className="flex justify-end">
+            <div className="fixed bottom-8 right-8 z-50">
                 <button
                     type="submit"
                     disabled={loading}
-                    className="btn-primary btn-lg"
+                    className="px-8 py-4 bg-gradient-to-r from-blue-900 to-blue-400 text-white font-bold rounded-full shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100 animate-heartbeat border-2 border-white/20"
                 >
-                    {loading ? content.creating : (mode === 'edit' ? content.updateProduct : content.createProduct)}
+                    {loading ? content.creating : 'Create Your Winning Product Now'}
                 </button>
             </div>
         </form>
