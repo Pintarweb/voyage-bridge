@@ -63,9 +63,12 @@ export default function Dashboard() {
             inventory: 'inventory',
             trackPerformance: 'and track performance all in one place.',
             in_location: 'in',
+            logout: 'Logout',
+            createWinningProduct: 'Create Your Winning Product Now',
             supplierTypes: {
                 'Hotel': 'Hotel',
                 'Transportation': 'Transportation',
+                'Transport': 'Transportation',
                 'Land Operator': 'Land Operator',
                 'Airline': 'Airline'
             },
@@ -128,9 +131,12 @@ export default function Dashboard() {
             inventory: '库存',
             trackPerformance: '并在一个地方跟踪绩效。',
             in_location: '在',
+            logout: '登出',
+            createWinningProduct: '立即创建您的致胜产品',
             supplierTypes: {
                 'Hotel': '酒店',
                 'Transportation': '交通',
+                'Transport': '交通',
                 'Land Operator': '地接社',
                 'Airline': '航空公司'
             },
@@ -193,9 +199,12 @@ export default function Dashboard() {
             inventory: 'inventori',
             trackPerformance: 'anda dan jejak prestasi semuanya di satu tempat.',
             in_location: 'di',
+            logout: 'Log Keluar',
+            createWinningProduct: 'Cipta Produk Menang Anda Sekarang',
             supplierTypes: {
                 'Hotel': 'Hotel',
                 'Transportation': 'Pengangkutan',
+                'Transport': 'Pengangkutan',
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Syarikat Penerbangan'
             },
@@ -258,9 +267,12 @@ export default function Dashboard() {
             inventory: 'inventario',
             trackPerformance: 'y rastree el rendimiento todo en un solo lugar.',
             in_location: 'en',
+            logout: 'Cerrar Sesión',
+            createWinningProduct: 'Cree Su Producto Ganador Ahora',
             supplierTypes: {
                 'Hotel': 'Hotel',
                 'Transportation': 'Transporte',
+                'Transport': 'Transporte',
                 'Land Operator': 'Operador Terrestre',
                 'Airline': 'Aerolínea'
             },
@@ -323,9 +335,12 @@ export default function Dashboard() {
             inventory: 'inventaire',
             trackPerformance: 'et suivez les performances au même endroit.',
             in_location: 'à',
+            logout: 'Déconnexion',
+            createWinningProduct: 'Créez Votre Produit Gagnant Maintenant',
             supplierTypes: {
                 'Hotel': 'Hôtel',
                 'Transportation': 'Transport',
+                'Transport': 'Transport',
                 'Land Operator': 'Opérateur Terrestre',
                 'Airline': 'Compagnie Aérienne'
             },
@@ -388,9 +403,12 @@ export default function Dashboard() {
             inventory: 'Inventar',
             trackPerformance: 'und verfolgen Sie die Leistung an einem Ort.',
             in_location: 'in',
+            logout: 'Abmelden',
+            createWinningProduct: 'Erstellen Sie Jetzt Ihr Gewinnerprodukt',
             supplierTypes: {
                 'Hotel': 'Hotel',
                 'Transportation': 'Transport',
+                'Transport': 'Transport',
                 'Land Operator': 'Landoperator',
                 'Airline': 'Fluggesellschaft'
             },
@@ -453,9 +471,12 @@ export default function Dashboard() {
             inventory: '在庫',
             trackPerformance: 'そして、一箇所でパフォーマンスを追跡します。',
             in_location: 'で',
+            logout: 'ログアウト',
+            createWinningProduct: '今すぐ勝てる製品を作成',
             supplierTypes: {
                 'Hotel': 'ホテル',
                 'Transportation': '交通',
+                'Transport': '交通',
                 'Land Operator': 'ランドオペレーター',
                 'Airline': '航空会社'
             },
@@ -518,9 +539,12 @@ export default function Dashboard() {
             inventory: '재고',
             trackPerformance: '한 곳에서 성과를 추적하십시오.',
             in_location: '에서',
+            logout: '로그아웃',
+            createWinningProduct: '지금 성공적인 제품을 만드세요',
             supplierTypes: {
                 'Hotel': '호텔',
                 'Transportation': '운송',
+                'Transport': '운송',
                 'Land Operator': '랜드 오퍼레이터',
                 'Airline': '항공사'
             },
@@ -583,9 +607,12 @@ export default function Dashboard() {
             inventory: 'المخزون',
             trackPerformance: 'وتتبع الأداء في مكان واحد.',
             in_location: 'في',
+            logout: 'تسجيل الخروج',
+            createWinningProduct: 'أنشئ منتجك المتميز الآن',
             supplierTypes: {
                 'Hotel': 'فندق',
                 'Transportation': 'النقل',
+                'Transport': 'النقل',
                 'Land Operator': 'مشغل بري',
                 'Airline': 'شركة طيران'
             },
@@ -648,9 +675,12 @@ export default function Dashboard() {
             inventory: 'สินค้าคงคลัง',
             trackPerformance: 'และติดตามประสิทธิภาพได้ในที่เดียว',
             in_location: 'ใน',
+            logout: 'ออกจากระบบ',
+            createWinningProduct: 'สร้างผลิตภัณฑ์ที่ชนะเลิศของคุณตอนนี้',
             supplierTypes: {
                 'Hotel': 'โรงแรม',
                 'Transportation': 'การขนส่ง',
+                'Transport': 'การขนส่ง',
                 'Land Operator': 'ผู้ให้บริการทางบก',
                 'Airline': 'สายการบิน'
             },
@@ -713,9 +743,12 @@ export default function Dashboard() {
             inventory: 'kho hàng',
             trackPerformance: 'và theo dõi hiệu suất tất cả ở một nơi.',
             in_location: 'tại',
+            logout: 'Đăng xuất',
+            createWinningProduct: 'Tạo Sản Phẩm Chiến Thắng Của Bạn Ngay',
             supplierTypes: {
                 'Hotel': 'Khách sạn',
                 'Transportation': 'Vận tải',
+                'Transport': 'Vận tải',
                 'Land Operator': 'Nhà điều hành mặt đất',
                 'Airline': 'Hãng hàng không'
             },
@@ -778,9 +811,12 @@ export default function Dashboard() {
             inventory: 'inventaris',
             trackPerformance: 'dan lacak kinerja semuanya di satu tempat.',
             in_location: 'di',
+            logout: 'Keluar',
+            createWinningProduct: 'Buat Produk Unggulan Anda Sekarang',
             supplierTypes: {
                 'Hotel': 'Hotel',
                 'Transportation': 'Transportasi',
+                'Transport': 'Transportasi',
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Maskapai Penerbangan'
             },
@@ -807,7 +843,7 @@ export default function Dashboard() {
                 'draft': 'DRAF',
                 'archived': 'DIARSIPKAN'
             }
-        }
+        },
     }
 
     const content = t[language as keyof typeof t] || t['en-US']
@@ -822,7 +858,6 @@ export default function Dashboard() {
         await supabase.auth.signOut()
         router.push('/')
     }
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -837,7 +872,7 @@ export default function Dashboard() {
                 const { data: supplierData } = await supabase
                     .from('suppliers')
                     .select('*')
-                    .eq('user_id', user.id)
+                    .eq('id', user.id)
                     .single()
 
                 if (supplierData) {
@@ -941,7 +976,7 @@ export default function Dashboard() {
                 <div className="mb-8 flex justify-between items-start">
                     <div>
                         <h1 className="text-3xl font-bold text-foreground">
-                            {content.welcomeBack}, {supplier?.company_name || content.partner}
+                            {content.welcomeBack}, {supplier?.company_name || supplier?.name || content.partner}
                         </h1>
                         <p className="mt-2 text-muted-foreground">
                             {content.manageYour} {(() => {
@@ -964,63 +999,61 @@ export default function Dashboard() {
                             })()} {content.inventory} {content.trackPerformance}
                         </p>
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
-                    >
-                        <FaSignOutAlt className="mr-2" />
-                        Logout
-                    </button>
+                    <div className="flex space-x-3">
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                        >
+                            <FaSignOutAlt className="mr-2" />
+                            {content.logout}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
-                    <div className="bg-card overflow-hidden shadow rounded-lg border border-border">
-                        <div className="p-5">
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                    <FaBox className="h-6 w-6 text-primary" />
-                                </div>
-                                <div className="ml-5 w-0 flex-1">
-                                    <dl>
-                                        <dt className="text-sm font-medium text-muted-foreground truncate">{content.activeInventory}</dt>
-                                        <dd className="text-lg font-medium text-foreground">{activeProducts.length}</dd>
-                                    </dl>
-                                </div>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-8">
+                    {/* Active Inventory */}
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-6 shadow-[0_8px_0_0_rgba(0,0,0,0.2)] transition-transform hover:-translate-y-1 border-t border-white/20">
+                        <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
+                        <div className="relative flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.activeInventory}</p>
+                                <p className="mt-2 text-5xl font-black text-white">{activeProducts.length}</p>
+                            </div>
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
+                                <FaBox className="h-8 w-8 text-yellow-300 drop-shadow-lg" />
                             </div>
                         </div>
                     </div>
-                    <div className="bg-card overflow-hidden shadow rounded-lg border border-border">
-                        <div className="p-5">
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                    <FaEye className="h-6 w-6 text-blue-500" />
-                                </div>
-                                <div className="ml-5 w-0 flex-1">
-                                    <dl>
-                                        <dt className="text-sm font-medium text-muted-foreground truncate">{content.views}</dt>
-                                        <dd className="text-lg font-medium text-foreground">
-                                            {activeProducts.reduce((acc, curr) => acc + (curr.view_count || 0), 0)}
-                                        </dd>
-                                    </dl>
-                                </div>
+
+                    {/* Views */}
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-6 shadow-[0_8px_0_0_rgba(0,0,0,0.2)] transition-transform hover:-translate-y-1 border-t border-white/20">
+                        <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
+                        <div className="relative flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.views}</p>
+                                <p className="mt-2 text-5xl font-black text-white">
+                                    {activeProducts.reduce((acc, curr) => acc + (curr.view_count || 0), 0)}
+                                </p>
+                            </div>
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
+                                <FaEye className="h-8 w-8 text-cyan-300 drop-shadow-lg" />
                             </div>
                         </div>
                     </div>
-                    <div className="bg-card overflow-hidden shadow rounded-lg border border-border">
-                        <div className="p-5">
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                    <FaHeart className="h-6 w-6 text-pink-500" />
-                                </div>
-                                <div className="ml-5 w-0 flex-1">
-                                    <dl>
-                                        <dt className="text-sm font-medium text-muted-foreground truncate">{content.wishlisted}</dt>
-                                        <dd className="text-lg font-medium text-foreground">
-                                            {activeProducts.reduce((acc, curr) => acc + (curr.wishlist_count || 0), 0)}
-                                        </dd>
-                                    </dl>
-                                </div>
+
+                    {/* Wishlisted */}
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-6 shadow-[0_8px_0_0_rgba(0,0,0,0.2)] transition-transform hover:-translate-y-1 border-t border-white/20">
+                        <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
+                        <div className="relative flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.wishlisted}</p>
+                                <p className="mt-2 text-5xl font-black text-white">
+                                    {activeProducts.reduce((acc, curr) => acc + (curr.wishlist_count || 0), 0)}
+                                </p>
+                            </div>
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
+                                <FaHeart className="h-8 w-8 text-pink-400 drop-shadow-lg" />
                             </div>
                         </div>
                     </div>
@@ -1069,10 +1102,10 @@ export default function Dashboard() {
                         {activeProducts.length === 0 && (
                             <button
                                 onClick={() => router.push('/supplier/dashboard/products/create')}
-                                className="relative block w-full border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors group bg-muted/20"
+                                className="relative block w-full border-2 border-dashed border-orange-300 rounded-lg p-12 text-center hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors group bg-orange-50/50 animate-pulse"
                             >
-                                <FaPlus className="mx-auto h-12 w-12 text-muted-foreground group-hover:text-primary transition-colors" />
-                                <span className="mt-2 block text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                                <FaPlus className="mx-auto h-12 w-12 text-orange-400 group-hover:text-orange-600 transition-colors" />
+                                <span className="mt-2 block text-sm font-bold text-orange-600 group-hover:text-orange-800 transition-colors">
                                     {content.createFirstProduct}
                                 </span>
                             </button>
@@ -1191,10 +1224,10 @@ export default function Dashboard() {
                 {/* Floating Action Button */}
                 <button
                     onClick={() => router.push('/supplier/dashboard/products/create')}
-                    className="fixed bottom-8 right-8 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg hover:bg-primary/90 transition-all duration-200 flex items-center space-x-2 z-50 animate-bounce-subtle"
+                    className="fixed bottom-8 right-8 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center space-x-3 z-50 animate-pulse"
                 >
-                    <FaPlus className="h-4 w-4" />
-                    <span className="font-medium">Create Your Winning Product Now</span>
+                    <FaPlus className="h-5 w-5" />
+                    <span className="text-lg font-bold">{content.createWinningProduct}</span>
                 </button>
 
                 {/* Archive Confirmation Modal */}
