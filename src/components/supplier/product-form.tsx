@@ -53,18 +53,10 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     setCompanyName(data.company_name)
                     setSupplierType(data.supplier_type)
 
-                    // Map supplier type to product category (Case-insensitive)
-                    let category = ''
-                    const type = data.supplier_type?.toLowerCase() || ''
-
-                    if (type.includes('hotel')) category = 'Accommodation'
-                    else if (type.includes('transport') || type.includes('airline')) category = 'Transportation'
-                    else if (type.includes('tour') || type.includes('land operator')) category = 'Tours & Activities'
-                    else category = 'Tours & Activities' // Default
-
+                    // Use supplier_type directly as product_category
                     setFormData(prev => ({
                         ...prev,
-                        product_category: category
+                        product_category: data.supplier_type
                     }))
                 }
             }
@@ -615,8 +607,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         setPreviews(newPreviews)
     }
 
-    const isHotel = formData.product_category === 'Accommodation' || formData.product_category === 'Hotel'
-    const isTransport = formData.product_category === 'Transportation'
+    const isHotel = formData.product_category?.toLowerCase().includes('hotel')
+    const isTransport = formData.product_category?.toLowerCase().includes('transport') || formData.product_category?.toLowerCase().includes('airline')
 
     const getFlagUrl = (countryCode: string) => {
         if (!countryCode) return ''
