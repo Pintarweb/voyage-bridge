@@ -230,9 +230,12 @@ export default function Home() {
             </Link>
             <Link
               href="/auth/supplier"
-              className="group px-6 py-2 md:px-8 md:py-3 bg-white text-slate-800 font-bold text-sm md:text-base rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 border border-slate-200 w-full sm:w-auto"
+              className="group relative px-6 py-2 md:px-8 md:py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-sm md:text-base rounded-xl shadow-xl shadow-orange-500/30 hover:shadow-2xl hover:shadow-orange-500/50 transition-all transform hover:-translate-y-1 overflow-hidden w-full sm:w-auto"
             >
-              {content.ctaSupplier}
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {content.ctaSupplier} <FaBuilding />
+              </span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </Link>
           </div>
         </div>
@@ -241,51 +244,54 @@ export default function Home() {
       {/* Stats */}
       <section className="relative z-10 -mt-8 md:-mt-12 px-4 pb-12">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Supplier Stats */}
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/50 hover:shadow-2xl transition-all hover:-translate-y-1 group">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+          {/* Supplier Stats - Darkest Amber */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-amber-700 to-amber-600 rounded-2xl p-8 shadow-xl border border-white/20 hover:shadow-2xl transition-all hover:-translate-y-1 group">
+            <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="relative flex flex-col items-center text-center z-10">
+              <div className="w-16 h-16 bg-white text-blue-600 rounded-2xl shadow-lg flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
                 <FaBuilding />
               </div>
-              <div className="text-4xl md:text-5xl font-extrabold text-blue-600 mb-2">
+              <div className="text-5xl md:text-6xl font-black text-blue-900 mb-2 drop-shadow-sm tracking-tight">
                 {supplierCount || 0}+
               </div>
-              <div className="text-slate-600 font-bold uppercase tracking-wider text-xs md:text-sm">
+              <div className="text-blue-800 text-lg font-bold uppercase tracking-widest mb-2 drop-shadow-sm">
                 {content.statsSuppliers}
               </div>
-              <div className="mt-2 text-xs text-slate-400">{content.statsSuppliersDesc}</div>
+              <div className="text-blue-900/80 text-base font-medium">{content.statsSuppliersDesc}</div>
             </div>
           </div>
 
-          {/* Product Stats */}
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/50 hover:shadow-2xl transition-all hover:-translate-y-1 group">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+          {/* Product Stats - Medium Amber */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-amber-600 to-amber-500 rounded-2xl p-8 shadow-xl border border-white/20 hover:shadow-2xl transition-all hover:-translate-y-1 group">
+            <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="relative flex flex-col items-center text-center z-10">
+              <div className="w-16 h-16 bg-white text-rose-600 rounded-2xl shadow-lg flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
                 <FaMapMarkedAlt />
               </div>
-              <div className="text-4xl md:text-5xl font-extrabold text-rose-600 mb-2">
+              <div className="text-5xl md:text-6xl font-black text-rose-900 mb-2 drop-shadow-sm tracking-tight">
                 {productCount || 0}+
               </div>
-              <div className="text-slate-600 font-bold uppercase tracking-wider text-xs md:text-sm">
+              <div className="text-rose-800 text-lg font-bold uppercase tracking-widest mb-2 drop-shadow-sm">
                 {content.statsProducts}
               </div>
-              <div className="mt-2 text-xs text-slate-400">{content.statsProductsDesc}</div>
+              <div className="text-rose-900/80 text-base font-medium">{content.statsProductsDesc}</div>
             </div>
           </div>
 
-          {/* Agent Stats */}
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/50 hover:shadow-2xl transition-all hover:-translate-y-1 group">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-12 h-12 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+          {/* Agent Stats - Lightest Amber */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-amber-500 to-amber-400 rounded-2xl p-8 shadow-xl border border-white/20 hover:shadow-2xl transition-all hover:-translate-y-1 group">
+            <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="relative flex flex-col items-center text-center z-10">
+              <div className="w-16 h-16 bg-white text-violet-600 rounded-2xl shadow-lg flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
                 <FaHandshake />
               </div>
-              <div className="text-4xl md:text-5xl font-extrabold text-violet-600 mb-2">
+              <div className="text-5xl md:text-6xl font-black text-violet-900 mb-2 drop-shadow-sm tracking-tight">
                 {agentCount || 0}+
               </div>
-              <div className="text-slate-600 font-bold uppercase tracking-wider text-xs md:text-sm">
+              <div className="text-violet-800 text-lg font-bold uppercase tracking-widest mb-2 drop-shadow-sm">
                 {content.statsAgents}
               </div>
-              <div className="mt-2 text-xs text-slate-400">{content.statsAgentsDesc}</div>
+              <div className="text-violet-900/80 text-base font-medium">{content.statsAgentsDesc}</div>
             </div>
           </div>
         </div>

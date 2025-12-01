@@ -462,14 +462,14 @@ export default function Step4Review() {
                 <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200"
+                    className="rounded-lg bg-gradient-to-r from-blue-900 to-blue-500 hover:from-blue-800 hover:to-blue-400 px-6 py-2 text-sm font-bold text-white focus:outline-none transition-all shadow-md border-none"
                 >
                     {content.previous}
                 </button>
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="btn-primary btn-md font-bold shadow-lg"
+                    className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
                 >
                     {loading ? content.submitting : content.submit}
                 </button>

@@ -590,7 +590,7 @@ export default function Step1Identity() {
             <div className="flex justify-end">
                 <button
                     type="submit"
-                    className="btn-primary btn-md"
+                    className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
                 >
                     {content.next}
                 </button>

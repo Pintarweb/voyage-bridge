@@ -318,13 +318,13 @@ export default function Step2Legal() {
                 <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="rounded-md border-2 border-slate-600 bg-slate-800 px-6 py-2 text-sm font-bold text-white hover:bg-slate-700 hover:border-slate-500 focus:outline-none transition-all shadow-md"
+                    className="rounded-lg bg-gradient-to-r from-blue-900 to-blue-500 hover:from-blue-800 hover:to-blue-400 px-6 py-2 text-sm font-bold text-white focus:outline-none transition-all shadow-md border-none"
                 >
                     {content.previous}
                 </button>
                 <button
                     type="submit"
-                    className="btn-primary btn-md"
+                    className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
                 >
                     {content.next}
                 </button>
