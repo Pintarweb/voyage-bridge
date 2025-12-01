@@ -11,20 +11,16 @@ export async function GET() {
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const { count, error: countError } = await supabase
-        .from('products')
-        .select('*', { count: 'exact', head: true })
-
-    const { data: products, error: productsError } = await supabase
-        .from('products')
-        .select('*')
-        .limit(5)
+    // Query information_schema to get column names
+    const { data: columns, error: columnsError } = await supabase
+        .from('information_schema.columns')
+        .select('column_name')
+        .eq('table_name', 'products')
+        .eq('table_schema', 'public')
 
     return NextResponse.json({
-        count,
-        countError,
-        products,
-        productsError,
+        columns,
+        columnsError,
         env: {
             url: !!supabaseUrl,
             key: !!supabaseKey,

@@ -143,7 +143,14 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderHotelName: 'e.g. Grand Hyatt Kuala Lumpur',
             placeholderAddress: 'Full street address',
             remove: 'Remove',
-            download: 'Download'
+            download: 'Download',
+            // Supplier Types
+            hotel: 'Hotel',
+            airline: 'Airline',
+            transportation: 'Transportation',
+            tourOperator: 'Tour Operator',
+            travelAgent: 'Travel Agent',
+            other: 'Other'
         },
         'zh-CN': {
             hotelDetails: '酒店详情',
@@ -170,7 +177,14 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderHotelName: '例如：吉隆坡君悦酒店',
             placeholderAddress: '完整街道地址',
             remove: '移除',
-            download: '下载'
+            download: '下载',
+            // Supplier Types
+            hotel: '酒店',
+            airline: '航空公司',
+            transportation: '交通运输',
+            tourOperator: '旅游运营商',
+            travelAgent: '旅行社',
+            other: '其他'
         },
         'ms-MY': {
             hotelDetails: 'Butiran Hotel',
@@ -197,7 +211,14 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderHotelName: 'cth. Grand Hyatt Kuala Lumpur',
             placeholderAddress: 'Alamat penuh',
             remove: 'Buang',
-            download: 'Muat Turun'
+            download: 'Muat Turun',
+            // Supplier Types
+            hotel: 'Hotel',
+            airline: 'Syarikat Penerbangan',
+            transportation: 'Pengangkutan',
+            tourOperator: 'Pengendali Pelancongan',
+            travelAgent: 'Ejen Pelancongan',
+            other: 'Lain-lain'
         },
         'es-ES': {
             hotelDetails: 'Detalles del Hotel',
@@ -224,11 +245,299 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderHotelName: 'ej. Grand Hyatt Kuala Lumpur',
             placeholderAddress: 'Dirección completa',
             remove: 'Eliminar',
-            download: 'Descargar'
+            download: 'Descargar',
+            // Supplier Types
+            hotel: 'Hotel',
+            airline: 'Aerolínea',
+            transportation: 'Transporte',
+            tourOperator: 'Operador Turístico',
+            travelAgent: 'Agencia de Viajes',
+            other: 'Otro'
+        },
+        'fr-FR': {
+            hotelDetails: 'Détails de l\'Hôtel',
+            hotelName: 'Nom de l\'Hôtel',
+            hotelAddress: 'Adresse',
+            hotelStars: 'Classement par Étoiles',
+            productDescription: 'Description du Produit',
+            descriptionPlaceholder: 'Décrivez votre produit...',
+            media: 'Médias',
+            dragDrop: 'Glissez-déposez des images ici, ou cliquez pour sélectionner',
+            maxImages: '(Max 5 images, 5 Mo chacune)',
+            createProduct: 'Créer un Produit',
+            updateProduct: 'Mettre à Jour le Produit',
+            creating: 'Création...',
+            errorMissingFields: 'Veuillez remplir tous les champs obligatoires et télécharger au moins une image.',
+            errorUpload: 'Erreur lors du téléchargement des images',
+            errorCreate: 'Erreur lors de la création du produit',
+            yourCompany: 'Votre Entreprise',
+            category: 'Catégorie',
+            location: 'Emplacement',
+            city: 'Ville',
+            uploadImage: 'Télécharger une Image',
+            createWinningProduct: 'Créez Votre Produit Gagnant Maintenant',
+            placeholderHotelName: 'ex. Grand Hyatt Kuala Lumpur',
+            placeholderAddress: 'Adresse complète',
+            remove: 'Supprimer',
+            download: 'Télécharger',
+            // Supplier Types
+            hotel: 'Hôtel',
+            airline: 'Compagnie Aérienne',
+            transportation: 'Transport',
+            tourOperator: 'Tour Opérateur',
+            travelAgent: 'Agence de Voyage',
+            other: 'Autre'
+        },
+        'de-DE': {
+            hotelDetails: 'Hoteldetails',
+            hotelName: 'Hotelname',
+            hotelAddress: 'Adresse',
+            hotelStars: 'Sternebewertung',
+            productDescription: 'Produktbeschreibung',
+            descriptionPlaceholder: 'Beschreiben Sie Ihr Produkt...',
+            media: 'Medien',
+            dragDrop: 'Bilder hierher ziehen oder klicken zum Auswählen',
+            maxImages: '(Max. 5 Bilder, je 5 MB)',
+            createProduct: 'Produkt Erstellen',
+            updateProduct: 'Produkt Aktualisieren',
+            creating: 'Erstellen...',
+            errorMissingFields: 'Bitte füllen Sie alle Pflichtfelder aus und laden Sie mindestens ein Bild hoch.',
+            errorUpload: 'Fehler beim Hochladen der Bilder',
+            errorCreate: 'Fehler beim Erstellen des Produkts',
+            yourCompany: 'Ihr Unternehmen',
+            category: 'Kategorie',
+            location: 'Standort',
+            city: 'Stadt',
+            uploadImage: 'Bild Hochladen',
+            createWinningProduct: 'Erstellen Sie Jetzt Ihr Gewinnerprodukt',
+            placeholderHotelName: 'z.B. Grand Hyatt Kuala Lumpur',
+            placeholderAddress: 'Vollständige Adresse',
+            remove: 'Entfernen',
+            download: 'Herunterladen',
+            // Supplier Types
+            hotel: 'Hotel',
+            airline: 'Fluggesellschaft',
+            transportation: 'Transport',
+            tourOperator: 'Reiseveranstalter',
+            travelAgent: 'Reisebüro',
+            other: 'Andere'
+        },
+        'ja-JP': {
+            hotelDetails: 'ホテルの詳細',
+            hotelName: 'ホテル名',
+            hotelAddress: '住所',
+            hotelStars: '星評価',
+            productDescription: '製品説明',
+            descriptionPlaceholder: '製品について説明してください...',
+            media: 'メディア',
+            dragDrop: '画像をここにドラッグ＆ドロップ、またはクリックして選択',
+            maxImages: '（最大5枚、各5MB）',
+            createProduct: '製品を作成',
+            updateProduct: '製品を更新',
+            creating: '作成中...',
+            errorMissingFields: 'すべての必須フィールドに入力し、少なくとも1つの画像をアップロードしてください。',
+            errorUpload: '画像のアップロードエラー',
+            errorCreate: '製品作成エラー',
+            yourCompany: 'あなたの会社',
+            category: 'カテゴリー',
+            location: '場所',
+            city: '都市',
+            uploadImage: '画像をアップロード',
+            createWinningProduct: '今すぐ勝てる製品を作成',
+            placeholderHotelName: '例：グランドハイアットクアラルンプール',
+            placeholderAddress: '完全な住所',
+            remove: '削除',
+            download: 'ダウンロード',
+            // Supplier Types
+            hotel: 'ホテル',
+            airline: '航空会社',
+            transportation: '交通機関',
+            tourOperator: 'ツアーオペレーター',
+            travelAgent: '旅行代理店',
+            other: 'その他'
+        },
+        'ko-KR': {
+            hotelDetails: '호텔 세부 정보',
+            hotelName: '호텔 이름',
+            hotelAddress: '주소',
+            hotelStars: '별점',
+            productDescription: '제품 설명',
+            descriptionPlaceholder: '제품을 설명하세요...',
+            media: '미디어',
+            dragDrop: '이미지를 여기로 드래그 앤 드롭하거나 클릭하여 선택하세요',
+            maxImages: '(최대 5장, 각 5MB)',
+            createProduct: '제품 생성',
+            updateProduct: '제품 업데이트',
+            creating: '생성 중...',
+            errorMissingFields: '모든 필수 입력란을 작성하고 최소 하나의 이미지를 업로드하세요.',
+            errorUpload: '이미지 업로드 오류',
+            errorCreate: '제품 생성 오류',
+            yourCompany: '귀하의 회사',
+            category: '카테고리',
+            location: '위치',
+            city: '도시',
+            uploadImage: '이미지 업로드',
+            createWinningProduct: '지금 성공적인 제품을 만드세요',
+            placeholderHotelName: '예: 그랜드 하얏트 쿠알라룸푸르',
+            placeholderAddress: '전체 주소',
+            remove: '제거',
+            download: '다운로드',
+            // Supplier Types
+            hotel: '호텔',
+            airline: '항공사',
+            transportation: '교통',
+            tourOperator: '투어 운영자',
+            travelAgent: '여행사',
+            other: '기타'
+        },
+        'ar-SA': {
+            hotelDetails: 'تفاصيل الفندق',
+            hotelName: 'اسم الفندق',
+            hotelAddress: 'العنوان',
+            hotelStars: 'تصنيف النجوم',
+            productDescription: 'وصف المنتج',
+            descriptionPlaceholder: 'صف منتجك...',
+            media: 'الوسائط',
+            dragDrop: 'اسحب وأفلت الصور هنا، أو انقر للتحديد',
+            maxImages: '(الحد الأقصى 5 صور، 5 ميجابايت لكل منها)',
+            createProduct: 'إنشاء منتج',
+            updateProduct: 'تحديث المنتج',
+            creating: 'جاري الإنشاء...',
+            errorMissingFields: 'يرجى ملء جميع الحقول المطلوبة وتحميل صورة واحدة على الأقل.',
+            errorUpload: 'خطأ في تحميل الصور',
+            errorCreate: 'خطأ في إنشاء المنتج',
+            yourCompany: 'شركتك',
+            category: 'الفئة',
+            location: 'الموقع',
+            city: 'المدينة',
+            uploadImage: 'تحميل صورة',
+            createWinningProduct: 'أنشئ منتجك الرابح الآن',
+            placeholderHotelName: 'مثال: جراند حياة كوالالمبور',
+            placeholderAddress: 'العنوان الكامل',
+            remove: 'إزالة',
+            download: 'تحميل',
+            // Supplier Types
+            hotel: 'فندق',
+            airline: 'شركة طيران',
+            transportation: 'نقل',
+            tourOperator: 'منظم رحلات',
+            travelAgent: 'وكيل سفر',
+            other: 'آخر'
+        },
+        'th-TH': {
+            hotelDetails: 'รายละเอียดโรงแรม',
+            hotelName: 'ชื่อโรงแรม',
+            hotelAddress: 'ที่อยู่',
+            hotelStars: 'ระดับดาว',
+            productDescription: 'รายละเอียดสินค้า',
+            descriptionPlaceholder: 'อธิบายสินค้าของคุณ...',
+            media: 'สื่อ',
+            dragDrop: 'ลากและวางรูปภาพที่นี่ หรือคลิกเพื่อเลือก',
+            maxImages: '(สูงสุด 5 รูป, รูปละ 5MB)',
+            createProduct: 'สร้างสินค้า',
+            updateProduct: 'อัปเดตสินค้า',
+            creating: 'กำลังสร้าง...',
+            errorMissingFields: 'กรุณากรอกข้อมูลที่จำเป็นทั้งหมดและอัปโหลดรูปภาพอย่างน้อยหนึ่งรูป',
+            errorUpload: 'ข้อผิดพลาดในการอัปโหลดรูปภาพ',
+            errorCreate: 'ข้อผิดพลาดในการสร้างสินค้า',
+            yourCompany: 'บริษัทของคุณ',
+            category: 'หมวดหมู่',
+            location: 'สถานที่ตั้ง',
+            city: 'เมือง',
+            uploadImage: 'อัปโหลดรูปภาพ',
+            createWinningProduct: 'สร้างสินค้าที่ชนะใจลูกค้าของคุณตอนนี้',
+            placeholderHotelName: 'เช่น แกรนด์ ไฮแอท กัวลาลัมเปอร์',
+            placeholderAddress: 'ที่อยู่เต็ม',
+            remove: 'ลบ',
+            download: 'ดาวน์โหลด',
+            // Supplier Types
+            hotel: 'โรงแรม',
+            airline: 'สายการบิน',
+            transportation: 'การขนส่ง',
+            tourOperator: 'ผู้ประกอบการท่องเที่ยว',
+            travelAgent: 'ตัวแทนท่องเที่ยว',
+            other: 'อื่นๆ'
+        },
+        'vi-VN': {
+            hotelDetails: 'Chi tiết Khách sạn',
+            hotelName: 'Tên Khách sạn',
+            hotelAddress: 'Địa chỉ',
+            hotelStars: 'Xếp hạng Sao',
+            productDescription: 'Mô tả Sản phẩm',
+            descriptionPlaceholder: 'Mô tả sản phẩm của bạn...',
+            media: 'Phương tiện',
+            dragDrop: 'Kéo và thả hình ảnh vào đây, hoặc nhấp để chọn',
+            maxImages: '(Tối đa 5 hình ảnh, mỗi hình 5MB)',
+            createProduct: 'Tạo Sản phẩm',
+            updateProduct: 'Cập nhật Sản phẩm',
+            creating: 'Đang tạo...',
+            errorMissingFields: 'Vui lòng điền vào tất cả các trường bắt buộc và tải lên ít nhất một hình ảnh.',
+            errorUpload: 'Lỗi tải lên hình ảnh',
+            errorCreate: 'Lỗi tạo sản phẩm',
+            yourCompany: 'Công ty của Bạn',
+            category: 'Danh mục',
+            location: 'Vị trí',
+            city: 'Thành phố',
+            uploadImage: 'Tải lên Hình ảnh',
+            createWinningProduct: 'Tạo Sản phẩm Chiến thắng của Bạn Ngay',
+            placeholderHotelName: 'vd: Grand Hyatt Kuala Lumpur',
+            placeholderAddress: 'Địa chỉ đầy đủ',
+            remove: 'Xóa',
+            download: 'Tải xuống',
+            // Supplier Types
+            hotel: 'Khách sạn',
+            airline: 'Hãng hàng không',
+            transportation: 'Vận tải',
+            tourOperator: 'Nhà điều hành tour',
+            travelAgent: 'Đại lý du lịch',
+            other: 'Khác'
+        },
+        'id-ID': {
+            hotelDetails: 'Detail Hotel',
+            hotelName: 'Nama Hotel',
+            hotelAddress: 'Alamat',
+            hotelStars: 'Peringkat Bintang',
+            productDescription: 'Deskripsi Produk',
+            descriptionPlaceholder: 'Jelaskan produk Anda...',
+            media: 'Media',
+            dragDrop: 'Seret & lepas gambar di sini, atau klik untuk memilih',
+            maxImages: '(Maks 5 gambar, masing-masing 5MB)',
+            createProduct: 'Buat Produk',
+            updateProduct: 'Perbarui Produk',
+            creating: 'Sedang membuat...',
+            errorMissingFields: 'Harap isi semua bidang yang wajib diisi dan unggah setidaknya satu gambar.',
+            errorUpload: 'Kesalahan mengunggah gambar',
+            errorCreate: 'Kesalahan membuat produk',
+            yourCompany: 'Perusahaan Anda',
+            category: 'Kategori',
+            tourOperator: 'Operator Tur',
+            travelAgent: 'Agen Perjalanan',
+            other: 'Lainnya'
         }
     }
 
     const content = t[language as keyof typeof t] || t['en-US']
+
+    const getCountryName = (code: string, locale: string) => {
+        if (!code) return ''
+        try {
+            const regionNames = new Intl.DisplayNames([locale], { type: 'region' });
+            return regionNames.of(code);
+        } catch (e) {
+            return code;
+        }
+    }
+
+    const getTranslatedSupplierType = (type: string) => {
+        if (!type) return content.category
+        const normalizedType = type.toLowerCase()
+        if (normalizedType.includes('hotel')) return content.hotel
+        if (normalizedType.includes('airline')) return content.airline
+        if (normalizedType.includes('transport')) return content.transportation
+        if (normalizedType.includes('tour')) return content.tourOperator
+        if (normalizedType.includes('agent')) return content.travelAgent
+        return type // Fallback to original if no match
+    }
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         if (files.length + acceptedFiles.length > 5) {
@@ -288,8 +597,12 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         }
 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) throw new Error('Not authenticated')
+            console.log('Starting submission...')
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+            if (authError || !user) {
+                console.error('Auth Error:', authError)
+                throw new Error('Not authenticated')
+            }
 
             // Upload images
             const imageUrls: string[] = []
@@ -298,11 +611,15 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                 const fileName = `${Math.random()}.${fileExt}`
                 const filePath = `${user.id}/${fileName}`
 
+                console.log('Uploading file:', filePath)
                 const { error: uploadError } = await supabase.storage
                     .from('product-images')
                     .upload(filePath, file)
 
-                if (uploadError) throw uploadError
+                if (uploadError) {
+                    console.error('Upload Error:', uploadError)
+                    throw new Error(`Upload failed: ${uploadError.message}`)
+                }
 
                 const { data: { publicUrl } } = supabase.storage
                     .from('product-images')
@@ -329,6 +646,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                 address: isHotel ? formData.hotel_address : null
             }
 
+            console.log('Submitting product data:', productData)
+
             // Create or Update product record
             if (mode === 'edit' && productId) {
                 // UPDATE existing product
@@ -337,7 +656,10 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     .update(productData)
                     .eq('id', productId)
 
-                if (updateError) throw updateError
+                if (updateError) {
+                    console.error('Update Error:', updateError)
+                    throw new Error(`Update failed: ${updateError.message}`)
+                }
             } else {
                 // INSERT new product
                 const { error: insertError } = await supabase
@@ -347,12 +669,21 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                         supplier_id: user.id
                     })
 
-                if (insertError) throw insertError
+                if (insertError) {
+                    console.error('Insert Error:', insertError)
+                    throw new Error(`Insert failed: ${insertError.message}`)
+                }
             }
 
+            console.log('Submission successful')
             onSuccess()
-        } catch (error: unknown) {
-            console.error('Error submitting product:', error)
+        } catch (error: any) {
+            console.error('Error submitting product (Full Details):', error)
+            // Try to log specific Supabase error properties if they exist
+            if (error?.details) console.error('Error Details:', error.details)
+            if (error?.hint) console.error('Error Hint:', error.hint)
+            if (error?.message) console.error('Error Message:', error.message)
+
             const errorMessage = error instanceof Error ? error.message : 'Unknown error'
             alert(content.errorCreate + (errorMessage ? `: ${errorMessage}` : ''))
         } finally {
@@ -376,7 +707,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                         <div className="flex flex-wrap items-center gap-6 mt-4 text-white">
                             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
                                 <FaTag className="text-cyan-300" />
-                                <span className="font-medium">{supplierType || content.category}</span>
+                                <span className="font-medium">{getTranslatedSupplierType(supplierType)}</span>
                             </div>
                             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
                                 {supplierCountry && (
@@ -389,7 +720,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                 <FaMapMarkerAlt className="text-pink-300" />
                                 <span>
                                     {formData.city ? `${formData.city}, ` : ''}
-                                    {supplierCountry || content.location}
+                                    {getCountryName(supplierCountry, language) || content.location}
                                 </span>
                             </div>
                         </div>
@@ -523,17 +854,6 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                 />
                                 <div className="absolute top-2 right-2 flex gap-2 transition-all">
-                                    <a
-                                        href={preview}
-                                        download={`image-${index + 1}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 bg-blue-500/80 hover:bg-blue-500 text-white rounded-full backdrop-blur-sm"
-                                        title={content.download}
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <FaDownload size={14} />
-                                    </a>
                                     <button
                                         type="button"
                                         onClick={() => removeFile(index)}
