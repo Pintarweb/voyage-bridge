@@ -64,8 +64,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
 
                     setFormData(prev => ({
                         ...prev,
-                        product_category: category,
-                        city: data.city // Auto-populate city
+                        product_category: category
                     }))
                 }
             }
@@ -144,6 +143,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'Full street address',
             remove: 'Remove',
             download: 'Download',
+            productCity: 'City (Product Location)',
+            productAddress: 'Address (Product Location)',
             // Supplier Types
             hotel: 'Hotel',
             airline: 'Airline',
@@ -178,6 +179,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: '完整街道地址',
             remove: '移除',
             download: '下载',
+            productCity: '城市 (产品位置)',
+            productAddress: '地址 (产品位置)',
             // Supplier Types
             hotel: '酒店',
             airline: '航空公司',
@@ -212,6 +215,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'Alamat penuh',
             remove: 'Buang',
             download: 'Muat Turun',
+            productCity: 'Bandar (Lokasi Produk)',
+            productAddress: 'Alamat (Lokasi Produk)',
             // Supplier Types
             hotel: 'Hotel',
             airline: 'Syarikat Penerbangan',
@@ -246,6 +251,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'Dirección completa',
             remove: 'Eliminar',
             download: 'Descargar',
+            productCity: 'Ciudad (Ubicación del Producto)',
+            productAddress: 'Dirección (Ubicación del Producto)',
             // Supplier Types
             hotel: 'Hotel',
             airline: 'Aerolínea',
@@ -280,6 +287,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'Adresse complète',
             remove: 'Supprimer',
             download: 'Télécharger',
+            productCity: 'Ville (Emplacement du Produit)',
+            productAddress: 'Adresse (Emplacement du Produit)',
             // Supplier Types
             hotel: 'Hôtel',
             airline: 'Compagnie Aérienne',
@@ -314,6 +323,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'Vollständige Adresse',
             remove: 'Entfernen',
             download: 'Herunterladen',
+            productCity: 'Stadt (Produktstandort)',
+            productAddress: 'Adresse (Produktstandort)',
             // Supplier Types
             hotel: 'Hotel',
             airline: 'Fluggesellschaft',
@@ -348,6 +359,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: '完全な住所',
             remove: '削除',
             download: 'ダウンロード',
+            productCity: '都市 (製品の場所)',
+            productAddress: '住所 (製品の場所)',
             // Supplier Types
             hotel: 'ホテル',
             airline: '航空会社',
@@ -382,6 +395,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: '전체 주소',
             remove: '제거',
             download: '다운로드',
+            productCity: '도시 (제품 위치)',
+            productAddress: '주소 (제품 위치)',
             // Supplier Types
             hotel: '호텔',
             airline: '항공사',
@@ -416,6 +431,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'العنوان الكامل',
             remove: 'إزالة',
             download: 'تحميل',
+            productCity: 'المدينة (موقع المنتج)',
+            productAddress: 'العنوان (موقع المنتج)',
             // Supplier Types
             hotel: 'فندق',
             airline: 'شركة طيران',
@@ -450,6 +467,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'ที่อยู่เต็ม',
             remove: 'ลบ',
             download: 'ดาวน์โหลด',
+            productCity: 'เมือง (ที่ตั้งสินค้า)',
+            productAddress: 'ที่อยู่ (ที่ตั้งสินค้า)',
             // Supplier Types
             hotel: 'โรงแรม',
             airline: 'สายการบิน',
@@ -484,6 +503,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             placeholderAddress: 'Địa chỉ đầy đủ',
             remove: 'Xóa',
             download: 'Tải xuống',
+            productCity: 'Thành phố (Vị trí Sản phẩm)',
+            productAddress: 'Địa chỉ (Vị trí Sản phẩm)',
             // Supplier Types
             hotel: 'Khách sạn',
             airline: 'Hãng hàng không',
@@ -510,6 +531,20 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             errorCreate: 'Kesalahan membuat produk',
             yourCompany: 'Perusahaan Anda',
             category: 'Kategori',
+            location: 'Lokasi',
+            city: 'Kota',
+            uploadImage: 'Unggah Gambar',
+            createWinningProduct: 'Buat Produk Pemenang Anda Sekarang',
+            placeholderHotelName: 'cth. Grand Hyatt Kuala Lumpur',
+            placeholderAddress: 'Alamat lengkap',
+            remove: 'Hapus',
+            download: 'Unduh',
+            productCity: 'Kota (Lokasi Produk)',
+            productAddress: 'Alamat (Lokasi Produk)',
+            // Supplier Types
+            hotel: 'Hotel',
+            airline: 'Maskapai Penerbangan',
+            transportation: 'Transportasi',
             tourOperator: 'Operator Tur',
             travelAgent: 'Agen Perjalanan',
             other: 'Lainnya'
@@ -561,12 +596,21 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
 
 
     const removeFile = (index: number) => {
-        const newFiles = [...files]
-        newFiles.splice(index, 1)
-        setFiles(newFiles)
+        const existingCount = previews.length - files.length
+
+        if (index >= existingCount) {
+            // It's a new file
+            const fileIndex = index - existingCount
+            const newFiles = [...files]
+            newFiles.splice(fileIndex, 1)
+            setFiles(newFiles)
+        }
 
         const newPreviews = [...previews]
-        URL.revokeObjectURL(newPreviews[index])
+        // Revoke if it's a blob URL
+        if (newPreviews[index].startsWith('blob:')) {
+            URL.revokeObjectURL(newPreviews[index])
+        }
         newPreviews.splice(index, 1)
         setPreviews(newPreviews)
     }
@@ -584,7 +628,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         setLoading(true)
 
         // Basic validation
-        if (!formData.product_category || !formData.city || files.length === 0) {
+        if (!formData.product_category || !formData.city || previews.length === 0) {
             alert(content.errorMissingFields)
             setLoading(false)
             return
@@ -635,7 +679,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             }
 
             const productData = {
-                product_name: formData.product_name || `${formData.product_category} in ${supplierCity}`,
+                product_name: formData.product_name || `${formData.product_category} in ${formData.city}`,
                 product_description: finalDescription,
                 product_category: formData.product_category,
                 photo_urls: imageUrls.length > 0 ? imageUrls : previews,
@@ -692,9 +736,9 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8" >
             {/* Context Header - Vibrant Gradient */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
+            < div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10" >
                 <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
                 <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <div>
@@ -719,42 +763,52 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                 )}
                                 <FaMapMarkerAlt className="text-pink-300" />
                                 <span>
-                                    {formData.city ? `${formData.city}, ` : ''}
+                                    {supplierCity ? `${supplierCity}, ` : ''}
                                     {getCountryName(supplierCountry, language) || content.location}
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
 
             {/* Hotel Specific Fields */}
-            {isHotel && (
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10 space-y-6">
-                    <div className="absolute left-0 bottom-0 h-64 w-64 translate-x-[-50%] translate-y-[50%] rounded-full bg-white/5 blur-3xl"></div>
-                    <div className="relative">
-                        <h3 className="text-xl font-bold text-white flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
-                                <FaHotel className="text-yellow-300" />
-                            </div>
-                            {content.hotelDetails}
-                        </h3>
+            {
+                isHotel && (
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10 space-y-6">
+                        <div className="absolute left-0 bottom-0 h-64 w-64 translate-x-[-50%] translate-y-[50%] rounded-full bg-white/5 blur-3xl"></div>
+                        <div className="relative">
+                            <h3 className="text-xl font-bold text-white flex items-center gap-3 mb-6">
+                                <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                                    <FaHotel className="text-yellow-300" />
+                                </div>
+                                {content.hotelDetails}
+                            </h3>
 
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium !text-white mb-2">{content.hotelName}</label>
-                                <input
-                                    type="text"
-                                    value={formData.product_name}
-                                    onChange={e => setFormData({ ...formData, product_name: e.target.value })}
-                                    className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
-                                    placeholder={content.placeholderHotelName}
-                                />
-                            </div>
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium !text-white mb-2">{content.hotelName}</label>
+                                    <input
+                                        type="text"
+                                        value={formData.product_name}
+                                        onChange={e => setFormData({ ...formData, product_name: e.target.value })}
+                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                    />
+                                </div>
 
-                            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                                <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium !text-white mb-2">{content.hotelAddress}</label>
+                                <div>
+                                    <label className="block text-sm font-medium !text-white mb-2">{content.productCity}</label>
+                                    <input
+                                        type="text"
+                                        value={formData.city}
+                                        onChange={e => setFormData({ ...formData, city: e.target.value })}
+                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                        placeholder={content.city}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium !text-white mb-2">{content.productAddress}</label>
                                     <input
                                         type="text"
                                         value={formData.hotel_address}
@@ -762,16 +816,9 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                         className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
                                         placeholder={content.placeholderAddress}
                                     />
+
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium !text-white mb-2">{content.city}</label>
-                                    <input
-                                        type="text"
-                                        value={formData.city}
-                                        onChange={e => setFormData({ ...formData, city: e.target.value })}
-                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
-                                    />
-                                </div>
+
                                 <div>
                                     <label className="block text-sm font-medium !text-white mb-2">{content.hotelStars}</label>
                                     <select
@@ -789,24 +836,26 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Product Description for Non-Hotel/Airline */}
-            {!isHotel && !isTransport && (
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
-                    <div className="relative">
-                        <label className="block text-lg font-bold text-white mb-4">{content.productDescription}</label>
-                        <textarea
-                            rows={6}
-                            value={formData.product_description}
-                            onChange={e => setFormData({ ...formData, product_description: e.target.value })}
-                            className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
-                            placeholder={content.descriptionPlaceholder}
-                        />
+            {
+                !isHotel && !isTransport && (
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
+                        <div className="relative">
+                            <label className="block text-lg font-bold text-white mb-4">{content.productDescription}</label>
+                            <textarea
+                                rows={6}
+                                value={formData.product_description}
+                                onChange={e => setFormData({ ...formData, product_description: e.target.value })}
+                                className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                placeholder={content.descriptionPlaceholder}
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Media Upload */}
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
@@ -878,6 +927,6 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     {loading ? content.creating : content.createWinningProduct}
                 </button>
             </div>
-        </form>
+        </form >
     )
 }
