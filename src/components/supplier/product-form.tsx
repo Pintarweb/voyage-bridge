@@ -34,6 +34,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         city: '',
         photo_url_1: '',
         description: '',
+        product_url: '',
         status: 'draft'
     })
 
@@ -43,7 +44,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             if (user) {
                 const { data } = await supabase
                     .from('suppliers')
-                    .select('country_code, city, company_name, supplier_type')
+                    .select('country_code, city, company_name, supplier_type, website_url')
                     .eq('id', user.id)
                     .single()
 
@@ -56,7 +57,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     // Use supplier_type directly as product_category
                     setFormData(prev => ({
                         ...prev,
-                        product_category: data.supplier_type
+                        product_category: data.supplier_type,
+                        product_url: data.website_url || ''
                     }))
                 }
             }
@@ -95,6 +97,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                         city: product.city || '',
                         photo_url_1: '',
                         description: '',
+                        product_url: product.product_url || '',
                         status: product.status || 'draft'
                     })
 
@@ -692,7 +695,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                 city: formData.city || supplierCity,
                 country_code: supplierCountry,
                 star_rating: isHotel ? parseInt(formData.hotel_stars) : null,
-                address: isHotel ? formData.hotel_address : null
+                address: isHotel ? formData.hotel_address : null,
+                product_url: formData.product_url
             }
 
             console.log('Submitting product data:', productData)
@@ -813,6 +817,17 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                 </div>
 
                                 <div>
+                                    <label className="block text-sm font-medium !text-white mb-2">Product URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.product_url}
+                                        onChange={e => setFormData({ ...formData, product_url: e.target.value })}
+                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                        placeholder="https://example.com/product"
+                                    />
+                                </div>
+
+                                <div>
                                     <label className="block text-sm font-medium !text-white mb-2">{content.productAddress}</label>
                                     <input
                                         type="text"
@@ -837,6 +852,17 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                                         <option value="2">⭐⭐ 2 Stars</option>
                                         <option value="1">⭐ 1 Star</option>
                                     </select>
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium !text-white mb-2">{content.productDescription}</label>
+                                    <textarea
+                                        rows={4}
+                                        value={formData.product_description}
+                                        onChange={e => setFormData({ ...formData, product_description: e.target.value })}
+                                        className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                        placeholder={content.descriptionPlaceholder}
+                                    />
                                 </div>
                             </div>
                         </div>
