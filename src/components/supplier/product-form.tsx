@@ -620,7 +620,14 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         setLoading(true)
 
         // Basic validation
-        if (!formData.product_category || !formData.city || previews.length === 0) {
+        if (!formData.product_category || previews.length === 0) {
+            alert(content.errorMissingFields)
+            setLoading(false)
+            return
+        }
+
+        // Hotels require city
+        if (isHotel && !formData.city) {
             alert(content.errorMissingFields)
             setLoading(false)
             return
@@ -670,13 +677,19 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                 finalDescription = `Address: ${formData.hotel_address}\nStars: ${formData.hotel_stars}\n\n${formData.product_description}`
             }
 
+
+            console.log('Debug - formData.product_name:', formData.product_name)
+            console.log('Debug - formData.product_category:', formData.product_category)
+            console.log('Debug - formData.city:', formData.city)
+            console.log('Debug - supplierCity:', supplierCity)
+
             const productData = {
-                product_name: formData.product_name || `${formData.product_category} in ${formData.city}`,
+                product_name: formData.product_name || `${formData.product_category} in ${formData.city || supplierCity}`,
                 product_description: finalDescription,
                 product_category: formData.product_category,
                 photo_urls: imageUrls.length > 0 ? imageUrls : previews,
                 status: 'active',
-                city: formData.city,
+                city: formData.city || supplierCity,
                 country_code: supplierCountry,
                 star_rating: isHotel ? parseInt(formData.hotel_stars) : null,
                 address: isHotel ? formData.hotel_address : null
@@ -831,9 +844,9 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                 )
             }
 
-            {/* Product Description for Non-Hotel/Airline */}
+            {/* Product Description for Non-Hotel Products */}
             {
-                !isHotel && !isTransport && (
+                !isHotel && (
                     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
                         <div className="relative">
                             <label className="block text-lg font-bold text-white mb-4">{content.productDescription}</label>

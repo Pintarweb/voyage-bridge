@@ -1,95 +1,199 @@
 'use client'
 
-import { FaMapMarkerAlt, FaHeart, FaRegHeart } from 'react-icons/fa'
-import { useCurrency } from '@/context/CurrencyContext'
+import { useState } from 'react'
+import { FaMapMarkerAlt, FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import SupplierDetailsModal from './SupplierDetailsModal'
 
 type Product = {
     id: string
     product_name: string
-    description: string
-    photo_url_1: string
+    product_description: string
+    photo_urls: string[] | string
     city: string
     country_code: string
-    currency: string
-    suggested_retail_price: number
-    agent_price?: number
     product_category: string
+    supplier?: {
+        id: string
+        company_name: string
+        description: string | null
+        website_url: string | null
+        contact_email: string | null
+    } | null
 }
 
 type ProductCardProps = {
     product: Product
-    onBook: (product: Product) => void
     isWishlisted?: boolean
     onToggleWishlist?: (id: string) => void
 }
 
-export default function ProductCard({ product, onBook, isWishlisted = false, onToggleWishlist }: ProductCardProps) {
-    const { convertPrice, symbol } = useCurrency()
-    const agentPrice = product.agent_price || (product.suggested_retail_price * 0.8)
+export default function ProductCard({ product, isWishlisted = false, onToggleWishlist }: ProductCardProps) {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+
+    // Parse photo_urls - handle both array and JSON string
+    let images: string[] = []
+    if (Array.isArray(product.photo_urls)) {
+        images = product.photo_urls
+    } else if (typeof product.photo_urls === 'string') {
+        try {
+            images = JSON.parse(product.photo_urls)
+        } catch {
+            images = []
+        }
+    }
+
+    const nextImage = () => {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length)
+    }
+
+    const prevImage = () => {
+        setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+    }
+
+    const handleRequest = async () => {
+        // If no supplier data, just show an alert
+        if (!product.supplier) {
+            alert('Supplier information is not available for this product.')
+            return
+        }
+
+        setIsLoading(true)
+
+        try {
+            // Track the click
+            await fetch('/api/track-supplier-click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    supplier_id: product.supplier.id,
+                    product_id: product.id
+                })
+            })
+
+            // Show supplier modal
+            setIsModalOpen(true)
+        } catch (error) {
+            console.error('Error tracking click:', error)
+            // Still show modal even if tracking fails
+            setIsModalOpen(true)
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     return (
-        <div className="group bg-[#1A1A20] rounded-xl overflow-hidden border border-white/5 hover:border-teal-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-teal-900/10 flex flex-col h-full">
-            {/* Image Container */}
-            <div className="relative h-48 overflow-hidden">
-                <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                    style={{ backgroundImage: `url(${product.photo_url_1 || '/placeholder-image.jpg'})` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A20] via-transparent to-transparent opacity-80" />
-
-                {/* Category Badge */}
-                <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide text-white border border-white/10">
-                    {product.product_category}
-                </div>
-
-                {/* Wishlist Button */}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onToggleWishlist?.(product.id)
-                    }}
-                    className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md hover:bg-white/20 transition-colors text-white"
-                >
-                    {isWishlisted ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
-                </button>
-
-                {/* Location Overlay */}
-                <div className="absolute bottom-3 left-3 flex items-center text-xs text-white/90 font-medium">
-                    <FaMapMarkerAlt className="mr-1 text-teal-400" />
-                    {product.city}, {product.country_code}
-                </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-5 flex flex-col flex-grow">
-                <h3 className="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-teal-400 transition-colors">
-                    {product.product_name}
-                </h3>
-                <p className="text-gray-400 text-xs line-clamp-2 mb-4 flex-grow">
-                    {product.description}
-                </p>
-
-                {/* Price & Action */}
-                <div className="pt-4 border-t border-white/5 flex items-end justify-between mt-auto">
-                    <div>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Agent Price</p>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-lg font-bold text-teal-400">
-                                {symbol} {convertPrice(agentPrice, product.currency)}
-                            </span>
-                            <span className="text-xs text-gray-600 line-through">
-                                {symbol} {convertPrice(product.suggested_retail_price, product.currency)}
-                            </span>
+        <>
+            <div className="group bg-white rounded-xl overflow-hidden border border-slate-200 hover:border-blue-400 transition-all duration-300 hover:shadow-xl flex flex-col h-full">
+                {/* Image Carousel */}
+                <div className="relative h-64 overflow-hidden bg-slate-100">
+                    {images.length > 0 ? (
+                        <>
+                            <div
+                                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        </>
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                            No image available
                         </div>
+                    )}
+
+                    {/* Category Badge */}
+                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide text-slate-700 shadow-md">
+                        {product.product_category}
                     </div>
+
+                    {/* Wishlist Button */}
                     <button
-                        onClick={() => onBook(product)}
-                        className="px-4 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-teal-500 hover:text-white transition-all transform hover:-translate-y-0.5 shadow-lg shadow-white/5 hover:shadow-teal-500/20"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            onToggleWishlist?.(product.id)
+                        }}
+                        className="absolute top-3 right-3 p-2.5 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg"
+                        aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                     >
-                        Request
+                        {isWishlisted ? (
+                            <FaHeart className="text-red-500 text-lg" />
+                        ) : (
+                            <FaRegHeart className="text-slate-600 text-lg" />
+                        )}
                     </button>
+
+                    {/* Image Navigation */}
+                    {images.length > 1 && (
+                        <>
+                            <button
+                                onClick={prevImage}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white transition-all shadow-md"
+                                aria-label="Previous image"
+                            >
+                                <FaChevronLeft className="text-slate-700" />
+                            </button>
+                            <button
+                                onClick={nextImage}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white transition-all shadow-md"
+                                aria-label="Next image"
+                            >
+                                <FaChevronRight className="text-slate-700" />
+                            </button>
+                            {/* Image Indicators */}
+                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                {images.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentImageIndex(index)}
+                                        className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
+                                                ? 'bg-white w-6'
+                                                : 'bg-white/50 hover:bg-white/75'
+                                            }`}
+                                        aria-label={`Go to image ${index + 1}`}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {/* Location Overlay */}
+                    <div className="absolute bottom-3 left-3 flex items-center text-sm text-white font-medium bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-lg">
+                        <FaMapMarkerAlt className="mr-1.5 text-blue-300" />
+                        {product.city}, {product.country_code}
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-5 flex flex-col flex-grow">
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+                        {product.product_name}
+                    </h3>
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-grow whitespace-pre-wrap">
+                        {product.product_description}
+                    </p>
+
+                    {/* Action */}
+                    <div className="pt-4 border-t border-slate-200 mt-auto">
+                        <button
+                            onClick={handleRequest}
+                            disabled={isLoading}
+                            className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 disabled:from-slate-400 disabled:to-slate-400 text-white text-sm font-bold rounded-lg transition-all transform hover:-translate-y-0.5 disabled:transform-none shadow-lg hover:shadow-xl disabled:shadow-none"
+                        >
+                            {isLoading ? 'Processing...' : 'Request'}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {/* Supplier Details Modal */}
+            {product.supplier && (
+                <SupplierDetailsModal
+                    supplier={product.supplier}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
+        </>
     )
 }

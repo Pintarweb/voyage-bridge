@@ -93,7 +93,10 @@ export default function Dashboard() {
                 'Paris': 'Paris',
                 'London': 'London',
                 'New York': 'New York',
-                'Dubai': 'Dubai'
+                'Dubai': 'Dubai',
+                'Penang': 'Penang',
+                'Johor Bahru': 'Johor Bahru',
+                'Kota Kinabalu': 'Kota Kinabalu'
             }
         },
         'zh-CN': {
@@ -155,8 +158,11 @@ export default function Dashboard() {
                 'Singapore': 'Singapore',
                 'Paris': 'Paris',
                 'London': 'London',
-                'New York': 'New York',
-                'Dubai': 'Dubai'
+                'New York': '纽约',
+                'Dubai': '迪拜',
+                'Penang': '槟城',
+                'Johor Bahru': '新山',
+                'Kota Kinabalu': '亚庇'
             },
             statusValues: {
                 'active': '活跃',
@@ -224,7 +230,10 @@ export default function Dashboard() {
                 'Paris': 'Paris',
                 'London': 'London',
                 'New York': 'New York',
-                'Dubai': 'Dubai'
+                'Dubai': 'Dubai',
+                'Penang': 'Pulau Pinang',
+                'Johor Bahru': 'Johor Bahru',
+                'Kota Kinabalu': 'Kota Kinabalu'
             },
             statusValues: {
                 'active': 'AKTIF',
@@ -284,15 +293,18 @@ export default function Dashboard() {
             },
             cityTranslations: {
                 'Kuala Lumpur': 'Kuala Lumpur',
-                'Tokyo': 'Tokyo',
+                'Tokyo': 'Tokio',
                 'Osaka': 'Osaka',
-                'Seoul': 'Seoul',
+                'Seoul': 'Seúl',
                 'Bangkok': 'Bangkok',
-                'Singapore': 'Singapore',
-                'Paris': 'Paris',
-                'London': 'London',
-                'New York': 'New York',
-                'Dubai': 'Dubai'
+                'Singapore': 'Singapur',
+                'Paris': 'París',
+                'London': 'Londres',
+                'New York': 'Nueva York',
+                'Dubai': 'Dubái',
+                'Penang': 'Penang',
+                'Johor Bahru': 'Johor Bahru',
+                'Kota Kinabalu': 'Kota Kinabalu'
             },
             statusValues: {
                 'active': 'ACTIVO',
@@ -354,13 +366,16 @@ export default function Dashboard() {
                 'Kuala Lumpur': 'Kuala Lumpur',
                 'Tokyo': 'Tokyo',
                 'Osaka': 'Osaka',
-                'Seoul': 'Seoul',
+                'Seoul': 'Séoul',
                 'Bangkok': 'Bangkok',
-                'Singapore': 'Singapore',
+                'Singapore': 'Singapour',
                 'Paris': 'Paris',
-                'London': 'London',
+                'London': 'Londres',
                 'New York': 'New York',
-                'Dubai': 'Dubai'
+                'Dubai': 'Dubaï',
+                'Penang': 'Penang',
+                'Johor Bahru': 'Johor Bahru',
+                'Kota Kinabalu': 'Kota Kinabalu'
             },
             statusValues: {
                 'active': 'ACTIF',
@@ -420,15 +435,18 @@ export default function Dashboard() {
             },
             cityTranslations: {
                 'Kuala Lumpur': 'Kuala Lumpur',
-                'Tokyo': 'Tokyo',
+                'Tokyo': 'Tokio',
                 'Osaka': 'Osaka',
                 'Seoul': 'Seoul',
                 'Bangkok': 'Bangkok',
-                'Singapore': 'Singapore',
+                'Singapore': 'Singapur',
                 'Paris': 'Paris',
                 'London': 'London',
                 'New York': 'New York',
-                'Dubai': 'Dubai'
+                'Dubai': 'Dubai',
+                'Penang': 'Penang',
+                'Johor Bahru': 'Johor Bahru',
+                'Kota Kinabalu': 'Kota Kinabalu'
             },
             statusValues: {
                 'active': 'AKTIV',
@@ -495,8 +513,11 @@ export default function Dashboard() {
                 'Singapore': 'Singapore',
                 'Paris': 'Paris',
                 'London': 'London',
-                'New York': 'New York',
-                'Dubai': 'Dubai'
+                'New York': 'ニューヨーク',
+                'Dubai': 'ドバイ',
+                'Penang': 'ペナン',
+                'Johor Bahru': 'ジョホールバル',
+                'Kota Kinabalu': 'コタキナバル'
             },
             statusValues: {
                 'active': 'アクティブ',
@@ -563,8 +584,11 @@ export default function Dashboard() {
                 'Singapore': 'Singapore',
                 'Paris': 'Paris',
                 'London': 'London',
-                'New York': 'New York',
-                'Dubai': 'Dubai'
+                'New York': '뉴욕',
+                'Dubai': '두바이',
+                'Penang': '페낭',
+                'Johor Bahru': '조호바루',
+                'Kota Kinabalu': '코타키나발루'
             },
             statusValues: {
                 'active': '활성',
@@ -631,8 +655,11 @@ export default function Dashboard() {
                 'Singapore': 'Singapore',
                 'Paris': 'Paris',
                 'London': 'London',
-                'New York': 'New York',
-                'Dubai': 'Dubai'
+                'New York': 'نيويورك',
+                'Dubai': 'دبي',
+                'Penang': 'بينانج',
+                'Johor Bahru': 'جوهر بهرو',
+                'Kota Kinabalu': 'كوتا كينابالو'
             },
             statusValues: {
                 'active': 'نشط',
@@ -699,8 +726,11 @@ export default function Dashboard() {
                 'Singapore': 'Singapore',
                 'Paris': 'Paris',
                 'London': 'London',
-                'New York': 'New York',
-                'Dubai': 'Dubai'
+                'New York': 'นิวยอร์ก',
+                'Dubai': 'ดูไบ',
+                'Penang': 'ปีนัง',
+                'Johor Bahru': 'โจฮอร์บาห์รู',
+                'Kota Kinabalu': 'โคตาคินาบาลู'
             },
             statusValues: {
                 'active': 'ใช้งานอยู่',
@@ -766,9 +796,12 @@ export default function Dashboard() {
                 'Bangkok': 'Bangkok',
                 'Singapore': 'Singapore',
                 'Paris': 'Paris',
-                'London': 'London',
+                'London': 'Luân Đôn',
                 'New York': 'New York',
-                'Dubai': 'Dubai'
+                'Dubai': 'Dubai',
+                'Penang': 'Penang',
+                'Johor Bahru': 'Johor Bahru',
+                'Kota Kinabalu': 'Kota Kinabalu'
             },
             statusValues: {
                 'active': 'ĐANG HOẠT ĐỘNG',
@@ -836,7 +869,10 @@ export default function Dashboard() {
                 'Paris': 'Paris',
                 'London': 'London',
                 'New York': 'New York',
-                'Dubai': 'Dubai'
+                'Dubai': 'Dubai',
+                'Penang': 'Penang',
+                'Johor Bahru': 'Johor Bahru',
+                'Kota Kinabalu': 'Kota Kinabalu'
             },
             statusValues: {
                 'active': 'AKTIF',
@@ -849,9 +885,20 @@ export default function Dashboard() {
     const content = t[language as keyof typeof t] || t['en-US']
 
     // Helper for city translation
-    const translateCity = (city: string) => {
+    const translateCity = (cityInput: string) => {
+        const city = cityInput?.trim();
+        if (!city) return '';
+        // console.log('translateCity called with:', city, 'Language:', language);
         const cityMap = content.cityTranslations as Record<string, string> | undefined;
-        return cityMap?.[city] || city;
+        if (!cityMap) return city;
+
+        // Direct match
+        if (cityMap[city]) return cityMap[city];
+
+        // Case-insensitive match
+        const lowerCity = city.toLowerCase();
+        const key = Object.keys(cityMap).find(k => k.toLowerCase() === lowerCity);
+        return key ? cityMap[key] : city;
     }
 
     const handleLogout = async () => {
@@ -1095,22 +1142,8 @@ export default function Dashboard() {
                     </button>
                 </div>
 
-                {/* Content */}
                 {activeTab === 'active' ? (
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {/* Create New Card - Only show if no products */}
-                        {activeProducts.length === 0 && (
-                            <button
-                                onClick={() => router.push('/supplier/dashboard/products/create')}
-                                className="relative block w-full border-2 border-dashed border-orange-300 rounded-lg p-12 text-center hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors group bg-orange-50/50 animate-pulse"
-                            >
-                                <FaPlus className="mx-auto h-12 w-12 text-orange-400 group-hover:text-orange-600 transition-colors" />
-                                <span className="mt-2 block text-sm font-bold text-orange-600 group-hover:text-orange-800 transition-colors">
-                                    {content.createFirstProduct}
-                                </span>
-                            </button>
-                        )}
-
+                    <div className="grid grid-cols-1 gap-6">
                         {activeProducts.map((product) => (
                             <div key={product.id} className="bg-card rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm flex flex-col">
                                 {/* Top Section: Details */}
@@ -1124,8 +1157,8 @@ export default function Dashboard() {
                                         <div className="flex-grow min-w-0">
                                             <h3 className="text-lg font-semibold text-foreground truncate" title={product.product_name}>
                                                 {(() => {
-                                                    // Smart Title Logic using Supplier Type
-                                                    const type = supplier?.supplier_type || 'Supplier';
+                                                    // Smart Title Logic
+                                                    const type = product.product_category || supplier?.supplier_type || 'Supplier';
                                                     let key = '';
                                                     const lowerType = type.toLowerCase();
 
@@ -1141,7 +1174,10 @@ export default function Dashboard() {
                                                     }
 
                                                     const translatedType = key ? content.supplierTypes[key as keyof typeof content.supplierTypes] : type;
-                                                    const translatedCity = translateCity(product.city);
+                                                    // Use product city if available (Hotels), otherwise fallback to supplier city (Airlines etc)
+                                                    const cityToUse = product.city || supplier?.city || '';
+                                                    const translatedCity = translateCity(cityToUse);
+
                                                     return `${translatedType} ${content.in_location} ${translatedCity}`;
                                                 })()}
                                             </h3>

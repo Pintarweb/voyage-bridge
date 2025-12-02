@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import CountrySearchView from '@/components/portal/CountrySearchView'
+import TourismBackground from '@/components/ui/TourismBackground'
 
 export default async function PortalPage() {
     const supabase = await createClient()
@@ -29,14 +30,30 @@ export default async function PortalPage() {
         countryMap.set(p.country_code, count + 1)
     })
 
-    // Convert to array with names (you may want to add a country names mapping)
+    // Convert to array with names
+    const displayNames = new Intl.DisplayNames(['en'], { type: 'region' });
     const countryOptions = Array.from(countryMap.entries())
-        .map(([code, count]) => ({
-            code,
-            name: code, // TODO: Add country name mapping
-            productCount: count
-        }))
+        .map(([code, count]) => {
+            let name = code;
+            try {
+                name = displayNames.of(code) || code;
+            } catch (e) {
+                // Fallback to code if invalid
+            }
+            return {
+                code,
+                name,
+                productCount: count
+            };
+        })
         .sort((a, b) => a.name.localeCompare(b.name))
 
-    return <CountrySearchView countries={countryOptions} />
+    return (
+        <div className="relative min-h-screen flex flex-col">
+            <TourismBackground />
+            <div className="relative z-10 flex-grow">
+                <CountrySearchView countries={countryOptions} />
+            </div>
+        </div>
+    )
 }

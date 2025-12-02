@@ -196,76 +196,90 @@ export default function CountrySearchView({ countries }: { countries: CountryOpt
     }
 
     return (
-        <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4">
-            <div className="max-w-2xl w-full">
+        <div className="flex items-center justify-center px-4 py-12">
+            <div className="max-w-4xl w-full">
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-teal-500/10 rounded-full mb-6">
-                        <FaGlobeAmericas className="text-4xl text-teal-500" />
+                <div className="text-center mb-12 animate-fade-in-up">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-white shadow-lg rounded-full mb-6 transform hover:scale-110 transition-transform duration-300">
+                        <FaGlobeAmericas className="text-4xl text-rose-500" />
                     </div>
-                    <h1 className="text-4xl font-bold text-white mb-4">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight drop-shadow-sm">
                         {content.title}
                     </h1>
-                    <p className="text-lg text-gray-400">
+                    <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto font-light leading-relaxed">
                         {content.subtitle}
                     </p>
                 </div>
 
                 {/* Search Card */}
-                <div className="bg-[#1A1A20] border border-white/10 rounded-2xl p-8 shadow-2xl">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                        {content.selectCountry}
-                    </label>
+                <div className="bg-gradient-to-br from-blue-900 to-blue-400 rounded-3xl p-8 shadow-2xl relative overflow-hidden group border border-white/20">
+                    <div className="absolute top-0 left-0 w-full h-full bg-white/10 backdrop-blur-sm"></div>
 
-                    <div className="flex gap-3">
-                        <select
-                            value={selectedCountry}
-                            onChange={(e) => setSelectedCountry(e.target.value)}
-                            className="flex-1 bg-[#101015] border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all"
-                        >
-                            <option value="">{content.chooseCountry}</option>
-                            {countries.map((country) => (
-                                <option key={country.code} value={country.code}>
-                                    {country.name} ({country.productCount} {content.productsSuffix})
-                                </option>
-                            ))}
-                        </select>
+                    <div className="relative z-10">
+                        <label className="block text-sm font-bold text-white mb-3 uppercase tracking-wide drop-shadow-sm">
+                            {content.selectCountry}
+                        </label>
 
-                        <button
-                            onClick={handleSearch}
-                            disabled={!selectedCountry}
-                            className="px-8 py-4 bg-teal-500 hover:bg-teal-400 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all transform hover:-translate-y-0.5 disabled:transform-none shadow-lg disabled:shadow-none flex items-center gap-2"
-                        >
-                            <FaSearch />
-                            {content.search}
-                        </button>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="mt-8 pt-6 border-t border-white/5">
-                        <div className="grid grid-cols-3 gap-4 text-center">
-                            <div>
-                                <div className="text-2xl font-bold text-teal-400">
-                                    {countries.length}
-                                </div>
-                                <div className="text-xs text-gray-500 uppercase tracking-wider mt-1">
-                                    {content.stats.countries}
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <div className="flex-1 relative">
+                                <select
+                                    value={selectedCountry}
+                                    onChange={(e) => setSelectedCountry(e.target.value)}
+                                    className="w-full bg-white/90 border-0 rounded-xl px-4 py-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-white/30 transition-all appearance-none font-medium shadow-lg"
+                                >
+                                    <option value="">{content.chooseCountry}</option>
+                                    {countries.map((country) => (
+                                        <option key={country.code} value={country.code}>
+                                            {country.name} ({country.productCount} {content.productsSuffix})
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-slate-500">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
-                            <div>
-                                <div className="text-2xl font-bold text-purple-400">
-                                    {countries.reduce((sum, c) => sum + c.productCount, 0)}
+
+                            <button
+                                onClick={handleSearch}
+                                disabled={!selectedCountry}
+                                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white hover:from-purple-700 hover:to-blue-600 disabled:bg-white/50 disabled:text-white/50 disabled:cursor-not-allowed font-black rounded-xl transition-all transform hover:-translate-y-1 disabled:transform-none shadow-lg disabled:shadow-none flex items-center justify-center gap-2 min-w-[140px]"
+                            >
+                                <FaSearch />
+                                {content.search}
+                            </button>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="mt-10 pt-8 border-t border-white/20">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* Countries Stat */}
+                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center hover:bg-white/20 transition-colors">
+                                    <div className="text-3xl font-black text-white mb-1 drop-shadow-sm">
+                                        {countries.length}
+                                    </div>
+                                    <div className="text-xs font-bold text-white/80 uppercase tracking-wider">
+                                        {content.stats.countries}
+                                    </div>
                                 </div>
-                                <div className="text-xs text-gray-500 uppercase tracking-wider mt-1">
-                                    {content.stats.products}
+
+                                {/* Products Stat */}
+                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center hover:bg-white/20 transition-colors">
+                                    <div className="text-3xl font-black text-white mb-1 drop-shadow-sm">
+                                        {countries.reduce((sum, c) => sum + c.productCount, 0)}
+                                    </div>
+                                    <div className="text-xs font-bold text-white/80 uppercase tracking-wider">
+                                        {content.stats.products}
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div className="text-2xl font-bold text-blue-400">
-                                    {countries.filter(c => c.productCount > 0).length}
-                                </div>
-                                <div className="text-xs text-gray-500 uppercase tracking-wider mt-1">
-                                    {content.stats.activeMarkets}
+
+                                {/* Active Markets Stat */}
+                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center hover:bg-white/20 transition-colors">
+                                    <div className="text-3xl font-black text-white mb-1 drop-shadow-sm">
+                                        {countries.filter(c => c.productCount > 0).length}
+                                    </div>
+                                    <div className="text-xs font-bold text-white/80 uppercase tracking-wider">
+                                        {content.stats.activeMarkets}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -274,9 +288,9 @@ export default function CountrySearchView({ countries }: { countries: CountryOpt
 
                 {/* Quick Access - Top Countries */}
                 {countries.length > 0 && (
-                    <div className="mt-8">
-                        <p className="text-sm text-gray-500 mb-4">{content.popularDestinations}</p>
-                        <div className="flex flex-wrap gap-2">
+                    <div className="mt-10 text-center">
+                        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">{content.popularDestinations}</p>
+                        <div className="flex flex-wrap justify-center gap-4">
                             {countries
                                 .sort((a, b) => b.productCount - a.productCount)
                                 .slice(0, 6)
@@ -284,9 +298,21 @@ export default function CountrySearchView({ countries }: { countries: CountryOpt
                                     <button
                                         key={country.code}
                                         onClick={() => router.push(`/portal/country/${country.code}`)}
-                                        className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-teal-500/50 rounded-lg text-sm text-gray-300 hover:text-white transition-all"
+                                        className="group relative flex flex-col items-center transition-transform hover:scale-110"
+                                        title={country.name}
                                     >
-                                        {country.name}
+                                        <div className="w-16 h-12 shadow-lg rounded-md overflow-hidden border-2 border-white group-hover:border-rose-400 transition-colors relative">
+                                            <img
+                                                src={`https://flagcdn.com/w80/${country.code.toLowerCase()}.png`}
+                                                srcSet={`https://flagcdn.com/w160/${country.code.toLowerCase()}.png 2x`}
+                                                alt={country.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-white/10 transition-colors"></div>
+                                        </div>
+                                        <span className="mt-2 text-xs font-bold text-slate-600 group-hover:text-rose-600 transition-colors bg-white/80 px-2 py-0.5 rounded-full backdrop-blur-sm shadow-sm">
+                                            {country.name}
+                                        </span>
                                     </button>
                                 ))}
                         </div>
