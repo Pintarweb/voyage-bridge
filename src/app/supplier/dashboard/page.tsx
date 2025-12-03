@@ -926,7 +926,7 @@ export default function Dashboard() {
                     setSupplier(supplierData)
                 }
 
-                // Get products
+                // Get products with stats
                 const { data: productsData, error } = await supabase
                     .from('products')
                     .select('*')

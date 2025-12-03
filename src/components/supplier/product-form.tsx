@@ -676,9 +676,6 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
 
             // Construct description
             let finalDescription = formData.product_description
-            if (isHotel) {
-                finalDescription = `Address: ${formData.hotel_address}\nStars: ${formData.hotel_stars}\n\n${formData.product_description}`
-            }
 
 
             console.log('Debug - formData.product_name:', formData.product_name)

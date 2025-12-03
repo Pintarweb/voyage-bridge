@@ -47,6 +47,9 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    // Increment wishlist count
+    await supabase.rpc('increment_wishlist_count', { product_id })
+
     return NextResponse.json({ success: true, data })
 }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 import { FaArrowLeft, FaMapMarkerAlt, FaBuilding, FaMoneyBillWave } from 'react-icons/fa'
 import { useCurrency } from '@/context/CurrencyContext'
 import Image from 'next/image'
@@ -26,6 +27,29 @@ export default function ProductDetailsView({ product }: { product: Product }) {
     const router = useRouter()
     const { convertPrice, symbol } = useCurrency()
     const agentPrice = product.agent_price || (product.suggested_retail_price * 0.8)
+
+    // Increment view count on mount
+    const hasViewed = useRef(false)
+
+    useEffect(() => {
+        if (hasViewed.current) return
+        hasViewed.current = true
+
+        const incrementView = async () => {
+            console.log('Incrementing view count for:', product.id)
+            try {
+                const res = await fetch('/api/products/view', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_id: product.id })
+                })
+                console.log('View increment response:', res.status)
+            } catch (error) {
+                console.error('Error incrementing view count:', error)
+            }
+        }
+        incrementView()
+    }, [product.id])
 
     return (
         <div className="min-h-screen bg-[#101015] text-white p-8">

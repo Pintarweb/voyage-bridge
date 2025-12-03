@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { FaMapMarkerAlt, FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import SupplierDetailsModal from './SupplierDetailsModal'
 
@@ -53,6 +54,17 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
     }
 
     const handleRequest = async () => {
+        // Increment view count regardless of supplier status
+        try {
+            await fetch('/api/products/view', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: product.id })
+            })
+        } catch (error) {
+            console.error('Error incrementing view count:', error)
+        }
+
         // If no supplier data, just show an alert
         if (!product.supplier) {
             alert('Supplier information is not available for this product.')
@@ -88,22 +100,24 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
             <div className="group bg-white rounded-xl overflow-hidden border border-slate-200 hover:border-blue-400 transition-all duration-300 hover:shadow-xl flex flex-col h-full">
                 {/* Image Carousel */}
                 <div className="relative h-64 overflow-hidden bg-slate-100">
-                    {images.length > 0 ? (
-                        <>
-                            <div
-                                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                        </>
-                    ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                            No image available
-                        </div>
-                    )}
+                    <Link href={`/portal/product/${product.id}`} className="block h-full w-full cursor-pointer">
+                        {images.length > 0 ? (
+                            <>
+                                <div
+                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                    style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                            </>
+                        ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                                No image available
+                            </div>
+                        )}
+                    </Link>
 
                     {/* Category Badge */}
-                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide text-slate-700 shadow-md">
+                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide text-slate-700 shadow-md pointer-events-none">
                         {product.product_category}
                     </div>
 
@@ -113,7 +127,7 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
                             e.stopPropagation()
                             onToggleWishlist?.(product.id)
                         }}
-                        className="absolute top-3 right-3 p-2.5 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg"
+                        className="absolute top-3 right-3 p-2.5 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg z-10"
                         aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                     >
                         {isWishlisted ? (
@@ -127,28 +141,40 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
                     {images.length > 1 && (
                         <>
                             <button
-                                onClick={prevImage}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white transition-all shadow-md"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    prevImage()
+                                }}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white transition-all shadow-md z-10"
                                 aria-label="Previous image"
                             >
                                 <FaChevronLeft className="text-slate-700" />
                             </button>
                             <button
-                                onClick={nextImage}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white transition-all shadow-md"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    nextImage()
+                                }}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white transition-all shadow-md z-10"
                                 aria-label="Next image"
                             >
                                 <FaChevronRight className="text-slate-700" />
                             </button>
                             {/* Image Indicators */}
-                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                                 {images.map((_, index) => (
                                     <button
                                         key={index}
-                                        onClick={() => setCurrentImageIndex(index)}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            setCurrentImageIndex(index)
+                                        }}
                                         className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
-                                                ? 'bg-white w-6'
-                                                : 'bg-white/50 hover:bg-white/75'
+                                            ? 'bg-white w-6'
+                                            : 'bg-white/50 hover:bg-white/75'
                                             }`}
                                         aria-label={`Go to image ${index + 1}`}
                                     />
@@ -158,7 +184,7 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
                     )}
 
                     {/* Location Overlay */}
-                    <div className="absolute bottom-3 left-3 flex items-center text-sm text-white font-medium bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-lg">
+                    <div className="absolute bottom-3 left-3 flex items-center text-sm text-white font-medium bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-lg pointer-events-none">
                         <FaMapMarkerAlt className="mr-1.5 text-blue-300" />
                         {product.city}, {product.country_code}
                     </div>
@@ -166,9 +192,11 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-grow">
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
-                        {product.product_name}
-                    </h3>
+                    <Link href={`/portal/product/${product.id}`} className="block group-hover:text-blue-600 transition-colors">
+                        <h3 className="text-xl font-bold text-slate-900 mb-3">
+                            {product.product_name}
+                        </h3>
+                    </Link>
                     <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-grow whitespace-pre-wrap">
                         {product.product_description}
                     </p>
