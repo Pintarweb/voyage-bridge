@@ -180,66 +180,70 @@ export default function SupplierAuthPage() {
     }
 
     return (
-        <div className="flex-grow relative flex items-center justify-center px-4 py-12">
-            <TourismBackground />
+        <>
+            <GlobalHeader />
+            <div className="flex-grow relative flex items-center justify-center px-4 py-12">
+                <TourismBackground />
 
-            <div className="relative z-10 max-w-md w-full space-y-8">
-                <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
-                        {content.title}
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-600">
-                        {content.subtitle}
-                    </p>
-                </div>
+                <div className="relative z-10 max-w-md w-full space-y-8">
+                    <div className="text-center">
+                        <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
+                            {content.title}
+                        </h2>
+                        <p className="mt-2 text-sm text-slate-600">
+                            {content.subtitle}
+                        </p>
+                    </div>
 
-                <div className="bg-gradient-to-br from-orange-400 to-yellow-400 backdrop-blur-sm p-8 rounded-xl border border-orange-300 shadow-2xl">
-                    {error && (
-                        <div className="mb-4 bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
-                            {error}
+                    <div className="bg-gradient-to-br from-orange-400 to-yellow-400 backdrop-blur-sm p-8 rounded-xl border border-orange-300 shadow-2xl">
+                        {error && (
+                            <div className="mb-4 bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
+                                {error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleLogin} className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-bold text-slate-900 mb-1">{content.email}</label>
+                                <input
+                                    type="email"
+                                    required
+                                    className="w-full px-3 py-2 bg-white/90 border border-white/50 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent text-slate-900 placeholder-slate-500"
+                                    placeholder="supplier@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-900 mb-1">{content.password}</label>
+                                <input
+                                    type="password"
+                                    required
+                                    className="w-full px-3 py-2 bg-white/90 border border-white/50 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent text-slate-900 placeholder-slate-500"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full bg-slate-900 text-white hover:bg-slate-800 font-bold py-3 px-4 rounded-lg transition-colors shadow-lg"
+                            >
+                                {loading ? content.loggingIn : content.signIn}
+                            </button>
+                        </form>
+
+                        <div className="mt-6 text-center text-sm">
+                            <span className="text-slate-900 font-medium">{content.newSupplier} </span>
+                            <Link href="/auth/register" className="font-bold text-blue-700 hover:text-blue-800 underline decoration-2 underline-offset-2">
+                                {content.apply}
+                            </Link>
                         </div>
-                    )}
-
-                    <form onSubmit={handleLogin} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-bold text-slate-900 mb-1">{content.email}</label>
-                            <input
-                                type="email"
-                                required
-                                className="w-full px-3 py-2 bg-white/90 border border-white/50 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent text-slate-900 placeholder-slate-500"
-                                placeholder="supplier@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-slate-900 mb-1">{content.password}</label>
-                            <input
-                                type="password"
-                                required
-                                className="w-full px-3 py-2 bg-white/90 border border-white/50 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent text-slate-900 placeholder-slate-500"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-slate-900 text-white hover:bg-slate-800 font-bold py-3 px-4 rounded-lg transition-colors shadow-lg"
-                        >
-                            {loading ? content.loggingIn : content.signIn}
-                        </button>
-                    </form>
-
-                    <div className="mt-6 text-center text-sm">
-                        <span className="text-slate-900 font-medium">{content.newSupplier} </span>
-                        <Link href="/auth/register" className="font-bold text-blue-700 hover:text-blue-800 underline decoration-2 underline-offset-2">
-                            {content.apply}
-                        </Link>
                     </div>
                 </div>
             </div>
-        </div>
+            <Footer />
+        </>
     )
 }

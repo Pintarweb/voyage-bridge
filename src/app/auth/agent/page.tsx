@@ -10,6 +10,8 @@ import { FaInfoCircle, FaCheckCircle } from 'react-icons/fa'
 import './auth.css'
 import TourismBackground from '@/components/ui/TourismBackground'
 import { useLanguage } from '@/context/LanguageContext'
+import GlobalHeader from '@/components/layout/GlobalHeader'
+import Footer from '@/components/layout/Footer'
 
 const CITY_TO_COUNTRY: Record<string, string> = {
     // North America
@@ -444,198 +446,202 @@ function AgentAuthContent() {
     }
 
     return (
-        <div className="flex-grow relative flex items-center justify-center px-4 py-12">
-            <TourismBackground />
+        <>
+            <GlobalHeader />
+            <div className="flex-grow relative flex items-center justify-center px-4 py-12">
+                <TourismBackground />
 
-            <div className="relative z-10 max-w-md w-full bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden border border-white/20">
-                {/* Header */}
-                <div className="bg-slate-50/80 px-8 py-6 border-b border-slate-100 text-center">
-                    <h2 className="text-2xl font-bold text-slate-900">{content.title}</h2>
-                    <p className="text-sm text-slate-500 mt-1">{content.subtitle}</p>
-                </div>
+                <div className="relative z-10 max-w-md w-full bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden border border-white/20">
+                    {/* Header */}
+                    <div className="bg-slate-50/80 px-8 py-6 border-b border-slate-100 text-center">
+                        <h2 className="text-2xl font-bold text-slate-900">{content.title}</h2>
+                        <p className="text-sm text-slate-500 mt-1">{content.subtitle}</p>
+                    </div>
 
-                {/* Tabs */}
-                <div className="flex border-b border-slate-200">
-                    <button
-                        className={`flex-1 py-4 text-sm font-medium text-center transition-colors ${activeTab === 'login' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' : 'text-slate-500 hover:text-slate-700'}`}
-                        onClick={() => {
-                            setActiveTab('login')
-                            setError('')
-                        }}
-                    >
-                        {content.login}
-                    </button>
-                    <button
-                        className={`flex-1 py-4 text-sm font-medium text-center transition-colors ${activeTab === 'register' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' : 'text-slate-500 hover:text-slate-700'}`}
-                        onClick={() => {
-                            setActiveTab('register')
-                            setError('')
-                        }}
-                    >
-                        {content.register}
-                    </button>
-                </div>
+                    {/* Tabs */}
+                    <div className="flex border-b border-slate-200">
+                        <button
+                            className={`flex-1 py-4 text-sm font-medium text-center transition-colors ${activeTab === 'login' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' : 'text-slate-500 hover:text-slate-700'}`}
+                            onClick={() => {
+                                setActiveTab('login')
+                                setError('')
+                            }}
+                        >
+                            {content.login}
+                        </button>
+                        <button
+                            className={`flex-1 py-4 text-sm font-medium text-center transition-colors ${activeTab === 'register' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' : 'text-slate-500 hover:text-slate-700'}`}
+                            onClick={() => {
+                                setActiveTab('register')
+                                setError('')
+                            }}
+                        >
+                            {content.register}
+                        </button>
+                    </div>
 
-                <div className="p-8">
-                    {error && (
-                        <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-                            {error}
-                        </div>
-                    )}
+                    <div className="p-8">
+                        {error && (
+                            <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                                {error}
+                            </div>
+                        )}
 
-                    {activeTab === 'login' ? (
-                        <form onSubmit={handleLogin} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">{content.email}</label>
+                        {activeTab === 'login' ? (
+                            <form onSubmit={handleLogin} className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">{content.email}</label>
+                                    <input
+                                        type="email"
+                                        required
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
+                                        value={loginEmail}
+                                        onChange={(e) => setLoginEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">{content.password}</label>
+                                    <input
+                                        type="password"
+                                        required
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
+                                        value={loginPassword}
+                                        onChange={(e) => setLoginPassword(e.target.value)}
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full btn-primary btn-md"
+                                >
+                                    {loading ? content.loggingIn : content.login}
+                                </button>
+                            </form>
+                        ) : (
+                            <form onSubmit={handleRegister} className="space-y-4">
+                                {/* Trust Statement */}
+                                <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start space-x-3 mb-4">
+                                    <FaCheckCircle className="text-blue-500 mt-0.5 flex-shrink-0" />
+                                    <p className="text-xs text-blue-800">
+                                        <strong>{content.secureNetwork}</strong> {content.licenseUsage}
+                                    </p>
+                                </div>
+
                                 <input
                                     type="email"
+                                    name="email"
                                     required
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
-                                    value={loginEmail}
-                                    onChange={(e) => setLoginEmail(e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">{content.password}</label>
-                                <input
-                                    type="password"
-                                    required
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
-                                    value={loginPassword}
-                                    onChange={(e) => setLoginPassword(e.target.value)}
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full btn-primary btn-md"
-                            >
-                                {loading ? content.loggingIn : content.login}
-                            </button>
-                        </form>
-                    ) : (
-                        <form onSubmit={handleRegister} className="space-y-4">
-                            {/* Trust Statement */}
-                            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start space-x-3 mb-4">
-                                <FaCheckCircle className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-blue-800">
-                                    <strong>{content.secureNetwork}</strong> {content.licenseUsage}
-                                </p>
-                            </div>
-
-                            <input
-                                type="email"
-                                name="email"
-                                required
-                                placeholder={content.email}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
-                                onChange={handleRegisterChange}
-                            />
-                            <input
-                                type="password"
-                                name="password"
-                                required
-                                placeholder={content.password}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
-                                onChange={handleRegisterChange}
-                            />
-                            <input
-                                type="text"
-                                name="agency_name"
-                                required
-                                placeholder={content.agencyName}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
-                                onChange={handleRegisterChange}
-                            />
-
-                            {/* License with Tooltip */}
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    name="license_number"
-                                    required
-                                    placeholder={content.licenseNumber}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400 pr-10"
-                                    onChange={handleRegisterChange}
-                                />
-                                <div className="absolute right-3 top-2.5 text-slate-400 cursor-help tooltip-container">
-                                    <FaInfoCircle />
-                                    <span className="tooltip-text">{content.licenseTooltip}</span>
-                                </div>
-                            </div>
-
-                            <input
-                                type="url"
-                                name="website_url"
-                                placeholder={content.websiteUrl}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
-                                onChange={handleRegisterChange}
-                            />
-
-                            <input
-                                type="text"
-                                name="address"
-                                required
-                                placeholder={content.address}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
-                                onChange={handleRegisterChange}
-                            />
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <input
-                                    type="text"
-                                    name="city"
-                                    required
-                                    placeholder={content.city}
+                                    placeholder={content.email}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
                                     onChange={handleRegisterChange}
                                 />
-                                <CountrySelect
-                                    value={formData.country_code}
-                                    onChange={handleCountryChange}
-                                    className="text-slate-900"
-                                    theme="light"
-                                />
-                            </div>
-
-                            <div className="border border-slate-300 rounded-lg px-3 py-2">
-                                <PhoneInput
-                                    key={formData.country_code}
-                                    placeholder={content.enterPhone}
-                                    value={formData.phone_number}
-                                    onChange={(value) => setFormData({ ...formData, phone_number: value as string })}
-                                    defaultCountry={formData.country_code as Country}
-                                    className="bg-transparent phone-input-light"
-                                />
-                            </div>
-
-                            {/* T&C Checkbox */}
-                            <div className="flex items-center mt-4">
                                 <input
-                                    id="tc-agree"
-                                    name="has_agreed_tc"
-                                    type="checkbox"
+                                    type="password"
+                                    name="password"
                                     required
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                                    placeholder={content.password}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
                                     onChange={handleRegisterChange}
                                 />
-                                <label htmlFor="tc-agree" className="ml-2 block text-sm text-slate-700">
-                                    {content.agreeTc} <a href="#" className="text-blue-600 hover:underline">{content.tc}</a>
-                                </label>
-                            </div>
+                                <input
+                                    type="text"
+                                    name="agency_name"
+                                    required
+                                    placeholder={content.agencyName}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+                                    onChange={handleRegisterChange}
+                                />
 
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full btn-primary btn-md mt-4"
-                            >
-                                {loading ? content.creatingAccount : content.registerAgency}
-                            </button>
-                        </form>
-                    )}
+                                {/* License with Tooltip */}
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        name="license_number"
+                                        required
+                                        placeholder={content.licenseNumber}
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400 pr-10"
+                                        onChange={handleRegisterChange}
+                                    />
+                                    <div className="absolute right-3 top-2.5 text-slate-400 cursor-help tooltip-container">
+                                        <FaInfoCircle />
+                                        <span className="tooltip-text">{content.licenseTooltip}</span>
+                                    </div>
+                                </div>
+
+                                <input
+                                    type="url"
+                                    name="website_url"
+                                    placeholder={content.websiteUrl}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+                                    onChange={handleRegisterChange}
+                                />
+
+                                <input
+                                    type="text"
+                                    name="address"
+                                    required
+                                    placeholder={content.address}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+                                    onChange={handleRegisterChange}
+                                />
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        required
+                                        placeholder={content.city}
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+                                        onChange={handleRegisterChange}
+                                    />
+                                    <CountrySelect
+                                        value={formData.country_code}
+                                        onChange={handleCountryChange}
+                                        className="text-slate-900"
+                                        theme="light"
+                                    />
+                                </div>
+
+                                <div className="border border-slate-300 rounded-lg px-3 py-2">
+                                    <PhoneInput
+                                        key={formData.country_code}
+                                        placeholder={content.enterPhone}
+                                        value={formData.phone_number}
+                                        onChange={(value) => setFormData({ ...formData, phone_number: value as string })}
+                                        defaultCountry={formData.country_code as Country}
+                                        className="bg-transparent phone-input-light"
+                                    />
+                                </div>
+
+                                {/* T&C Checkbox */}
+                                <div className="flex items-center mt-4">
+                                    <input
+                                        id="tc-agree"
+                                        name="has_agreed_tc"
+                                        type="checkbox"
+                                        required
+                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                                        onChange={handleRegisterChange}
+                                    />
+                                    <label htmlFor="tc-agree" className="ml-2 block text-sm text-slate-700">
+                                        {content.agreeTc} <a href="#" className="text-blue-600 hover:underline">{content.tc}</a>
+                                    </label>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full btn-primary btn-md mt-4"
+                                >
+                                    {loading ? content.creatingAccount : content.registerAgency}
+                                </button>
+                            </form>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+            <Footer />
+        </>
     )
 }
 
