@@ -4,8 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import GlobalHeader from '@/components/layout/GlobalHeader'
-import Footer from '@/components/layout/Footer'
+
 import TourismBackground from '@/components/ui/TourismBackground'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -181,7 +180,7 @@ export default function SupplierAuthPage() {
 
     return (
         <>
-            <GlobalHeader />
+
             <div className="flex-grow relative flex items-center justify-center px-4 py-12">
                 <TourismBackground />
 
@@ -243,7 +242,7 @@ export default function SupplierAuthPage() {
                     </div>
                 </div>
             </div>
-            <Footer />
+
         </>
     )
 }

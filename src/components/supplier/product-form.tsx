@@ -871,15 +871,28 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             {
                 !isHotel && (
                     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
-                        <div className="relative">
-                            <label className="block text-lg font-bold text-white mb-4">{content.productDescription}</label>
-                            <textarea
-                                rows={6}
-                                value={formData.product_description}
-                                onChange={e => setFormData({ ...formData, product_description: e.target.value })}
-                                className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
-                                placeholder={content.descriptionPlaceholder}
-                            />
+                        <div className="relative space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium !text-white mb-2">Product URL</label>
+                                <input
+                                    type="url"
+                                    value={formData.product_url}
+                                    onChange={e => setFormData({ ...formData, product_url: e.target.value })}
+                                    className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                    placeholder="https://example.com/product"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-lg font-bold text-white mb-4">{content.productDescription}</label>
+                                <textarea
+                                    rows={6}
+                                    value={formData.product_description}
+                                    onChange={e => setFormData({ ...formData, product_description: e.target.value })}
+                                    className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                    placeholder={content.descriptionPlaceholder}
+                                />
+                            </div>
                         </div>
                     </div>
                 )

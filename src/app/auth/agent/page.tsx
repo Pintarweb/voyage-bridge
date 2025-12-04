@@ -10,8 +10,7 @@ import { FaInfoCircle, FaCheckCircle } from 'react-icons/fa'
 import './auth.css'
 import TourismBackground from '@/components/ui/TourismBackground'
 import { useLanguage } from '@/context/LanguageContext'
-import GlobalHeader from '@/components/layout/GlobalHeader'
-import Footer from '@/components/layout/Footer'
+
 
 const CITY_TO_COUNTRY: Record<string, string> = {
     // North America
@@ -447,7 +446,7 @@ function AgentAuthContent() {
 
     return (
         <>
-            <GlobalHeader />
+
             <div className="flex-grow relative flex items-center justify-center px-4 py-12">
                 <TourismBackground />
 
@@ -640,7 +639,7 @@ function AgentAuthContent() {
                     </div>
                 </div>
             </div>
-            <Footer />
+
         </>
     )
 }

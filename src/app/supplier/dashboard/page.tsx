@@ -1080,7 +1080,7 @@ export default function Dashboard() {
                             <div>
                                 <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.views}</p>
                                 <p className="mt-2 text-5xl font-black text-white">
-                                    {activeProducts.reduce((acc, curr) => acc + (curr.view_count || 0), 0)}
+                                    {products.reduce((acc, curr) => acc + (curr.view_count || 0), 0)}
                                 </p>
                             </div>
                             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
@@ -1096,7 +1096,7 @@ export default function Dashboard() {
                             <div>
                                 <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.wishlisted}</p>
                                 <p className="mt-2 text-5xl font-black text-white">
-                                    {activeProducts.reduce((acc, curr) => acc + (curr.wishlist_count || 0), 0)}
+                                    {products.reduce((acc, curr) => acc + (curr.wishlist_count || 0), 0)}
                                 </p>
                             </div>
                             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
@@ -1143,9 +1143,9 @@ export default function Dashboard() {
                 </div>
 
                 {activeTab === 'active' ? (
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {activeProducts.map((product) => (
-                            <div key={product.id} className="bg-card rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm flex flex-col">
+                            <div key={product.id} className="bg-gradient-to-br from-orange-100 via-amber-50 to-yellow-100 rounded-lg border border-orange-200 overflow-hidden hover:border-orange-300 hover:shadow-md transition-all duration-300 flex flex-col">
                                 {/* Top Section: Details */}
                                 <div className="p-6 flex flex-col md:flex-row justify-between items-start flex-grow">
                                     <div className="flex items-start space-x-4 w-full">

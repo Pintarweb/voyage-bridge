@@ -13,6 +13,7 @@ type Product = {
     city: string
     country_code: string
     product_category: string
+    product_url?: string
     supplier?: {
         id: string
         company_name: string
@@ -218,8 +219,10 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
             {product.supplier && (
                 <SupplierDetailsModal
                     supplier={product.supplier}
+                    product={product}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
+                    productUrl={product.product_url}
                 />
             )}
         </>
