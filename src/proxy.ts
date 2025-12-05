@@ -35,57 +35,82 @@ export async function updateSession(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Protected Route: /portal (Agents)
-    if (request.nextUrl.pathname.startsWith('/portal')) {
-        if (!user) {
-            return NextResponse.redirect(new URL('/auth/agent', request.url))
-        }
+    const path = request.nextUrl.pathname
 
-        const { data: profile } = await supabase
-            .from('agent_profiles')
-            .select('verification_status')
-            .eq('id', user.id)
-            .single()
+    // Allow access to these pages regardless of status
+    const publicPaths = [
+        '/',
+        '/approval-pending',
+        '/rejected',
+        '/auth/agent',
+        '/auth/supplier',
+        '/auth/register',
+        '/register-agent',
+    ]
 
-        if (!profile) {
-            // Not an agent (or profile not created yet)
-            return NextResponse.redirect(new URL('/', request.url))
-        }
+    // If on a public path, allow access
+    if (publicPaths.some(p => path === p || path.startsWith('/api/'))) {
+        return response
+    }
 
-        if (profile.verification_status === 'pending') {
+    // If no user, allow access (auth pages will handle login)
+    if (!user) {
+        return response
+    }
+
+    // Check for Agent Profile
+    const { data: agentProfile } = await supabase
+        .from('agent_profiles')
+        .select('verification_status')
+        .eq('id', user.id)
+        .single()
+
+    if (agentProfile) {
+        const status = agentProfile.verification_status
+
+        if (status === 'pending') {
             return NextResponse.redirect(new URL('/approval-pending', request.url))
         }
+        if (status === 'rejected') {
+            return NextResponse.redirect(new URL('/rejected', request.url))
+        }
+        // If approved, allow access
+        return response
+    }
 
-        if (profile.verification_status === 'rejected') {
+    // Check for Supplier Profile
+    const { data: supplierProfile } = await supabase
+        .from('suppliers')
+        .select('subscription_status')
+        .eq('id', user.id)
+        .single()
+
+    if (supplierProfile) {
+        const status = supplierProfile.subscription_status
+
+        if (status === 'pending' || status === 'pending_payment') {
+            return NextResponse.redirect(new URL('/approval-pending', request.url))
+        }
+        if (status === 'rejected') {
+            return NextResponse.redirect(new URL('/rejected', request.url))
+        }
+        // If active/approved, allow access
+    }
+
+    // Protected Route: /portal (Agents)
+    if (path.startsWith('/portal')) {
+        if (!agentProfile) {
+            // Not an agent
             return NextResponse.redirect(new URL('/', request.url))
         }
     }
 
     // Protected Route: /supplier/dashboard (Suppliers)
-    if (request.nextUrl.pathname.startsWith('/supplier/dashboard')) {
-        if (!user) {
-            return NextResponse.redirect(new URL('/auth/supplier', request.url))
-        }
-
-        // Check metadata first
-        if (user.user_metadata?.role === 'supplier') {
-            return response
-        }
-
-        // Fallback: Check DB
-        const { data: supplier } = await supabase
-            .from('suppliers')
-            .select('id')
-            .eq('id', user.id)
-            .single()
-
-        if (!supplier) {
-            // Not a supplier, redirect to portal (which will handle agent check)
+    if (path.startsWith('/supplier/dashboard')) {
+        if (!supplierProfile) {
+            // Not a supplier, redirect to portal
             return NextResponse.redirect(new URL('/portal', request.url))
         }
-
-        // Supplier exists in DB, allow access
-        return response
     }
 
     return response
@@ -102,8 +127,9 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
+         * - api (API routes)
          * Feel free to modify this pattern to include more paths.
          */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 }

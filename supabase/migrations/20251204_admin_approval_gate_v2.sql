@@ -1,4 +1,4 @@
--- Add role column to suppliers and agent_profiles if not exists
+-- First, let's make sure the role columns exist
 ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS role text DEFAULT 'supplier';
 ALTER TABLE agent_profiles ADD COLUMN IF NOT EXISTS role text DEFAULT 'agent';
 
@@ -6,7 +6,7 @@ ALTER TABLE agent_profiles ADD COLUMN IF NOT EXISTS role text DEFAULT 'agent';
 ALTER TABLE suppliers ALTER COLUMN subscription_status SET DEFAULT 'pending';
 ALTER TABLE agent_profiles ALTER COLUMN verification_status SET DEFAULT 'pending';
 
--- Update handle_new_user function to set role and appropriate status
+-- Simplified trigger that only inserts required columns
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -15,12 +15,12 @@ AS $$
 BEGIN
   -- Only create a supplier entry if the role is 'supplier'
   IF new.raw_user_meta_data->>'role' = 'supplier' THEN
-    INSERT INTO public.suppliers (id, contact_email, role)
-    VALUES (new.id, new.email, 'supplier')
+    INSERT INTO public.suppliers (id, contact_email)
+    VALUES (new.id, new.email)
     ON CONFLICT (id) DO NOTHING;
   ELSIF new.raw_user_meta_data->>'role' = 'agent' THEN
-    INSERT INTO public.agent_profiles (id, email, role)
-    VALUES (new.id, new.email, 'agent')
+    INSERT INTO public.agent_profiles (id, email)
+    VALUES (new.id, new.email)
     ON CONFLICT (id) DO NOTHING;
   END IF;
 
@@ -90,12 +90,11 @@ TO authenticated
 USING (is_approved());
 
 -- Allow Anon access (for public portal) - explicitly
--- This ensures the landing page still works for visitors
 DROP POLICY IF EXISTS "Anon can view suppliers" ON suppliers;
 CREATE POLICY "Anon can view suppliers"
 ON suppliers FOR SELECT
 TO anon
 USING (true);
 
--- Drop the old permissive policy if it exists to enforce the gate for authenticated users
+-- Drop the old permissive policy if it exists
 DROP POLICY IF EXISTS "Enable read access for all users" ON suppliers;

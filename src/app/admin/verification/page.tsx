@@ -28,20 +28,30 @@ export default function AdminVerificationPage() {
         setLoading(true)
 
         // Fetch Agents
-        const { data: agents } = await supabase
+        const { data: agents, error: agentError } = await supabase
             .from('agent_profiles')
-            .select('id, full_name, email, created_at, verification_status')
+            .select('id, agency_name, email, created_at, verification_status')
             .eq('verification_status', 'pending')
 
+        if (agentError) {
+            console.error('Error fetching agents:', agentError)
+        } else {
+            console.log('Fetched agents:', agents)
+        }
+
         // Fetch Suppliers
-        const { data: suppliers } = await supabase
+        const { data: suppliers, error: supplierError } = await supabase
             .from('suppliers')
-            .select('id, company_name, contact_email, subscription_status') // Assuming created_at might not be there or named differently
+            .select('id, company_name, contact_email, subscription_status')
             .or('subscription_status.eq.pending,subscription_status.eq.pending_payment')
+
+        if (supplierError) {
+            console.error('Error fetching suppliers:', supplierError)
+        }
 
         const formattedAgents: UserRequest[] = (agents || []).map(a => ({
             id: a.id,
-            full_name: a.full_name,
+            full_name: a.agency_name,
             email: a.email,
             role: 'agent',
             created_at: a.created_at,

@@ -82,41 +82,47 @@ export default function AgentRegistration() {
         setError('')
 
         try {
-            // 1. Sign Up
+            // 1. Sign Up with all data in metadata
+            const metadataToSend = {
+                role: 'agent',
+                agency_name: formData.agency_name,
+                license_number: formData.license_number,
+                website_url: formData.website_url,
+                city: formData.city,
+                country_code: formData.country_code,
+                address: formData.address,
+                phone_number: formData.phone_number
+            }
+
+            console.log('=== AGENT REGISTRATION DEBUG ===')
+            console.log('Form Data:', formData)
+            console.log('Metadata being sent:', metadataToSend)
+
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: formData.email,
                 password: formData.password,
                 options: {
-                    data: {
-                        role: 'agent', // Metadata to distinguish
-                    }
+                    data: metadataToSend
                 }
             })
+
+            console.log('SignUp response:', { authData, authError })
 
             if (authError) throw authError
             if (!authData.user) throw new Error('Registration failed')
 
-            // 2. Create Profile
-            const { error: profileError } = await supabase
-                .from('agent_profiles')
-                .insert({
-                    id: authData.user.id,
-                    agency_name: formData.agency_name,
-                    license_number: formData.license_number,
-                    website_url: formData.website_url,
-                    city: formData.city,
-                    country_code: formData.country_code,
-                    address: formData.address,
-                    phone_number: formData.phone_number,
-                    verification_status: 'pending'
-                })
+            console.log('User created successfully:', authData.user.id)
+            console.log('User metadata:', authData.user.user_metadata)
 
-            if (profileError) throw profileError
+            // The trigger will create the profile automatically
+            // Wait a moment for the trigger to complete
+            await new Promise(resolve => setTimeout(resolve, 1000))
 
-            // 3. Redirect
+            // 2. Redirect
             router.push('/approval-pending')
 
         } catch (err: any) {
+            console.error('Registration error:', err)
             setError(err.message)
         } finally {
             setLoading(false)
