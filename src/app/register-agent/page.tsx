@@ -43,7 +43,6 @@ const CITY_TO_COUNTRY: Record<string, string> = {
 export default function AgentRegistration() {
     const [formData, setFormData] = useState({
         email: '',
-        password: '',
         agency_name: '',
         license_number: '',
         website_url: '',
@@ -82,9 +81,10 @@ export default function AgentRegistration() {
         setError('')
 
         try {
-            // 1. Sign Up with all data in metadata
+            // 1. Sign Up - Passwordless (Email Only)
+            // Metadata is still passed to trigger the handle_new_user function
             const metadataToSend = {
-                role: 'agent',
+                role: 'pending_agent', // Explicitly setting role
                 agency_name: formData.agency_name,
                 license_number: formData.license_number,
                 website_url: formData.website_url,
@@ -98,27 +98,25 @@ export default function AgentRegistration() {
             console.log('Form Data:', formData)
             console.log('Metadata being sent:', metadataToSend)
 
-            const { data: authData, error: authError } = await supabase.auth.signUp({
+            // Supabase Passwordless Sign Up / Sign In (Magic Link)
+            // We use signInWithOtp which handles creating the user if they don't exist
+            // and sending the magic link.
+            const { data: authData, error: authError } = await supabase.auth.signInWithOtp({
                 email: formData.email,
-                password: formData.password,
                 options: {
-                    data: metadataToSend
+                    data: metadataToSend, // This metadata is only applied if the user is created (new signup)
+                    emailRedirectTo: `${window.location.origin}/approval-pending`,
+                    shouldCreateUser: true
                 }
             })
 
-            console.log('SignUp response:', { authData, authError })
+            console.log('SignInWithOtp response:', { authData, authError })
 
             if (authError) throw authError
-            if (!authData.user) throw new Error('Registration failed')
+            // Note: authData.user is usually null for OTP/MagicLink until they click the link, 
+            // but the process was successful if no error.
 
-            console.log('User created successfully:', authData.user.id)
-            console.log('User metadata:', authData.user.user_metadata)
-
-            // The trigger will create the profile automatically
-            // Wait a moment for the trigger to complete
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            // 2. Redirect
+            // 2. Redirect immediately to approval pending
             router.push('/approval-pending')
 
         } catch (err: any) {
@@ -153,14 +151,7 @@ export default function AgentRegistration() {
                             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white bg-gray-800 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
                             onChange={handleChange}
                         />
-                        <input
-                            type="password"
-                            name="password"
-                            required
-                            placeholder="Password"
-                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white bg-gray-800 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
-                            onChange={handleChange}
-                        />
+                        {/* Password field removed */}
 
                         {/* Agency Details */}
                         <input

@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { approveUser, rejectUser } from '@/app/actions/admin-actions'
 
 type UserRequest = {
     id: string
     full_name?: string // Agents
     company_name?: string // Suppliers
     email: string
-    role: 'agent' | 'supplier'
+    role: 'pending_agent' | 'pending_supplier' | 'agent' | 'supplier'
     created_at?: string
     status: string
 }
@@ -18,6 +17,7 @@ export default function AdminVerificationPage() {
     const [requests, setRequests] = useState<UserRequest[]>([])
     const [loading, setLoading] = useState(true)
     const [processingId, setProcessingId] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>(null)
     const supabase = createClient()
 
     useEffect(() => {
@@ -26,34 +26,32 @@ export default function AdminVerificationPage() {
 
     const fetchPendingRequests = async () => {
         setLoading(true)
+        setError(null)
 
-        // Fetch Agents
+        // Fetch Pending Agents from agent_profiles
+        // Strict check: role must be 'pending_agent'
         const { data: agents, error: agentError } = await supabase
             .from('agent_profiles')
-            .select('id, agency_name, email, created_at, verification_status')
-            .eq('verification_status', 'pending')
+            .select('*')
+            .eq('is_approved', false)
+            .eq('role', 'pending_agent')
 
         if (agentError) {
             console.error('Error fetching agents:', agentError)
-        } else {
-            console.log('Fetched agents:', agents)
+            setError('Failed to load pending requests.')
         }
 
-        // Fetch Suppliers
+        // Fetch Suppliers (Optional/Legacy check)
         const { data: suppliers, error: supplierError } = await supabase
             .from('suppliers')
-            .select('id, company_name, contact_email, subscription_status')
+            .select('*')
             .or('subscription_status.eq.pending,subscription_status.eq.pending_payment')
-
-        if (supplierError) {
-            console.error('Error fetching suppliers:', supplierError)
-        }
 
         const formattedAgents: UserRequest[] = (agents || []).map(a => ({
             id: a.id,
             full_name: a.agency_name,
             email: a.email,
-            role: 'agent',
+            role: a.role as any,
             created_at: a.created_at,
             status: a.verification_status
         }))
@@ -62,7 +60,7 @@ export default function AdminVerificationPage() {
             id: s.id,
             company_name: s.company_name,
             email: s.contact_email,
-            role: 'supplier',
+            role: s.role as any || 'supplier',
             status: s.subscription_status
         }))
 
@@ -71,70 +69,133 @@ export default function AdminVerificationPage() {
     }
 
     const handleAction = async (user: UserRequest, action: 'approve' | 'reject') => {
-        if (!confirm(`Are you sure you want to ${action} this ${user.role}?`)) return
+        if (!confirm(`Are you sure you want to ${action} this ${user.role?.replace('_', ' ')}?`)) return
 
         setProcessingId(user.id)
+        let success = false
+        const errorMessage = ''
 
-        let result
-        if (action === 'approve') {
-            result = await approveUser(user.id, user.role, user.email)
-        } else {
-            result = await rejectUser(user.id, user.role, user.email)
+        try {
+            if (action === 'approve') {
+                if (user.role === 'pending_agent') {
+                    const { error } = await supabase
+                        .from('agent_profiles')
+                        .update({
+                            is_approved: true,
+                            role: 'agent',
+                            verification_status: 'approved'
+                        })
+                        .eq('id', user.id)
+
+                    if (error) throw error
+                    success = true
+                } else {
+                    // Supplier logic
+                    const { error } = await supabase
+                        .from('suppliers')
+                        .update({ subscription_status: 'active', role: 'supplier' })
+                        .eq('id', user.id)
+                    if (error) throw error
+                    success = true
+                }
+            } else {
+                // Reject logic
+                alert('Reject functionality implementation pending.')
+            }
+        } catch (err: any) {
+            console.error('Error processing request:', err)
+            alert(`Error: ${err.message}`)
         }
 
-        if (result.success) {
+        if (success) {
             setRequests(prev => prev.filter(r => r.id !== user.id))
-            alert(`User ${action}d successfully`)
-        } else {
-            alert(`Failed to ${action} user: ${result.error}`)
+            // Simple toast
+            const toast = document.createElement('div')
+            toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce'
+            toast.textContent = `User successfully ${action}d!`
+            document.body.appendChild(toast)
+            setTimeout(() => toast.remove(), 3000)
         }
 
         setProcessingId(null)
     }
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
-            <h1 className="text-3xl font-bold mb-8 text-teal-400">Admin Verification Dashboard</h1>
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">Verification Requests</h1>
+                    <p className="text-gray-500 mt-1">Manage pending agent and supplier approvals.</p>
+                </div>
+                <button
+                    onClick={fetchPendingRequests}
+                    className="text-sm text-teal-600 hover:underline flex items-center gap-1"
+                >
+                    🔄 Refresh
+                </button>
+            </div>
+
+            {error && (
+                <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200">
+                    {error}
+                </div>
+            )}
 
             {loading ? (
-                <p>Loading pending requests...</p>
+                <div className="flex justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                </div>
             ) : requests.length === 0 ? (
-                <p className="text-gray-400">No pending verification requests.</p>
+                <div className="bg-white p-12 rounded-xl shadow-sm border border-gray-200 text-center">
+                    <div className="text-4xl mb-4">✨</div>
+                    <h3 className="text-lg font-medium text-gray-900">All caught up!</h3>
+                    <p className="text-gray-500 mt-2">No pending requests at this time.</p>
+                </div>
             ) : (
-                <div className="overflow-x-auto bg-gray-800 rounded-lg shadow">
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-700 text-gray-300 uppercase">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3">Type</th>
-                                <th className="px-6 py-3">Name / Company</th>
-                                <th className="px-6 py-3">Email</th>
-                                <th className="px-6 py-3">Status</th>
-                                <th className="px-6 py-3">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-700">
+                        <tbody className="bg-white divide-y divide-gray-200">
                             {requests.map((req) => (
-                                <tr key={req.id} className="hover:bg-gray-750">
-                                    <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${req.role === 'agent' ? 'bg-blue-900 text-blue-300' : 'bg-purple-900 text-purple-300'}`}>
-                                            {req.role}
+                                <tr key={req.id} className="hover:bg-gray-50 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${req.role?.includes('agent') ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
+                                            }`}>
+                                            {req.role?.replace('_', ' ')}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 font-medium">{req.full_name || req.company_name}</td>
-                                    <td className="px-6 py-4">{req.email}</td>
-                                    <td className="px-6 py-4 capitalize text-yellow-400">{req.status.replace('_', ' ')}</td>
-                                    <td className="px-6 py-4 space-x-2">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm font-medium text-gray-900">{req.full_name || req.company_name}</div>
+                                        <div className="text-sm text-gray-500 text-xs">ID: {req.id.slice(0, 8)}...</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {req.email}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className="text-sm text-yellow-600 bg-yellow-50 px-2 py-1 rounded">
+                                            {req.status?.replace('_', ' ') || 'Pending'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                         <button
                                             onClick={() => handleAction(req, 'approve')}
                                             disabled={!!processingId}
-                                            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-3 py-1 rounded text-xs transition-colors"
+                                            className="text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded text-xs transition-colors disabled:opacity-50"
                                         >
-                                            {processingId === req.id ? 'Processing...' : 'Approve'}
+                                            {processingId === req.id ? '...' : 'Approve'}
                                         </button>
                                         <button
                                             onClick={() => handleAction(req, 'reject')}
                                             disabled={!!processingId}
-                                            className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-3 py-1 rounded text-xs transition-colors"
+                                            className="text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs transition-colors disabled:opacity-50"
                                         >
                                             Reject
                                         </button>
