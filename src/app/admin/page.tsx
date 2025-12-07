@@ -5,18 +5,20 @@ import Link from 'next/link'
 export default async function AdminDashboardPage() {
     const supabase = await createClient()
 
-    // Count pending agents
+    // Count pending agents (exclude admins)
     const { count: pendingCount, error } = await supabase
         .from('agent_profiles')
         .select('*', { count: 'exact', head: true })
         .eq('verification_status', 'pending')
         .eq('is_approved', false)
+        .neq('role', 'admin')
 
-    // Count approved agents
+    // Count approved agents (exclude admins)
     const { count: agentCount } = await supabase
         .from('agent_profiles')
         .select('*', { count: 'exact', head: true })
         .eq('verification_status', 'approved')
+        .neq('role', 'admin')
 
     // Count active suppliers (assuming 'active' or 'trial' status - easier to count all non-pending/rejected)
     const { count: supplierCount } = await supabase

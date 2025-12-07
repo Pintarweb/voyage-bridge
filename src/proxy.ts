@@ -61,11 +61,16 @@ export async function updateSession(request: NextRequest) {
     // Check for Agent Profile
     const { data: agentProfile } = await supabase
         .from('agent_profiles')
-        .select('verification_status')
+        .select('verification_status, role')
         .eq('id', user.id)
         .single()
 
     if (agentProfile) {
+        // Admins bypass all approval checks
+        if (agentProfile.role === 'admin') {
+            return response
+        }
+
         const status = agentProfile.verification_status
 
         if (status === 'pending') {

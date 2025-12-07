@@ -48,24 +48,30 @@ export async function approveAgent(agentId: string, agentEmail: string): Promise
             return { success: false, error: 'Failed to update agent profile' }
         }
 
-        // 3. Trigger Password Reset Email (The "Invite")
-        // This allows them to set their password for the first time.
-
-        // Note: resetPasswordForEmail sends the standard Supabase "Reset Password" template.
-        // We ensure the redirect URL points to a page handling password reset.
+        // 3. Generate Password Setup Link (The "Invite")
+        // Use generateLink instead of resetPasswordForEmail because the user has never set a password
         const origin = (await headers()).get('origin')
-        const redirectUrl = `${origin}/auth/reset-password` // Ensure this route exists or is handled by Supabase default UI
+        const redirectUrl = `${origin}/auth/reset-password`
 
-        const { error: emailError } = await supabaseAdmin.auth.resetPasswordForEmail(agentEmail, {
-            redirectTo: redirectUrl
+        const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+            type: 'recovery',
+            email: agentEmail,
+            options: {
+                redirectTo: redirectUrl
+            }
         })
 
-        if (emailError) {
-            console.error('Email Trigger Error:', emailError)
-            // We return success: true because the approval worked, but warn about email.
-            // Or we could return a specific warning state.
-            return { success: true, error: 'Agent approved, but failed to send invite email.' }
+        if (linkError) {
+            console.error('Link Generation Error:', linkError)
+            return { success: true, error: 'Agent approved, but failed to generate invite link.' }
         }
+
+        console.log('Generated recovery link for agent:', agentEmail)
+        console.log('Recovery link:', linkData.properties.action_link)
+
+        // TODO: Send this link via email using your email service
+        // For now, log it so admin can manually send it
+        console.log('IMPORTANT: Send this link to the agent:', linkData.properties.action_link)
 
         return { success: true }
 
