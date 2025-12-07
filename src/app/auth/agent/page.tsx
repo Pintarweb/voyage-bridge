@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import TourismBackground from '@/components/ui/TourismBackground'
 import { useLanguage } from '@/context/LanguageContext'
+import { useRoleRedirect } from '@/hooks/useRoleRedirect'
 
 function AgentAuthContent() {
     const [loading, setLoading] = useState(false)
@@ -13,6 +14,7 @@ function AgentAuthContent() {
     const router = useRouter()
     const supabase = createClient()
     const { language } = useLanguage()
+    const { checkAndRedirect } = useRoleRedirect()
 
     const [loginEmail, setLoginEmail] = useState('')
     const [loginPassword, setLoginPassword] = useState('')
@@ -125,14 +127,12 @@ function AgentAuthContent() {
 
             if (error) throw error
 
-            // Check if user is admin
-            const role = data.user?.app_metadata?.role || data.user?.user_metadata?.role
+            // Secure Admin Redirection Check
+            const wasRedirected = await checkAndRedirect(data.user.id)
+            if (wasRedirected) return
 
-            if (role === 'admin') {
-                router.push('/admin')
-            } else {
-                router.push('/portal')
-            }
+            // Standard Agent Flow
+            router.push('/portal')
         } catch (err: any) {
             setError(err.message)
         } finally {

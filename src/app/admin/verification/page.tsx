@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { approveAgent } from '@/app/actions/approve-agent'
 
 type UserRequest = {
     id: string
@@ -78,16 +79,17 @@ export default function AdminVerificationPage() {
         try {
             if (action === 'approve') {
                 if (user.role === 'pending_agent') {
-                    const { error } = await supabase
-                        .from('agent_profiles')
-                        .update({
-                            is_approved: true,
-                            role: 'agent',
-                            verification_status: 'approved'
-                        })
-                        .eq('id', user.id)
+                    // Use Server Action to Approve AND Send Invite Email
+                    const result = await approveAgent(user.id, user.email)
 
-                    if (error) throw error
+                    if (!result.success) {
+                        throw new Error(result.error)
+                    }
+                    // If there's a non-fatal error (like email fail), it might be in result.error but success=true
+                    if (result.error) {
+                        alert(`Warning: ${result.error}`)
+                    }
+
                     success = true
                 } else {
                     // Supplier logic
@@ -112,7 +114,7 @@ export default function AdminVerificationPage() {
             // Simple toast
             const toast = document.createElement('div')
             toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce'
-            toast.textContent = `User successfully ${action}d!`
+            toast.textContent = `User approved & Email sent!`
             document.body.appendChild(toast)
             setTimeout(() => toast.remove(), 3000)
         }

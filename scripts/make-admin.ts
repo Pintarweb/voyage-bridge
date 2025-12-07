@@ -109,6 +109,22 @@ async function makeAdmin() {
         console.log('Admin profile created/updated in agent_profiles')
     }
 
+    // 4. Ensure Admin Profile exists in admin_profiles (for new useRoleRedirect hook)
+    console.log('Ensuring admin profile exists in admin_profiles...')
+    const { error: adminProfileError } = await supabase
+        .from('admin_profiles')
+        .upsert({
+            id: userId,
+            internal_notes: 'System Super Admin',
+            last_verification_date: new Date().toISOString()
+        })
+
+    if (adminProfileError) {
+        console.error('Error creating admin_profile:', adminProfileError)
+    } else {
+        console.log('Admin profile created/updated in admin_profiles')
+    }
+
     console.log('Successfully promoted user to admin!')
     console.log('New Metadata:', updatedUser.user.app_metadata)
 }

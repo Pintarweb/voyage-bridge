@@ -7,6 +7,7 @@ import PhoneInput, { Country } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import CountrySelect from '@/components/ui/CountrySelect'
 import './agent-registration.css'
+import { registerAgent } from '@/app/actions/register-agent'
 
 const CITY_TO_COUNTRY: Record<string, string> = {
     // North America
@@ -81,10 +82,13 @@ export default function AgentRegistration() {
         setError('')
 
         try {
-            // 1. Sign Up - Passwordless (Email Only)
-            // Metadata is still passed to trigger the handle_new_user function
-            const metadataToSend = {
-                role: 'pending_agent', // Explicitly setting role
+            console.log('=== AGENT REGISTRATION ===')
+            console.log('Form Data:', formData)
+
+            // 1. Sign Up - Silent Registration (Via Server Action)
+            // This prevents the default Magic Link email from being sent immediately.
+            const result = await registerAgent({
+                email: formData.email,
                 agency_name: formData.agency_name,
                 license_number: formData.license_number,
                 website_url: formData.website_url,
@@ -92,29 +96,18 @@ export default function AgentRegistration() {
                 country_code: formData.country_code,
                 address: formData.address,
                 phone_number: formData.phone_number
-            }
-
-            console.log('=== AGENT REGISTRATION DEBUG ===')
-            console.log('Form Data:', formData)
-            console.log('Metadata being sent:', metadataToSend)
-
-            // Supabase Passwordless Sign Up / Sign In (Magic Link)
-            // We use signInWithOtp which handles creating the user if they don't exist
-            // and sending the magic link.
-            const { data: authData, error: authError } = await supabase.auth.signInWithOtp({
-                email: formData.email,
-                options: {
-                    data: metadataToSend, // This metadata is only applied if the user is created (new signup)
-                    emailRedirectTo: `${window.location.origin}/approval-pending`,
-                    shouldCreateUser: true
-                }
             })
 
-            console.log('SignInWithOtp response:', { authData, authError })
+            console.log('RegisterAgent response:', result)
 
-            if (authError) throw authError
-            // Note: authData.user is usually null for OTP/MagicLink until they click the link, 
-            // but the process was successful if no error.
+            if (!result.success) {
+                throw new Error(result.error)
+            }
+
+            // Note: No authData returned because we aren't logging them in.
+            // They are just created and pending.
+
+
 
             // 2. Redirect immediately to approval pending
             router.push('/approval-pending')
