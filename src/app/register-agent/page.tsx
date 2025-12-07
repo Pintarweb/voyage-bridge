@@ -82,9 +82,6 @@ export default function AgentRegistration() {
         setError('')
 
         try {
-            console.log('=== AGENT REGISTRATION ===')
-            console.log('Form Data:', formData)
-
             // 1. Sign Up - Silent Registration (Via Server Action)
             // This prevents the default Magic Link email from being sent immediately.
             const result = await registerAgent({
@@ -106,8 +103,6 @@ export default function AgentRegistration() {
 
             // Note: No authData returned because we aren't logging them in.
             // They are just created and pending.
-
-
 
             // 2. Redirect immediately to approval pending
             router.push('/approval-pending')
@@ -188,8 +183,8 @@ export default function AgentRegistration() {
                         </div>
 
                         <div className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2">
+                            {/* REMOVED key={formData.country_code} to prevent re-mounting focus issues */}
                             <PhoneInput
-                                key={formData.country_code}
                                 placeholder="Enter phone number"
                                 value={formData.phone_number}
                                 onChange={(value) => setFormData({ ...formData, phone_number: value as string })}

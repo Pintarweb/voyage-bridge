@@ -38,7 +38,8 @@ export async function approveAgent(agentId: string, agentEmail: string): Promise
             .update({
                 is_approved: true,
                 role: 'agent',
-                verification_status: 'approved'
+                verification_status: 'approved',
+                approved_at: new Date().toISOString()
             })
             .eq('id', agentId)
 

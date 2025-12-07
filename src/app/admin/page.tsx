@@ -12,6 +12,22 @@ export default async function AdminDashboardPage() {
         .eq('verification_status', 'pending')
         .eq('is_approved', false)
 
+    // Count approved agents
+    const { count: agentCount } = await supabase
+        .from('agent_profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'approved')
+
+    // Count active suppliers (assuming 'active' or 'trial' status - easier to count all non-pending/rejected)
+    const { count: supplierCount } = await supabase
+        .from('suppliers')
+        .select('*', { count: 'exact', head: true })
+        .in('subscription_status', ['active', 'trial', 'approved'])
+
+    const totalUsers = (agentCount || 0) + (supplierCount || 0)
+
+    console.log('Dashboard Counts:', { pendingCount, agentCount, supplierCount, totalUsers })
+
     return (
         <div className="space-y-6">
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
@@ -38,9 +54,14 @@ export default async function AdminDashboardPage() {
                             <span className="text-2xl">👥</span>
                         </div>
                         <p className="text-4xl font-bold text-blue-600 mt-4">
-                            -
+                            {totalUsers}
                         </p>
-                        <p className="text-sm text-gray-500 mt-2">Manage system users</p>
+                        <div className="flex gap-4 mt-2 text-sm text-gray-500">
+                            <span>Agents: <b>{agentCount || 0}</b></span>
+                            <span>•</span>
+                            <span>Suppliers: <b>{supplierCount || 0}</b></span>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">Manage system users</p>
                     </div>
                 </Link>
 
