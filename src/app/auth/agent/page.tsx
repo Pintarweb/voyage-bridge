@@ -180,6 +180,14 @@ function AgentAuthContent() {
                                     onChange={(e) => setLoginPassword(e.target.value)}
                                 />
                             </div>
+                            <div className="flex justify-end">
+                                <Link
+                                    href="/auth/forgot-password"
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline"
+                                >
+                                    Forgot Password?
+                                </Link>
+                            </div>
                             <button
                                 type="submit"
                                 disabled={loading}

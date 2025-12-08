@@ -3,13 +3,11 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import TourismBackground from '@/components/ui/TourismBackground'
 
-export default function PasswordResetPage() {
+export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(true)
     const [showForm, setShowForm] = useState(false)
-    const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false)
-
-    // Form State
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [formError, setFormError] = useState('')
@@ -20,81 +18,88 @@ export default function PasswordResetPage() {
     const supabase = createClient()
 
     useEffect(() => {
-        // Check if URL contains recovery token
-        const checkRecoveryToken = async () => {
-            const hashParams = new URLSearchParams(window.location.hash.substring(1))
-            const accessToken = hashParams.get('access_token')
-            const type = hashParams.get('type')
+        let timeoutId: NodeJS.Timeout
 
-            console.log('URL Hash Check:', { accessToken: !!accessToken, type, hash: window.location.hash })
+        // Check for hash parameters immediately to know if we should expect a recovery flow
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+        const hasAccessToken = hashParams.get('access_token')
+        const type = hashParams.get('type')
+        const isRecoveryFlow = hasAccessToken && type === 'recovery'
 
+        console.log('Reset Page Mount Check:', { isRecoveryFlow, hash: window.location.hash })
 
-            // If we have a recovery token in the URL, this is a password reset flow
-            if (accessToken && type === 'recovery') {
-                console.log('Recovery token detected in URL')
+        // Setup the listener FIRST
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log('Reset Auth Event:', event, session?.user?.email)
 
-                // Check if there's an existing session that might interfere
-                const { data: { session } } = await supabase.auth.getSession()
+            if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && isRecoveryFlow)) {
+                // Success!
+                if (timeoutId) clearTimeout(timeoutId)
 
+                // If there's a session, we're good
                 if (session) {
-                    console.log('Existing session detected, signing out and reloading to process recovery token')
-                    // Sign out the existing session
-                    await supabase.auth.signOut()
-                    // Reload the page so Supabase can process the recovery token with a clean slate
-                    // The hash parameters will still be in the URL
-                    window.location.reload()
-                    return
-                }
-
-                // If we reach here, there's no existing session
-                // The Supabase SSR client should have already exchanged the token
-                // Let's verify we now have a recovery session
-                const { data: { session: recoverySession } } = await supabase.auth.getSession()
-
-                console.log('Recovery session check:', { hasSession: !!recoverySession, email: recoverySession?.user?.email })
-
-                if (recoverySession) {
-                    console.log('Recovery session established')
+                    console.log('Session established via event:', event)
                     setShowForm(true)
                     setLoading(false)
-                    setAlreadyLoggedIn(false)
-                } else {
-                    console.error('Failed to establish recovery session - token may be expired or invalid')
-                    setLoading(false)
-                    setShowForm(false)
                 }
-                return
-            }
-
-            // Otherwise, check current session
-            const { data: { session } } = await supabase.auth.getSession()
-            console.log('Current session check:', session?.user?.email)
-
-            if (session) {
-                // User has an existing session but no recovery token
-                setLoading(false)
-                setAlreadyLoggedIn(true)
-            } else {
-                // No session and no recovery token - invalid link
-                setLoading(false)
-                setShowForm(false)
-            }
-        }
-
-        checkRecoveryToken()
-
-        // Monitor session state changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log('Auth State Change:', event, session?.user?.email)
-
-            if (event === 'PASSWORD_RECOVERY') {
-                setShowForm(true)
-                setLoading(false)
-                setAlreadyLoggedIn(false)
             }
         })
 
+        // Logic to handle initial state
+        const checkSession = async () => {
+            if (isRecoveryFlow) {
+                // Manually attempt to set the session using the tokens from the URL
+                if (hasAccessToken) {
+                    console.log('Attempting manual session establishment with token')
+                    const { error } = await supabase.auth.setSession({
+                        access_token: hasAccessToken,
+                        refresh_token: hashParams.get('refresh_token') || '',
+                    })
+
+                    if (error) {
+                        console.error('Manual session establishment failed:', error)
+                    } else {
+                        console.log('Manual session establishment successful')
+                        const { data: { session } } = await supabase.auth.getSession()
+                        if (session) {
+                            setShowForm(true)
+                            setLoading(false)
+                            return
+                        }
+                    }
+                }
+
+                // Set a safety timeout to stop the loading spinner eventually
+                timeoutId = setTimeout(async () => {
+                    console.warn('Recovery timeout reached - checking session one last time')
+                    const { data: { session } } = await supabase.auth.getSession()
+                    if (session) {
+                        setShowForm(true)
+                        setLoading(false)
+                    } else {
+                        console.error('Failed to establish recovery session after timeout')
+                        setLoading(false)
+                        setShowForm(false)
+                    }
+                }, 4000) // 4 seconds wait time
+
+            } else {
+                // If not recovery flow, maybe they are just here? check session anyway
+                const { data: { session } } = await supabase.auth.getSession()
+                if (session) {
+                    setLoading(false)
+                    setShowForm(true)
+                } else {
+                    setLoading(false)
+                    setShowForm(false)
+                }
+            }
+        }
+
+        checkSession()
+
         return () => {
+            if (timeoutId) clearTimeout(timeoutId)
             subscription.unsubscribe()
         }
     }, [])
@@ -124,10 +129,10 @@ export default function PasswordResetPage() {
             if (error) {
                 setFormError(error.message)
             } else {
-                setSuccessMessage('Password successfully set! Redirecting to dashboard...')
+                setSuccessMessage('Password updated successfully! Redirecting...')
                 // Wait briefly then redirect
                 setTimeout(() => {
-                    router.push('/portal') // Agent dashboard
+                    router.push('/portal')
                 }, 2000)
             }
         } catch (err: any) {
@@ -140,26 +145,10 @@ export default function PasswordResetPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-                <div className="text-gray-600 animate-pulse">Verifying reset link...</div>
-            </div>
-        )
-    }
-
-    if (alreadyLoggedIn && !showForm) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-                <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md text-center">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Already Logged In</h2>
-                    <p className="text-gray-600 mb-6">
-                        You are already signed into an active session. If you need to reset your password, please use the settings page or logout and request a new link.
-                    </p>
-                    <button
-                        onClick={() => router.push('/portal')}
-                        className="w-full bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition"
-                    >
-                        Go to Dashboard
-                    </button>
+            <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen">
+                <TourismBackground />
+                <div className="relative z-10 text-white animate-pulse text-xl font-semibold">
+                    Verifying secure link...
                 </div>
             </div>
         )
@@ -167,15 +156,16 @@ export default function PasswordResetPage() {
 
     if (!showForm) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-                <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md text-center">
+            <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen">
+                <TourismBackground />
+                <div className="relative z-10 max-w-md w-full bg-white p-8 rounded-lg shadow-md text-center">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">Invalid or Expired Link</h2>
                     <p className="text-gray-600 mb-6">
                         This password reset link appears to be invalid or has expired.
                     </p>
                     <button
                         onClick={() => router.push('/auth/agent')}
-                        className="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900 transition"
+                        className="w-full bg-slate-800 text-white py-2 px-4 rounded hover:bg-slate-900 transition"
                     >
                         Back to Login
                     </button>
@@ -185,12 +175,14 @@ export default function PasswordResetPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
-            <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg">
+        <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen">
+            <TourismBackground />
+
+            <div className="relative z-10 max-w-md w-full bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden border border-white/20 p-8">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-900">Set New Password</h2>
-                    <p className="mt-2 text-sm text-gray-500">
-                        Please secure your account with a new password.
+                    <h2 className="text-2xl font-bold text-slate-900">Reset Password</h2>
+                    <p className="text-sm text-slate-500 mt-2">
+                        Enter your new password below.
                     </p>
                 </div>
 
@@ -217,7 +209,7 @@ export default function PasswordResetPage() {
                         )}
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-700">
                                 New Password
                             </label>
                             <input
@@ -227,13 +219,13 @@ export default function PasswordResetPage() {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm text-black"
+                                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
                                 placeholder="Min. 6 characters"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">
                                 Confirm New Password
                             </label>
                             <input
@@ -243,7 +235,7 @@ export default function PasswordResetPage() {
                                 required
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm text-black"
+                                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
                                 placeholder="Re-enter password"
                             />
                         </div>
@@ -251,9 +243,9 @@ export default function PasswordResetPage() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50"
+                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                         >
-                            {isSubmitting ? 'Setting Password...' : 'Set Password'}
+                            {isSubmitting ? 'Updating...' : 'Update Password'}
                         </button>
                     </form>
                 )}
