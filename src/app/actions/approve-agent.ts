@@ -2,11 +2,12 @@
 
 import { createAdminClient } from '@/utils/supabase/admin'
 import { createClient } from '@/utils/supabase/server'
-import { headers } from 'next/headers'
+import { sendInviteLinkEmail } from '@/lib/emailSender'
 
 type ApproveAgentResponse = {
     success: boolean
     error?: string
+    message?: string
 }
 
 export async function approveAgent(agentId: string, agentEmail: string): Promise<ApproveAgentResponse> {
@@ -48,32 +49,46 @@ export async function approveAgent(agentId: string, agentEmail: string): Promise
             return { success: false, error: 'Failed to update agent profile' }
         }
 
-        // 3. Generate Password Setup Link (The "Invite")
-        // Use generateLink instead of resetPasswordForEmail because the user has never set a password
-        const origin = (await headers()).get('origin')
-        const redirectUrl = `${origin}/auth/reset-password`
-
+        // 3. Generate Password Setup Link
+        // Use 'recovery' type because user already exists (created during registration)
+        // 'invite' type only works for users that don't exist yet
         const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
             type: 'recovery',
             email: agentEmail,
             options: {
-                redirectTo: redirectUrl
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/create-password`
             }
         })
 
         if (linkError) {
             console.error('Link Generation Error:', linkError)
-            return { success: true, error: 'Agent approved, but failed to generate invite link.' }
+            return {
+                success: true,
+                error: 'Agent approved, but failed to generate invite link.',
+                message: 'Approval successful, but email failed to send.'
+            }
         }
 
-        console.log('Generated recovery link for agent:', agentEmail)
-        console.log('Recovery link:', linkData.properties.action_link)
+        const inviteLink = linkData.properties.action_link
 
-        // TODO: Send this link via email using your email service
-        // For now, log it so admin can manually send it
-        console.log('IMPORTANT: Send this link to the agent:', linkData.properties.action_link)
+        // 4. Send Invite Email
+        const emailResult = await sendInviteLinkEmail(agentEmail, inviteLink)
 
-        return { success: true }
+        if (!emailResult.success) {
+            console.error('Email Send Error:', emailResult.error)
+            return {
+                success: true,
+                error: 'Agent approved, but failed to send invite email.',
+                message: 'Approval successful, but email failed to send.'
+            }
+        }
+
+        console.log('Agent approved and invite email sent to:', agentEmail)
+
+        return {
+            success: true,
+            message: 'Agent approved and invite email sent successfully.'
+        }
 
     } catch (error: any) {
         console.error('Approve Agent Server Action Error:', error)

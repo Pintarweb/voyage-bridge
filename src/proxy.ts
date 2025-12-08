@@ -46,6 +46,7 @@ export async function updateSession(request: NextRequest) {
         '/auth/supplier',
         '/auth/register',
         '/register-agent',
+        '/auth/create-password',
     ]
 
     // If on a public path, allow access

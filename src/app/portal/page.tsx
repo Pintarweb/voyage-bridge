@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import CountrySearchView from '@/components/portal/CountrySearchView'
 import TourismBackground from '@/components/ui/TourismBackground'
+import PortalHeader from '@/components/portal/PortalHeader'
 
 export default async function PortalPage() {
     const supabase = await createClient()
@@ -51,6 +52,7 @@ export default async function PortalPage() {
     return (
         <div className="relative min-h-screen flex flex-col">
             <TourismBackground />
+            <PortalHeader userEmail={user.email} />
             <div className="relative z-10 flex-grow">
                 <CountrySearchView countries={countryOptions} />
             </div>

@@ -50,7 +50,6 @@ export default function AdminVerificationPage() {
     useEffect(() => {
         fetchRequests()
     }, [activeTab, timeFilter, statusFilter])
-
     const fetchRequests = async () => {
         setLoading(true)
         setError(null)
@@ -181,12 +180,14 @@ export default function AdminVerificationPage() {
 
         setProcessingId(user.id)
         let success = false
+        let resultMessage = ''
 
         try {
             if (type === 'approve') {
                 if (user.role === 'pending_agent') {
                     const result = await approveAgent(user.id, user.email)
                     if (!result.success) throw new Error(result.error)
+                    resultMessage = result.message || 'User approved & Email sent!'
                     success = true
                 } else {
                     const { error } = await supabase
@@ -194,6 +195,7 @@ export default function AdminVerificationPage() {
                         .update({ subscription_status: 'active', role: 'supplier' })
                         .eq('id', user.id)
                     if (error) throw error
+                    resultMessage = 'Supplier approved successfully!'
                     success = true
                 }
             } else if (type === 'reject') {
@@ -201,6 +203,7 @@ export default function AdminVerificationPage() {
                     if (!reason) throw new Error('Rejection reason is required.')
                     const result = await rejectAgent(user.id, reason)
                     if (!result.success) throw new Error(result.error)
+                    resultMessage = 'User rejected.'
                     success = true
                 } else {
                     alert('Supplier rejection not implemented yet.')
@@ -215,9 +218,7 @@ export default function AdminVerificationPage() {
             setRequests(prev => prev.filter(r => r.id !== user.id))
             const toast = document.createElement('div')
             toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce'
-            toast.textContent = type === 'approve'
-                ? `User approved & Email sent!`
-                : `User rejected.`
+            toast.textContent = resultMessage
             document.body.appendChild(toast)
             setTimeout(() => toast.remove(), 3000)
         }
@@ -351,8 +352,8 @@ export default function AdminVerificationPage() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`text-sm px-2 py-1 rounded capitalize ${req.status === 'rejected' ? 'text-red-700 bg-red-100' :
-                                                req.status === 'approved' ? 'text-green-700 bg-green-100' :
-                                                    'text-yellow-700 bg-yellow-100'
+                                            req.status === 'approved' ? 'text-green-700 bg-green-100' :
+                                                'text-yellow-700 bg-yellow-100'
                                             }`}>
                                             {req.status?.replace('_', ' ') || 'Pending'}
                                         </span>
