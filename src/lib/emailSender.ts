@@ -56,4 +56,40 @@ export async function sendInviteLinkEmail(recipientEmail: string, inviteLink: st
         // Return a clear failure signal for the calling Admin action
         return { success: false, error: error.message };
     }
+
+}
+
+/**
+     * Sends a rejection email to the supplier.
+     * @param recipientEmail The supplier's email address.
+     * @param reason The reason for rejection.
+     */
+export async function sendRejectionEmail(recipientEmail: string, reason?: string) {
+    const mailOptions = {
+        from: 'no-reply@arkalliance.com',
+        to: recipientEmail,
+        subject: 'Account Status Update - ArkAlliance',
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <h1>Account Application Update</h1>
+                <p>Thank you for your interest in ArkAlliance. We have reviewed your supplier application.</p>
+                <p>Unfortunately, we are unable to approve your account at this time.</p>
+                
+                ${reason ? `<div style="background-color: #f8f9fa; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0;"><strong>Reason:</strong><br/>${reason}</div>` : ''}
+
+                <p><strong>Refund Status:</strong> A full refund for your subscription payment has been initiated. It may take 5-10 business days to appear on your statement.</p>
+                
+                <p>If you believe this decision was made in error or if you have addressed the issues mentioned, please contact our support team.</p>
+            </div>
+        `,
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`Rejection email sent successfully to ${recipientEmail}. Message ID: ${info.messageId}`);
+        return { success: true, messageId: info.messageId };
+    } catch (error: any) {
+        console.error(`Error sending rejection email to ${recipientEmail}:`, error);
+        return { success: false, error: error.message };
+    }
 }

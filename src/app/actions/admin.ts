@@ -2,7 +2,7 @@
 
 import { createAdminClient } from '@/utils/supabase/admin'
 import { createClient } from '@/utils/supabase/server'
-import { sendInviteLinkEmail } from '@/lib/emailSender'
+import { sendInviteLinkEmail, sendRejectionEmail } from '@/lib/emailSender'
 import { revalidatePath } from 'next/cache'
 
 type AdminActionResponse = {
@@ -166,8 +166,15 @@ export async function rejectSupplier(userId: string, reason?: string): Promise<A
 
         if (updateError) throw new Error('Failed to update supplier status: ' + updateError.message)
 
-        // 6. Send Rejection Email (Placeholder)
-        console.log(`[MOCK] Sending Rejection Email to ${supplier.contact_email}`)
+        // 6. Send Rejection Email
+        const emailResult = await sendRejectionEmail(supplier.contact_email, reason)
+        if (!emailResult.success) {
+            console.error('Rejection Email Failed:', emailResult.error)
+            // We still return success because the refund/db-update worked, 
+            // but we might want to warn the admin.
+        } else {
+            console.log(`Rejection Email Sent to ${supplier.contact_email}`)
+        }
 
         revalidatePath('/admin/verification')
         return {
