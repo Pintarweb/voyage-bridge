@@ -6,12 +6,21 @@ export default async function AdminDashboardPage() {
     const supabase = await createClient()
 
     // Count pending agents (exclude admins)
-    const { count: pendingCount, error } = await supabase
+    const { count: pendingAgentCount } = await supabase
         .from('agent_profiles')
         .select('*', { count: 'exact', head: true })
-        .eq('verification_status', 'pending')
         .eq('is_approved', false)
-        .neq('role', 'admin')
+        .eq('role', 'pending_agent')
+        .neq('verification_status', 'rejected')
+
+    // Count pending suppliers (paid but not approved)
+    const { count: pendingSupplierCount } = await supabase
+        .from('suppliers')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_approved', false)
+        .eq('payment_status', 'completed')
+
+    const totalPending = (pendingAgentCount || 0) + (pendingSupplierCount || 0)
 
     // Count approved agents (exclude admins)
     const { count: agentCount } = await supabase
@@ -24,11 +33,11 @@ export default async function AdminDashboardPage() {
     const { count: supplierCount } = await supabase
         .from('suppliers')
         .select('*', { count: 'exact', head: true })
-        .in('subscription_status', ['active', 'trial', 'approved'])
+        .eq('is_approved', true)
 
     const totalUsers = (agentCount || 0) + (supplierCount || 0)
 
-    console.log('Dashboard Counts:', { pendingCount, agentCount, supplierCount, totalUsers })
+    console.log('Dashboard Counts:', { pendingAgentCount, pendingSupplierCount, totalPending })
 
     return (
         <div className="space-y-6">
@@ -43,9 +52,14 @@ export default async function AdminDashboardPage() {
                             <span className="text-2xl">✅</span>
                         </div>
                         <p className="text-4xl font-bold text-teal-600 mt-4">
-                            {pendingCount || 0}
+                            {totalPending}
                         </p>
-                        <p className="text-sm text-gray-500 mt-2">Agents awaiting verification</p>
+                        <div className="flex gap-4 mt-2 text-sm text-gray-500">
+                            <span>Agents: <b>{pendingAgentCount || 0}</b></span>
+                            <span>•</span>
+                            <span>Suppliers: <b>{pendingSupplierCount || 0}</b></span>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">Awaiting verification</p>
                     </div>
                 </Link>
 

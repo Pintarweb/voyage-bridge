@@ -2,7 +2,7 @@
 -- This enables wishlist functionality and counters across the application
 
 CREATE TABLE IF NOT EXISTS public.wishlists (
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
     product_id uuid REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
     created_at timestamptz DEFAULT now() NOT NULL,

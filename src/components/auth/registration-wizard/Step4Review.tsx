@@ -320,66 +320,20 @@ export default function Step4Review() {
         setError(null)
 
         try {
-            // 1. Sign Up User
-            const { data: authData, error: authError } = await supabase.auth.signUp({
-                email: formData.email,
-                password: formData.password,
-                options: {
-                    data: {
-                        role: 'supplier',
-                        company_name: formData.company_name,
-                        country_code: formData.country_code,
-                        base_currency: formData.base_currency,
-                    },
-                },
-            })
+            const { registerSupplier } = await import('@/app/actions/register-supplier')
 
-            if (authError) throw authError
-            if (!authData.user) throw new Error(content.errors.failed)
+            const result = await registerSupplier(formData)
 
-            // 2. Insert Full Profile Data
-            const { error: dbError } = await supabase
-                .from('suppliers')
-                .upsert({
-                    id: authData.user.id,
-                    company_name: formData.company_name,
-                    trading_name: formData.trading_name,
-                    country_code: formData.country_code,
-                    address_line_1: formData.address_line_1,
-                    city: formData.city,
-                    postcode: formData.postcode,
-                    timezone: formData.timezone,
-                    base_currency: formData.base_currency,
+            if (result.error) {
+                let errorMessage = result.error
+                // Check if the error message indicates duplicate email
+                if (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('unique constraint')) {
+                    errorMessage = 'This email is already registered.'
+                }
+                throw new Error(errorMessage)
+            }
 
-                    company_reg_no: formData.company_reg_no,
-                    license_no: formData.license_no,
-                    tax_id: formData.tax_id,
-
-                    phone_number: formData.phone_number,
-
-                    supplier_type: formData.supplier_type,
-                    description: formData.description,
-                    website_url: formData.website_url,
-
-                    // New Social Fields
-                    social_instagram: formData.social_instagram,
-                    social_facebook: formData.social_facebook,
-                    social_tiktok: formData.social_tiktok,
-                    social_linkedin: formData.social_linkedin,
-                    social_tripadvisor: formData.social_tripadvisor,
-                    whatsapp_business_url: formData.whatsapp_business_url,
-
-                    languages_spoken: formData.languages_spoken,
-                    logo_url: formData.logo_url,
-                    cover_image_url: formData.cover_image_url,
-
-                    subscription_status: 'pending_payment',
-                })
-
-            if (dbError) throw dbError
-
-            // 3. Redirect to Payment
-            router.push('/payment')
+            router.push('/payment-init')
 
         } catch (err: any) {
             console.error('Registration error:', err)
@@ -471,7 +425,17 @@ export default function Step4Review() {
                     disabled={loading}
                     className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
                 >
-                    {loading ? content.submitting : content.submit}
+                    {loading ? (
+                        <span className="flex items-center">
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                        </span>
+                    ) : (
+                        'Register My Company'
+                    )}
                 </button>
             </div>
         </div>

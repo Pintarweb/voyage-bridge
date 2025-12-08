@@ -348,11 +348,6 @@ export default function Step1Identity() {
     const validate = () => {
         const newErrors: Record<string, string> = {}
         if (!formData.email) newErrors.email = content.errors.email
-        if (!formData.password) {
-            newErrors.password = content.errors.password
-        } else if (formData.password.length < 6) {
-            newErrors.password = content.errors.passwordLength
-        }
         if (!formData.company_name) newErrors.company_name = content.errors.companyName
         if (!formData.country_code) newErrors.country_code = content.errors.country
         if (!formData.base_currency) newErrors.base_currency = content.errors.currency
@@ -438,19 +433,6 @@ export default function Step1Identity() {
                             className={`mt-1 block w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
                         />
                         {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.password} *</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
-                            className={`mt-1 block w-full rounded-md border ${errors.password ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
-                        />
-                        {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
                     </div>
                 </div>
 

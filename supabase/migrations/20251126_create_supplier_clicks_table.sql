@@ -2,7 +2,7 @@
 -- This enables lead attribution and analytics
 
 CREATE TABLE IF NOT EXISTS public.supplier_clicks (
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     agent_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
     supplier_id uuid REFERENCES public.suppliers(id) ON DELETE CASCADE,
     product_id uuid REFERENCES public.products(id) ON DELETE SET NULL,

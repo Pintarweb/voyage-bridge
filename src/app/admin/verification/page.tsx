@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { approveAgent } from '@/app/actions/approve-agent'
+import { handleUserApproval, rejectSupplier } from '@/app/actions/admin'
 import { rejectAgent } from '@/app/actions/reject-agent'
 import ConfirmationModal from '@/components/ui/ConfirmationModal'
 import RejectionModal from '@/components/ui/RejectionModal'
@@ -12,19 +12,20 @@ type UserRequest = {
     full_name?: string
     company_name?: string
     email: string
-    role: 'pending_agent' | 'pending_supplier' | 'agent' | 'supplier'
+    role: 'pending_agent' | 'pending_supplier' | 'agent' | 'supplier' | 'rejected_supplier'
     created_at?: string
     status: string
     rejection_reason?: string
     rejected_at?: string
     approved_at?: string
+    profile_type: 'agent' | 'supplier'
 }
 
 type TimeFilter = 'all' | 'today' | 'week' | 'month'
 type StatusFilter = 'all' | 'approved' | 'rejected'
 
 export default function AdminVerificationPage() {
-    const [activeTab, setActiveTab] = useState<'pending' | 'rejected' | 'history'>('pending')
+    const [activeTab, setActiveTab] = useState<'pending' | 'history'>('pending')
     const [requests, setRequests] = useState<UserRequest[]>([])
     const [loading, setLoading] = useState(true)
     const [processingId, setProcessingId] = useState<string | null>(null)
@@ -50,120 +51,142 @@ export default function AdminVerificationPage() {
     useEffect(() => {
         fetchRequests()
     }, [activeTab, timeFilter, statusFilter])
+
     const fetchRequests = async () => {
         setLoading(true)
         setError(null)
 
-        let pendingAgents: any[] = []
-        let historyAgents: any[] = []
+        try {
+            let fetchedAgents: any[] = []
+            let fetchedSuppliers: any[] = []
 
-        if (activeTab === 'pending') {
-            const { data, error } = await supabase
-                .from('agent_profiles')
-                .select('*')
-                .eq('is_approved', false)
-                .eq('role', 'pending_agent')
-                .neq('verification_status', 'rejected')
+            if (activeTab === 'pending') {
+                // Fetch Pending Agents
+                const { data: agents, error: agentError } = await supabase
+                    .from('agent_profiles')
+                    .select('*')
+                    .eq('is_approved', false)
+                    .eq('role', 'pending_agent')
+                    .neq('verification_status', 'rejected')
 
-            if (error) {
-                console.error('Error fetching pending agents:', error)
-                setError('Failed to load pending requests.')
+                if (agentError) throw agentError
+                fetchedAgents = agents || []
+
+                // Fetch Paid, Pending Suppliers
+                const { data: allSuppliers } = await supabase.from('suppliers').select('id, payment_status, is_approved')
+                console.log('DEBUG: All Visible Suppliers:', allSuppliers)
+
+                const { data: suppliers, error: supplierError } = await supabase
+                    .from('suppliers')
+                    .select('*')
+                    .eq('is_approved', false)
+                    .eq('payment_status', 'completed')
+
+                if (supplierError) throw supplierError
+                fetchedSuppliers = suppliers || []
+
+            } else if (activeTab === 'history') {
+                // Fetch Agent History
+                let agentQuery = supabase
+                    .from('agent_profiles')
+                    .select('*')
+                    .neq('role', 'admin') // Exclude admins
+                    .order('created_at', { ascending: false })
+
+                if (statusFilter === 'approved') agentQuery = agentQuery.eq('verification_status', 'approved')
+                else if (statusFilter === 'rejected') agentQuery = agentQuery.eq('verification_status', 'rejected')
+                else agentQuery = agentQuery.in('verification_status', ['approved', 'rejected'])
+
+                const { data: agents, error: agentError } = await agentQuery
+                console.log('DEBUG: History Agents:', agents, 'Error:', agentError)
+                if (agentError) throw agentError
+                fetchedAgents = agents || []
+
+                // Fetch Supplier History
+                let supplierQuery = supabase
+                    .from('suppliers')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+
+                if (statusFilter === 'approved') {
+                    supplierQuery = supplierQuery.eq('is_approved', true) // .eq('role', 'supplier')
+                } else if (statusFilter === 'rejected') {
+                    supplierQuery = supplierQuery.eq('payment_status', 'refunded') // or role rejected
+                } else {
+                    // Get both approved and refunded
+                    supplierQuery = supplierQuery.or('is_approved.eq.true,payment_status.eq.refunded')
+                }
+
+                const { data: suppliers, error: supplierError } = await supplierQuery
+                console.log('DEBUG: History Suppliers:', suppliers, 'Error:', supplierError)
+                if (supplierError) throw supplierError
+                fetchedSuppliers = suppliers || []
             }
-            pendingAgents = data || []
-        } else if (activeTab === 'history') {
-            let query = supabase
-                .from('agent_profiles')
-                .select('*')
-                .order('created_at', { ascending: false })
 
-            if (statusFilter === 'approved') {
-                query = query.eq('verification_status', 'approved')
-            } else if (statusFilter === 'rejected') {
-                query = query.eq('verification_status', 'rejected')
-            } else {
-                query = query.in('verification_status', ['approved', 'rejected'])
-            }
-
+            // Apply Date Filters (Shared logic)
             const now = new Date()
             let startDate: Date | null = null
-
-            if (timeFilter === 'today') {
-                startDate = new Date(now.setHours(0, 0, 0, 0))
-            } else if (timeFilter === 'week') {
+            if (timeFilter === 'today') startDate = new Date(now.setHours(0, 0, 0, 0))
+            else if (timeFilter === 'week') {
                 const firstDay = now.getDate() - now.getDay()
                 startDate = new Date(now.setDate(firstDay))
                 startDate.setHours(0, 0, 0, 0)
-            } else if (timeFilter === 'month') {
-                startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+            } else if (timeFilter === 'month') startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+
+
+            const filterByDate = (item: any, type: 'agent' | 'supplier') => {
+                if (!startDate) return true
+                // Use whatever date field is appropriate
+                const dateStr = item.approved_at || item.rejected_at || item.created_at
+                if (!dateStr) return false
+                return new Date(dateStr) >= startDate
             }
 
-            const { data, error } = await query
-
-            if (error) {
-                console.error('Error fetching history:', error)
-                setError('Failed to load history.')
-            }
-
-            let filteredData = data || []
             if (startDate) {
-                filteredData = filteredData.filter(item => {
-                    // Filter based on action date if available, else fallback to created_at
-                    const actionDate = item.verification_status === 'approved'
-                        ? (item.approved_at || item.created_at)
-                        : (item.rejected_at || item.created_at)
-
-                    if (!actionDate) return false
-                    return new Date(actionDate) >= startDate!
-                })
+                fetchedAgents = fetchedAgents.filter(a => filterByDate(a, 'agent'))
+                fetchedSuppliers = fetchedSuppliers.filter(s => filterByDate(s, 'supplier'))
             }
 
-            historyAgents = filteredData
-        }
 
-        // Only fetch suppliers for pending tab for now
-        let pendingSuppliers: any[] = []
-        if (activeTab === 'pending') {
-            const { data: suppliers } = await supabase
-                .from('suppliers')
-                .select('*')
-                .or('subscription_status.eq.pending,subscription_status.eq.pending_payment')
-            pendingSuppliers = suppliers || []
-        }
-
-        const formattedRequests: UserRequest[] = [
-            ...pendingAgents.map(a => ({
+            // Map to Unified UserRequest
+            const formattedAgents: UserRequest[] = fetchedAgents.map(a => ({
                 id: a.id,
                 full_name: a.agency_name,
                 email: a.email,
-                role: a.role as any,
+                role: a.role,
                 created_at: a.created_at,
                 status: a.verification_status,
                 rejection_reason: a.rejection_reason,
                 rejected_at: a.rejected_at,
-                approved_at: a.approved_at
-            })),
-            ...historyAgents.map(a => ({
-                id: a.id,
-                full_name: a.agency_name,
-                email: a.email,
-                role: a.role as any,
-                created_at: a.created_at,
-                status: a.verification_status,
-                rejection_reason: a.rejection_reason,
-                rejected_at: a.rejected_at,
-                approved_at: a.approved_at
-            })),
-            ...pendingSuppliers.map(s => ({
+                approved_at: a.approved_at,
+                profile_type: 'agent'
+            }))
+
+            const formattedSuppliers: UserRequest[] = fetchedSuppliers.map(s => ({
                 id: s.id,
                 company_name: s.company_name,
-                email: s.contact_email,
-                role: s.role as any || 'supplier',
-                status: s.subscription_status
+                email: s.contact_email, // or whatever field stores email
+                role: s.role,
+                created_at: s.created_at, // Use created_at
+                status: s.is_approved ? 'approved' : (s.payment_status === 'refunded' ? 'rejected' : 'pending'),
+                approved_at: s.approved_at, // If schema has this? If not, fallback
+                rejection_reason: s.rejection_reason, // If schema has this?
+                profile_type: 'supplier'
             }))
-        ]
 
-        setRequests(formattedRequests)
-        setLoading(false)
+            // Merge & Sort
+            const allRequests = [...formattedAgents, ...formattedSuppliers].sort((a, b) => {
+                return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+            })
+
+            setRequests(allRequests)
+
+        } catch (err: any) {
+            console.error('Error fetching requests:', err, JSON.stringify(err, Object.getOwnPropertyNames(err)))
+            setError('Failed to load verification requests.')
+        } finally {
+            setLoading(false)
+        }
     }
 
     const confirmAction = (user: UserRequest, action: 'approve' | 'reject') => {
@@ -184,29 +207,23 @@ export default function AdminVerificationPage() {
 
         try {
             if (type === 'approve') {
-                if (user.role === 'pending_agent') {
-                    const result = await approveAgent(user.id, user.email)
-                    if (!result.success) throw new Error(result.error)
-                    resultMessage = result.message || 'User approved & Email sent!'
-                    success = true
-                } else {
-                    const { error } = await supabase
-                        .from('suppliers')
-                        .update({ subscription_status: 'active', role: 'supplier' })
-                        .eq('id', user.id)
-                    if (error) throw error
-                    resultMessage = 'Supplier approved successfully!'
-                    success = true
-                }
+                const result = await handleUserApproval(user.id, user.profile_type, user.email)
+                if (!result.success) throw new Error(result.error)
+                resultMessage = result.message || 'User approved successfully!'
+                success = true
             } else if (type === 'reject') {
-                if (user.role === 'pending_agent') {
+                if (user.profile_type === 'agent') {
                     if (!reason) throw new Error('Rejection reason is required.')
                     const result = await rejectAgent(user.id, reason)
                     if (!result.success) throw new Error(result.error)
-                    resultMessage = 'User rejected.'
+                    resultMessage = 'Agent rejected.'
                     success = true
                 } else {
-                    alert('Supplier rejection not implemented yet.')
+                    // Reject Supplier
+                    const result = await rejectSupplier(user.id, reason)
+                    if (!result.success) throw new Error(result.error)
+                    resultMessage = result.message || 'Supplier rejected & refunded.'
+                    success = true
                 }
             }
         } catch (err: any) {
@@ -225,7 +242,7 @@ export default function AdminVerificationPage() {
 
         setProcessingId(null)
         setModal({ isOpen: false, type: null, user: null })
-        if (activeTab === 'history') fetchRequests() // Refresh history if action taken there (rare but possible if re-approving?)
+        if (activeTab === 'history') fetchRequests()
     }
 
     return (
@@ -254,8 +271,6 @@ export default function AdminVerificationPage() {
                     >
                         Pending Requests
                     </button>
-                    {/* Deprecate old 'Rejected' tab in favor of History, or keep it? Prompt asked for History tab. Let's keep History as the superset. Removed 'Rejected' solitary tab to clean UI, or keep as shortcut? I'll remove it to force use of History as requested. */}
-                    {/* Actually, user might still want quick access. But typical admin UI consolidates history. I will replace Rejected with History. */}
                     <button
                         onClick={() => setActiveTab('history')}
                         className={`${activeTab === 'history'
@@ -324,11 +339,9 @@ export default function AdminVerificationPage() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 {activeTab === 'history' && (
-                                    <>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action Date</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason/Note</th>
-                                    </>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
                                 )}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                 {activeTab === 'pending' && (
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 )}
@@ -338,9 +351,11 @@ export default function AdminVerificationPage() {
                             {requests.map((req) => (
                                 <tr key={req.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${req.role?.includes('agent') ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${req.profile_type === 'agent'
+                                            ? 'bg-blue-100 text-blue-800'
+                                            : 'bg-purple-100 text-purple-800'
                                             }`}>
-                                            {req.role?.replace('_', ' ')}
+                                            {req.profile_type?.toUpperCase()}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -351,28 +366,21 @@ export default function AdminVerificationPage() {
                                         {req.email}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`text-sm px-2 py-1 rounded capitalize ${req.status === 'rejected' ? 'text-red-700 bg-red-100' :
-                                            req.status === 'approved' ? 'text-green-700 bg-green-100' :
+                                        <span className={`text-sm px-2 py-1 rounded capitalize ${req.status?.includes('reject') ? 'text-red-700 bg-red-100' :
+                                            req.status?.includes('approved') ? 'text-green-700 bg-green-100' :
                                                 'text-yellow-700 bg-yellow-100'
                                             }`}>
-                                            {req.status?.replace('_', ' ') || 'Pending'}
+                                            {req.status}
                                         </span>
                                     </td>
-
                                     {activeTab === 'history' && (
-                                        <>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {(req.status === 'approved' && req.approved_at)
-                                                    ? new Date(req.approved_at).toLocaleDateString()
-                                                    : (req.status === 'rejected' && req.rejected_at)
-                                                        ? new Date(req.rejected_at).toLocaleDateString()
-                                                        : '-'}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" title={req.rejection_reason}>
-                                                {req.rejection_reason || '-'}
-                                            </td>
-                                        </>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-xs truncate" title={req.rejection_reason}>
+                                            {req.rejection_reason || '-'}
+                                        </td>
                                     )}
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {new Date(req.created_at!).toLocaleDateString()}
+                                    </td>
 
                                     {activeTab === 'pending' && (
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
@@ -417,7 +425,7 @@ export default function AdminVerificationPage() {
                 onClose={() => setModal({ ...modal, isOpen: false })}
                 onConfirm={(reason) => executeAction(reason)}
                 title="Reject User"
-                message={`Please provide a reason for rejecting ${modal.user?.full_name || modal.user?.company_name} below.`}
+                message={`Please confirm you want to reject ${modal.user?.full_name || modal.user?.company_name}. ${modal.user?.profile_type === 'supplier' ? 'This will initiate a refund.' : 'They will receive a rejection notification.'}`}
                 isLoading={!!processingId}
             />
         </div>

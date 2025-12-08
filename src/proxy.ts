@@ -73,8 +73,16 @@ export async function updateSession(request: NextRequest) {
         }
 
         const status = agentProfile.verification_status
+        console.log(`[Middleware Proxy] User: ${user.email}, Status: ${status}, Approved: ${(agentProfile as any).is_approved}, Path: ${path}`)
 
         if (status === 'pending') {
+            // RELAXED CHECK: If is_approved is TRUE in DB but status is 'pending', allow it.
+            // This handles cases where the status column update might be lagging or inconsistent?
+            // Actually, we should trust is_approved if it exists.
+            if ((agentProfile as any).is_approved === true) {
+                console.log(`[Middleware Proxy] Bypass pending status because is_approved=true`)
+                return response
+            }
             return NextResponse.redirect(new URL('/approval-pending', request.url))
         }
         if (status === 'rejected') {
@@ -95,6 +103,10 @@ export async function updateSession(request: NextRequest) {
         const status = supplierProfile.subscription_status
 
         if (status === 'pending' || status === 'pending_payment') {
+            // Allow access to payment-init page for pending suppliers so they can complete registration
+            if (path === '/payment-init') {
+                return response
+            }
             return NextResponse.redirect(new URL('/approval-pending', request.url))
         }
         if (status === 'rejected') {

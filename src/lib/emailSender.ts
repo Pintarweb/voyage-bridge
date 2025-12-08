@@ -32,7 +32,7 @@ export async function sendInviteLinkEmail(recipientEmail: string, inviteLink: st
         html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
                 <h1>Welcome to ArkAlliance!</h1>
-                <p>Your agent account has been **approved** by our administration team. You can now set your permanent password and log in to the portal.</p>
+                <p>Your account has been **approved** by our administration team. You can now set your permanent password and log in to the portal.</p>
                 
                 <p>Click the secure link below to proceed:</p>
                 

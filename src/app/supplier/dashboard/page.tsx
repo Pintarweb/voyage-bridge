@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import ProductHistoryTable, { Product } from '@/components/supplier/product-history/ProductHistoryTable'
-import { FaPlus, FaEye, FaHeart, FaMoneyBillWave, FaChartLine, FaMapMarkerAlt, FaTag, FaBox, FaArchive, FaTrashRestore, FaSignOutAlt } from 'react-icons/fa'
+import { FaPlus, FaEye, FaHeart, FaMoneyBillWave, FaChartLine, FaMapMarkerAlt, FaTag, FaBox, FaArchive, FaTrashRestore, FaSignOutAlt, FaUserCircle } from 'react-icons/fa'
 import { LineChart, Line, ResponsiveContainer } from 'recharts'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -914,6 +914,7 @@ export default function Dashboard() {
                     router.push('/auth/supplier')
                     return
                 }
+                setUser(user)
 
                 // Get supplier profile
                 const { data: supplierData } = await supabase
@@ -1025,6 +1026,7 @@ export default function Dashboard() {
                         <h1 className="text-3xl font-bold text-foreground">
                             {content.welcomeBack}, {supplier?.company_name || supplier?.name || content.partner}
                         </h1>
+
                         <p className="mt-2 text-muted-foreground">
                             {content.manageYour} {(() => {
                                 const type = supplier?.supplier_type || 'Supplier';
@@ -1046,14 +1048,22 @@ export default function Dashboard() {
                             })()} {content.inventory} {content.trackPerformance}
                         </p>
                     </div>
-                    <div className="flex space-x-3">
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
-                        >
-                            <FaSignOutAlt className="mr-2" />
-                            {content.logout}
-                        </button>
+                    <div className="flex items-center space-x-4">
+                        {user?.email && (
+                            <div className="flex items-center space-x-2 bg-muted/50 px-3 py-1.5 rounded-full border border-border/50">
+                                <FaUserCircle className="text-muted-foreground h-4 w-4" />
+                                <span className="text-xs font-medium text-foreground">{user.email}</span>
+                            </div>
+                        )}
+                        <div className="flex space-x-3">
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                            >
+                                <FaSignOutAlt className="mr-2" />
+                                {content.logout}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
