@@ -14,10 +14,25 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
+        if (!process.env.STRIPE_SECRET_KEY) {
+            console.error('Missing STRIPE_SECRET_KEY')
+            return NextResponse.json({ error: 'Server misconfiguration: Missing Stripe Key' }, { status: 500 })
+        }
+
         const { priceId } = await request.json()
+
+        console.log(`[Stripe Checkout] Received Price ID: ${priceId}`)
 
         if (!priceId) {
             return NextResponse.json({ error: 'Price ID is required' }, { status: 400 })
+        }
+
+        if (priceId.includes('placeholder')) {
+            console.error('Invalid Price ID (Placeholder detected)')
+            return NextResponse.json({
+                error: 'Invalid Price ID configuration',
+                details: 'The Price ID is a placeholder. Please check your .env.local file and restart the server.'
+            }, { status: 400 })
         }
 
         // Initialize Admin Client for DB operations to bypass potential RLS issues on reading profile data
