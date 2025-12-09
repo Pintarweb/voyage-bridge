@@ -1,16 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import TourismBackground from '@/components/ui/TourismBackground'
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordContent() {
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
     const supabase = createClient()
+    const searchParams = useSearchParams()
+
+    // Determine user type (default to agent for backward compatibility)
+    const type = searchParams.get('type') || 'agent'
+    const backLink = type === 'supplier' ? '/auth/supplier' : '/auth/agent'
+    const backText = type === 'supplier' ? 'Back to Supplier Login' : 'Back to Login'
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -19,24 +26,22 @@ export default function ForgotPasswordPage() {
         setSuccess(false)
 
         try {
-            const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL
-                ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/reset-password`
-                : 'http://localhost:3000/auth/reset-password'
+            // Check if site url is localhost or production
+            const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+            const redirectUrl = `${siteUrl}/auth/callback?next=/auth/reset-password`
 
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: redirectUrl,
             })
 
             if (error) {
-                // Rate limit error or other API issues
                 console.error(error)
-                // We typically shouldn't expose specific errors for privacy, but rate limits are good to know
                 if (error.status === 429) {
                     setError('Too many requests. Please try again later.')
                 } else {
-                    // Fallback generic error or generic success to prevent enumeration
+                    // For security, treating unknown emails as success (or generic error) is better, 
+                    // but adhering to current style:
                     setSuccess(true)
-                    return
                 }
             } else {
                 setSuccess(true)
@@ -70,10 +75,10 @@ export default function ForgotPasswordPage() {
                             </p>
                         </div>
                         <Link
-                            href="/auth/agent"
+                            href={backLink}
                             className="block w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
-                            Back to Login
+                            {backText}
                         </Link>
                     </div>
                 ) : (
@@ -111,15 +116,23 @@ export default function ForgotPasswordPage() {
 
                         <div className="text-center mt-4">
                             <Link
-                                href="/auth/agent"
+                                href={backLink}
                                 className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline"
                             >
-                                Back to Login
+                                {backText}
                             </Link>
                         </div>
                     </form>
                 )}
             </div>
         </div>
+    )
+}
+
+export default function ForgotPasswordPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ForgotPasswordContent />
+        </Suspense>
     )
 }

@@ -18,90 +18,31 @@ export default function ResetPasswordPage() {
     const supabase = createClient()
 
     useEffect(() => {
-        let timeoutId: NodeJS.Timeout
-
-        // Check for hash parameters immediately to know if we should expect a recovery flow
-        const hashParams = new URLSearchParams(window.location.hash.substring(1))
-        const hasAccessToken = hashParams.get('access_token')
-        const type = hashParams.get('type')
-        const isRecoveryFlow = hasAccessToken && type === 'recovery'
-
-        console.log('Reset Page Mount Check:', { isRecoveryFlow, hash: window.location.hash })
-
-        // Setup the listener FIRST
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log('Reset Auth Event:', event, session?.user?.email)
-
-            if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && isRecoveryFlow)) {
-                // Success!
-                if (timeoutId) clearTimeout(timeoutId)
-
-                // If there's a session, we're good
-                if (session) {
-                    console.log('Session established via event:', event)
-                    setShowForm(true)
-                    setLoading(false)
-                }
-            }
-        })
-
-        // Logic to handle initial state
         const checkSession = async () => {
-            if (isRecoveryFlow) {
-                // Manually attempt to set the session using the tokens from the URL
-                if (hasAccessToken) {
-                    console.log('Attempting manual session establishment with token')
-                    const { error } = await supabase.auth.setSession({
-                        access_token: hasAccessToken,
-                        refresh_token: hashParams.get('refresh_token') || '',
-                    })
-
-                    if (error) {
-                        console.error('Manual session establishment failed:', error)
-                    } else {
-                        console.log('Manual session establishment successful')
-                        const { data: { session } } = await supabase.auth.getSession()
-                        if (session) {
-                            setShowForm(true)
-                            setLoading(false)
-                            return
-                        }
-                    }
-                }
-
-                // Set a safety timeout to stop the loading spinner eventually
-                timeoutId = setTimeout(async () => {
-                    console.warn('Recovery timeout reached - checking session one last time')
-                    const { data: { session } } = await supabase.auth.getSession()
+            // The callback route should have exchanged the code and set the session cookie
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+                setShowForm(true)
+            } else {
+                // Double check if maybe onAuthStateChange picks it up (sometimes slight delay)
+                const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
                     if (session) {
                         setShowForm(true)
                         setLoading(false)
-                    } else {
-                        console.error('Failed to establish recovery session after timeout')
-                        setLoading(false)
-                        setShowForm(false)
                     }
-                }, 4000) // 4 seconds wait time
+                })
 
-            } else {
-                // If not recovery flow, maybe they are just here? check session anyway
-                const { data: { session } } = await supabase.auth.getSession()
-                if (session) {
-                    setLoading(false)
-                    setShowForm(true)
-                } else {
-                    setLoading(false)
-                    setShowForm(false)
-                }
+                // If still no session after a short wait, show error
+                setTimeout(() => {
+                    if (!showForm) setLoading(false)
+                }, 2000)
+
+                return () => subscription.unsubscribe()
             }
+            setLoading(false)
         }
 
         checkSession()
-
-        return () => {
-            if (timeoutId) clearTimeout(timeoutId)
-            subscription.unsubscribe()
-        }
     }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
