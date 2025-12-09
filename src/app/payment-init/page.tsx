@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { createCheckoutSession } from '@/app/actions/stripe'
+
 
 export default function PaymentInitPage() {
     const [loading, setLoading] = useState(true)
@@ -71,18 +71,31 @@ export default function PaymentInitPage() {
         setMessage(null)
 
         try {
-            const result = await createCheckoutSession(priceId, userId)
+            const response = await fetch('/api/stripe/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    priceId,
+                }),
+            })
 
-            if (result.success) {
-                setMessage(result.message)
-                // In a real app, you would redirect to Stripe here:
-                // window.location.href = result.url
-            } else {
-                setMessage('Error creating checkout session.')
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to create checkout session')
             }
-        } catch (error) {
+
+            if (data.url) {
+                // Redirect to Stripe
+                window.location.href = data.url
+            } else {
+                setMessage('Error: No checkout URL returned.')
+            }
+        } catch (error: any) {
             console.error('Checkout error:', error)
-            setMessage('An unexpected error occurred.')
+            setMessage(error.message || 'An unexpected error occurred.')
         } finally {
             setProcessingPlan(null)
         }
@@ -177,8 +190,8 @@ function PricingCard({
 }) {
     return (
         <div className={`relative flex flex-col rounded-2xl border ${highlighted
-                ? 'border-orange-500 shadow-xl shadow-orange-500/20 bg-gray-800 scale-105 z-10'
-                : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+            ? 'border-orange-500 shadow-xl shadow-orange-500/20 bg-gray-800 scale-105 z-10'
+            : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
             } p-8 transition-all`}>
             {highlighted && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-gradient-to-r from-orange-500 to-red-600 rounded-full text-xs font-bold text-white uppercase tracking-wide">
@@ -204,8 +217,8 @@ function PricingCard({
                 onClick={() => onSelect(priceId)}
                 disabled={loading}
                 className={`mt-8 w-full py-3 px-6 rounded-lg font-bold text-white shadow-md transition-all ${highlighted
-                        ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700'
-                        : 'bg-gray-700 hover:bg-gray-600'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700'
+                    : 'bg-gray-700 hover:bg-gray-600'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
                 {loading ? 'Processing...' : 'Choose Plan'}
