@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { stripe } from '@/lib/stripe'
 import { NextResponse } from 'next/server'
 
@@ -19,38 +20,54 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Price ID is required' }, { status: 400 })
         }
 
-        // 1. Get or create Stripe customer
-        const { data: supplier } = await supabase
+        // Initialize Admin Client for DB operations to bypass potential RLS issues on reading profile data
+        const supabaseAdmin = createAdminClient()
+
+        console.log(`[Stripe Checkout] Lookup for User ID: ${user.id}`)
+
+        // 1. Get supplier
+        const { data: supplier, error: fetchError } = await supabaseAdmin
             .from('suppliers')
-            .select('stripe_customer_id, company_name, email')
+            .select('stripe_customer_id, company_name')
             .eq('id', user.id)
             .single()
 
-        if (!supplier) {
-            return NextResponse.json({ error: 'Supplier profile not found' }, { status: 404 })
+        console.log('[Stripe Checkout] Supplier Fetch Result:', { supplier, fetchError })
+
+        if (fetchError || !supplier) {
+            console.error('Error fetching supplier:', fetchError)
+            return NextResponse.json({
+                error: 'Supplier profile not found',
+                details: fetchError ? JSON.stringify(fetchError) : 'No supplier data returned',
+                userId: user.id
+            }, { status: 404 })
         }
 
         let customerId = supplier.stripe_customer_id
 
         if (!customerId) {
+            console.log('[Stripe Checkout] Creating new Stripe Customer')
             const customer = await stripe.customers.create({
-                email: supplier.email || user.email,
+                email: user.email,
                 name: supplier.company_name,
                 metadata: {
                     supabase_user_id: user.id
                 }
             })
             customerId = customer.id
+            console.log(`[Stripe Checkout] Created Customer: ${customerId}`)
 
-            await supabase
+            await supabaseAdmin
                 .from('suppliers')
                 .update({ stripe_customer_id: customerId })
                 .eq('id', user.id)
         }
 
+        console.log('[Stripe Checkout] Creating Checkout Session')
         // 2. Create Checkout Session
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
+            client_reference_id: user.id, // Explicitly set client reference ID
             line_items: [
                 {
                     price: priceId,

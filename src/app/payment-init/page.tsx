@@ -140,8 +140,8 @@ export default function PaymentInitPage() {
                         title="Standard"
                         price="$29"
                         features={['Basic Listing', 'Direct Messaging', 'Analytics Dashboard']}
-                        priceId="price_standard"
-                        loading={processingPlan === 'price_standard'}
+                        priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD || 'price_standard_placeholder'}
+                        loading={processingPlan === (process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD || 'price_standard_placeholder')}
                         onSelect={handlePlanSelect}
                     />
 
@@ -150,9 +150,9 @@ export default function PaymentInitPage() {
                         title="Pro"
                         price="$79"
                         features={['Priority Listing', 'Advanced Analytics', 'Unlimited Products', 'Featured Badge']}
-                        priceId="price_pro"
+                        priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_pro_placeholder'}
                         highlighted
-                        loading={processingPlan === 'price_pro'}
+                        loading={processingPlan === (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_pro_placeholder')}
                         onSelect={handlePlanSelect}
                     />
 
@@ -161,8 +161,8 @@ export default function PaymentInitPage() {
                         title="Premium"
                         price="$199"
                         features={['Top Tier Placement', 'Dedicated Support', 'API Access', 'White-label Reports', 'Global Reach']}
-                        priceId="price_premium"
-                        loading={processingPlan === 'price_premium'}
+                        priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_premium_placeholder'}
+                        loading={processingPlan === (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_premium_placeholder')}
                         onSelect={handlePlanSelect}
                     />
                 </div>
