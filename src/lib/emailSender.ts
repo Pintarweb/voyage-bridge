@@ -93,3 +93,46 @@ export async function sendRejectionEmail(recipientEmail: string, reason?: string
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Sends a payment confirmation email to the supplier (Administrator Review Phase).
+ * @param recipientEmail The supplier's email address.
+ * @param supplierName The supplier's company name or contact name.
+ */
+export async function sendPaymentConfirmationEmail(recipientEmail: string, supplierName: string) {
+    const mailOptions = {
+        from: 'no-reply@arkalliance.com',
+        to: recipientEmail,
+        subject: 'Payment Confirmed! Your ArkAlliance Supplier Profile is Under Review',
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <h1>Payment Confirmed</h1>
+                <p>Dear ${supplierName},</p>
+                <p>Thank you! We have successfully processed your payment for the Supplier Subscription.</p>
+                
+                <p><strong>Note:</strong> Your official payment receipt will be sent to this email address directly from Stripe once your account is fully activated and out of testing mode.</p>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+                <h2>What Happens Next?</h2>
+                <p>Your registration has now moved into our manual administrative review queue. Our team will verify your details within <strong>48 hours</strong>.</p>
+                
+                <p>You do not need to take any further action at this time.</p>
+
+                <p><strong>Access to Portal:</strong><br/>
+                Once your profile is approved, you will receive a separate email containing your final login link. You will not be able to access the portal until this approval is complete.</p>
+                
+                <p style="margin-top: 30px; font-size: 0.9em; color: #666;">If you have any questions, please reply to this email.</p>
+            </div>
+        `,
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`Payment confirmation email sent locally to Mailtrap for ${recipientEmail}. Message ID: ${info.messageId}`);
+        return { success: true, messageId: info.messageId };
+    } catch (error: any) {
+        console.error(`Error sending payment confirmation to ${recipientEmail}:`, error);
+        return { success: false, error: error.message };
+    }
+}

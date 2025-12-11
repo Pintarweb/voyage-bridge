@@ -4,6 +4,7 @@ import { createAdminClient } from '@/utils/supabase/admin'
 import { createClient } from '@/utils/supabase/server'
 import { sendInviteLinkEmail, sendRejectionEmail } from '@/lib/emailSender'
 import { revalidatePath } from 'next/cache'
+import { stripe } from '@/lib/stripe'
 
 type AdminActionResponse = {
     success: boolean
@@ -145,13 +146,52 @@ export async function rejectSupplier(userId: string, reason?: string): Promise<A
             throw new Error('Supplier not found or database error')
         }
 
-        // 3. Retrieve Stripe Details
-        // const customerId = supplier.stripe_customer_id
-        // const chargeId = supplier.stripe_charge_id // Assuming we store this
+        // 4. Call Stripe Refund API
+        const customerId = supplier.stripe_customer_id
 
-        // 4. Call Stripe Refund API (Placeholder)
-        console.log(`[MOCK] Initiating Stripe Refund for ${supplier.contact_email} (Cust: ${supplier.stripe_customer_id})`)
-        // await stripe.refunds.create({ charge: chargeId })
+        if (customerId) {
+            console.log(`[Admin] Processing Refund for Customer: ${customerId}`)
+            try {
+                // A. Cancel Active Subscriptions
+                const subscriptions = await stripe.subscriptions.list({
+                    customer: customerId,
+                    status: 'active',
+                    limit: 1
+                })
+
+                for (const sub of subscriptions.data) {
+                    await stripe.subscriptions.cancel(sub.id)
+                    console.log(`[Admin] Cancelled Subscription: ${sub.id}`)
+                }
+
+                // B. Refund Last Payment
+                const paymentIntents = await stripe.paymentIntents.list({
+                    customer: customerId,
+                    limit: 1,
+                })
+
+                if (paymentIntents.data.length > 0) {
+                    const pi = paymentIntents.data[0]
+                    if (pi.status === 'succeeded' && pi.amount > 0) {
+                        await stripe.refunds.create({
+                            payment_intent: pi.id,
+                            reason: 'requested_by_customer' // or 'duplicate' or 'fraudulent'
+                        })
+                        console.log(`[Admin] Refunded PaymentIntent: ${pi.id}`)
+                    } else {
+                        console.log(`[Admin] PaymentIntent ${pi.id} not eligible for refund (Status: ${pi.status})`)
+                    }
+                } else {
+                    console.log('[Admin] No payment intents found to refund.')
+                }
+
+            } catch (stripeError: any) {
+                console.error('Stripe Refund/Cancel Error:', stripeError)
+                // We don't block rejection if refund fails, but we verify logs
+            }
+        } else {
+            console.warn('[Admin] No Stripe Customer ID found for supplier. Skipping refund.')
+        }
 
         // 5. Update DB Status
         const { error: updateError } = await supabaseAdmin

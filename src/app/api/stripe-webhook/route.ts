@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { sendPaymentConfirmationEmail } from '@/lib/emailSender'
 
 export async function POST(req: Request) {
     const body = await req.text()
@@ -44,18 +45,31 @@ export async function POST(req: Request) {
         if (userId) {
             const supabase = createAdminClient()
 
-            // Update supplier status
-            const { error } = await supabase
+            // Update supplier status and return data for email
+            const { error, data } = await supabase
                 .from('suppliers')
                 .update({
                     payment_status: 'completed',
-                    // We could also map priceId to a plan name here if needed
                 })
                 .eq('id', userId)
+                .select()
+                .single()
 
             if (error) {
-                console.error('Error updating supplier:', error)
+                console.error('[Stripe Webhook] Error updating supplier:', error)
                 return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
+            }
+            console.log('[Stripe Webhook] Supplier updated successfully')
+
+            // Send Confirmation Email
+            const recipientEmail = session.customer_details?.email
+            const recipientName = session.customer_details?.name || data?.company_name || 'Supplier'
+
+            if (recipientEmail) {
+                console.log(`[Stripe Webhook] Sending payment confirmation email to ${recipientEmail}`)
+                await sendPaymentConfirmationEmail(recipientEmail, recipientName)
+            } else {
+                console.warn('[Stripe Webhook] No email found in session.customer_details, skipping email.')
             }
         }
     }

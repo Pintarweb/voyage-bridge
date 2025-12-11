@@ -11,6 +11,7 @@ export default function PaymentInitPage() {
     const [userId, setUserId] = useState<string | null>(null)
     const [processingPlan, setProcessingPlan] = useState<string | null>(null)
     const [message, setMessage] = useState<string | null>(null)
+    const [currency, setCurrency] = useState<'USD' | 'EUR'>('USD')
 
     const router = useRouter()
     const supabase = createClient()
@@ -126,6 +127,30 @@ export default function PaymentInitPage() {
                     <p className="mt-5 max-w-xl mx-auto text-xl text-gray-400">
                         Select the subscription that fits your business needs to complete your registration.
                     </p>
+
+                    {/* Currency Toggle */}
+                    <div className="mt-8 flex justify-center">
+                        <div className="relative bg-gray-800 p-1 rounded-lg flex items-center">
+                            <button
+                                onClick={() => setCurrency('USD')}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${currency === 'USD'
+                                    ? 'bg-gray-600 text-white shadow'
+                                    : 'text-gray-400 hover:text-white'
+                                    }`}
+                            >
+                                USD ($)
+                            </button>
+                            <button
+                                onClick={() => setCurrency('EUR')}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${currency === 'EUR'
+                                    ? 'bg-gray-600 text-white shadow'
+                                    : 'text-gray-400 hover:text-white'
+                                    }`}
+                            >
+                                EUR (€)
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 {message && (
@@ -138,31 +163,55 @@ export default function PaymentInitPage() {
                     {/* Standard Plan */}
                     <PricingCard
                         title="Standard"
-                        price="$29"
+                        price={currency === 'USD' ? "$29" : "€29"}
                         features={['Basic Listing', 'Direct Messaging', 'Analytics Dashboard']}
-                        priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD || 'price_standard_placeholder'}
-                        loading={processingPlan === (process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD || 'price_standard_placeholder')}
+                        priceId={
+                            currency === 'USD'
+                                ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD || 'price_standard_placeholder')
+                                : (process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD_EUR || 'price_standard_eur_placeholder')
+                        }
+                        loading={processingPlan === (
+                            currency === 'USD'
+                                ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD || 'price_standard_placeholder')
+                                : (process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD_EUR || 'price_standard_eur_placeholder')
+                        )}
                         onSelect={handlePlanSelect}
                     />
 
                     {/* Pro Plan */}
                     <PricingCard
                         title="Pro"
-                        price="$79"
+                        price={currency === 'USD' ? "$79" : "€79"}
                         features={['Priority Listing', 'Advanced Analytics', 'Unlimited Products', 'Featured Badge']}
-                        priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_pro_placeholder'}
+                        priceId={
+                            currency === 'USD'
+                                ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_pro_placeholder')
+                                : (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_EUR || 'price_pro_eur_placeholder')
+                        }
                         highlighted
-                        loading={processingPlan === (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_pro_placeholder')}
+                        loading={processingPlan === (
+                            currency === 'USD'
+                                ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_pro_placeholder')
+                                : (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_EUR || 'price_pro_eur_placeholder')
+                        )}
                         onSelect={handlePlanSelect}
                     />
 
                     {/* Premium Plan */}
                     <PricingCard
                         title="Premium"
-                        price="$199"
+                        price={currency === 'USD' ? "$199" : "€199"}
                         features={['Top Tier Placement', 'Dedicated Support', 'API Access', 'White-label Reports', 'Global Reach']}
-                        priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_premium_placeholder'}
-                        loading={processingPlan === (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_premium_placeholder')}
+                        priceId={
+                            currency === 'USD'
+                                ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_premium_placeholder')
+                                : (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM_EUR || 'price_premium_eur_placeholder')
+                        }
+                        loading={processingPlan === (
+                            currency === 'USD'
+                                ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_premium_placeholder')
+                                : (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM_EUR || 'price_premium_eur_placeholder')
+                        )}
                         onSelect={handlePlanSelect}
                     />
                 </div>
