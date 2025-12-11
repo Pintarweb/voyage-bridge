@@ -199,6 +199,7 @@ export async function rejectSupplier(userId: string, reason?: string): Promise<A
             .update({
                 is_approved: false,
                 payment_status: 'refunded',
+                subscription_status: 'rejected',
                 role: 'pending_supplier', // Revert to pending_supplier as rejected_supplier is not a valid enum
                 rejection_reason: reason || null
             })
