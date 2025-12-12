@@ -1,82 +1,55 @@
-import { headers } from 'next/headers'
-import { stripe } from '@/lib/stripe'
-import { createAdminClient } from '@/utils/supabase/admin'
+import { stripe, handleCheckoutSessionCompleted } from '@/lib/stripe'
+import { headers as getHeaders } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { sendPaymentConfirmationEmail } from '@/lib/emailSender'
+
 
 export async function POST(req: Request) {
-    const body = await req.text()
-    const headerPayload = await headers()
-    const signature = headerPayload.get('stripe-signature')
-
-    console.log('[Stripe Webhook] Received request')
-
-    if (!signature) {
-        console.error('[Stripe Webhook] No signature found')
-        return NextResponse.json({ error: 'No signature' }, { status: 400 })
-    }
-
-    if (!process.env.STRIPE_WEBHOOK_SECRET) {
-        console.error('[Stripe Webhook] Missing STRIPE_WEBHOOK_SECRET')
-        return NextResponse.json({ error: 'Server config error' }, { status: 500 })
-    }
-
-    let event: Stripe.Event
-
     try {
-        event = stripe.webhooks.constructEvent(
-            body,
-            signature,
-            process.env.STRIPE_WEBHOOK_SECRET as string
-        )
-    } catch (error: any) {
-        console.error(`Webhook signature verification failed.`, error.message)
-        return NextResponse.json({ error: `Webhook Error: ${error.message}` }, { status: 400 })
-    }
+        const body = await req.text()
+        const headerPayload = await getHeaders()
+        const signature = headerPayload.get('stripe-signature')
 
-    console.log(`[Stripe Webhook] Event Type: ${event.type}`)
+        console.log('[Stripe Webhook] Received request')
 
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object as Stripe.Checkout.Session
-        // Fix: Use 'userId' from new payload, fallback to 'supabase_user_id' for backward compat
-        const userId = session.metadata?.userId || session.metadata?.supabase_user_id
-        console.log(`[Stripe Webhook] Processing Session for User: ${userId}`)
+        if (!signature) {
+            console.error('[Stripe Webhook] No signature found')
+            return NextResponse.json({ error: 'No signature' }, { status: 400 })
+        }
 
-        if (userId) {
-            const supabase = createAdminClient()
+        if (!process.env.STRIPE_WEBHOOK_SECRET) {
+            console.error('[Stripe Webhook] Missing STRIPE_WEBHOOK_SECRET')
+            return NextResponse.json({ error: 'Server config error' }, { status: 500 })
+        }
 
-            // Update supplier status and return data for email
-            const { error, data } = await supabase
-                .from('suppliers')
-                .update({
-                    payment_status: 'completed',
-                    subscription_status: 'active', // Mark as active so they can access portal? Or 'pending'? 
-                    // Based on "pending approval supplier" comment, maybe we should set role or subscription_status specifically?
-                    // Assuming 'active' subscription + 'pending_supplier' role = Admin Queue.
-                })
-                .eq('id', userId)
-                .select()
-                .single()
+        let event: Stripe.Event
 
-            if (error) {
-                console.error('[Stripe Webhook] Error updating supplier:', error)
-                return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
-            }
-            console.log('[Stripe Webhook] Supplier updated successfully')
+        try {
+            event = stripe.webhooks.constructEvent(
+                body,
+                signature,
+                process.env.STRIPE_WEBHOOK_SECRET as string
+            )
+        } catch (error: any) {
+            console.error(`Webhook signature verification failed.`, error.message)
+            return NextResponse.json({ error: `Webhook Error: ${error.message}` }, { status: 400 })
+        }
 
-            // Send Confirmation Email
-            const recipientEmail = session.customer_details?.email
-            const recipientName = session.customer_details?.name || data?.company_name || 'Supplier'
+        console.log(`[Stripe Webhook] Event Type: ${event.type}`)
 
-            if (recipientEmail) {
-                console.log(`[Stripe Webhook] Sending payment confirmation email to ${recipientEmail}`)
-                await sendPaymentConfirmationEmail(recipientEmail, recipientName)
-            } else {
-                console.warn('[Stripe Webhook] No email found in session.customer_details, skipping email.')
+        if (event.type === 'checkout.session.completed') {
+            const session = event.data.object as Stripe.Checkout.Session
+            const result = await handleCheckoutSessionCompleted(session)
+
+            if (!result.success) {
+                return NextResponse.json({ error: result.error }, { status: 500 })
             }
         }
-    }
 
-    return NextResponse.json({ received: true })
+        return NextResponse.json({ received: true })
+
+    } catch (err: any) {
+        console.error('[Stripe Webhook] Critical Error:', err)
+        return NextResponse.json({ error: `Critical Error: ${err.message}`, stack: err.stack }, { status: 500 })
+    }
 }
