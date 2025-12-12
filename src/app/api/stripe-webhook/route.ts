@@ -39,7 +39,8 @@ export async function POST(req: Request) {
 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object as Stripe.Checkout.Session
-        const userId = session.metadata?.supabase_user_id
+        // Fix: Use 'userId' from new payload, fallback to 'supabase_user_id' for backward compat
+        const userId = session.metadata?.userId || session.metadata?.supabase_user_id
         console.log(`[Stripe Webhook] Processing Session for User: ${userId}`)
 
         if (userId) {
@@ -50,6 +51,9 @@ export async function POST(req: Request) {
                 .from('suppliers')
                 .update({
                     payment_status: 'completed',
+                    subscription_status: 'active', // Mark as active so they can access portal? Or 'pending'? 
+                    // Based on "pending approval supplier" comment, maybe we should set role or subscription_status specifically?
+                    // Assuming 'active' subscription + 'pending_supplier' role = Admin Queue.
                 })
                 .eq('id', userId)
                 .select()

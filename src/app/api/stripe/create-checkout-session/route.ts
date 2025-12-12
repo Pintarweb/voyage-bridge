@@ -1,106 +1,88 @@
-import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { stripe } from '@/lib/stripe'
 import { NextResponse } from 'next/server'
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
     try {
-        const supabase = await createClient()
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
+        const body = await req.json()
+        const { userId, userEmail, basePriceId, addOnPriceId, totalSlotsQuantity } = body
 
-        if (!user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        if (!userId || !userEmail || !basePriceId || !addOnPriceId || !totalSlotsQuantity) {
+            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
         }
 
-        if (!process.env.STRIPE_SECRET_KEY) {
-            console.error('Missing STRIPE_SECRET_KEY')
-            return NextResponse.json({ error: 'Server misconfiguration: Missing Stripe Key' }, { status: 500 })
+        // Validate Price IDs (Basic check for placeholder/test mode)
+        if (basePriceId.includes('placeholder') || addOnPriceId.includes('placeholder')) {
+            console.warn('Using placeholder Price IDs. Stripe Session creation might fail if not replaced with real IDs.')
         }
 
-        const { priceId } = await request.json()
+        const supabase = createAdminClient()
 
-        console.log(`[Stripe Checkout] Received Price ID: ${priceId}`)
+        // 1. Get or Create Customer
+        let customerId: string | undefined
 
-        if (!priceId) {
-            return NextResponse.json({ error: 'Price ID is required' }, { status: 400 })
-        }
-
-        if (priceId.includes('placeholder')) {
-            console.error('Invalid Price ID (Placeholder detected)')
-            return NextResponse.json({
-                error: 'Invalid Price ID configuration',
-                details: 'The Price ID is a placeholder. Please check your .env.local file and restart the server.'
-            }, { status: 400 })
-        }
-
-        // Initialize Admin Client for DB operations to bypass potential RLS issues on reading profile data
-        const supabaseAdmin = createAdminClient()
-
-        console.log(`[Stripe Checkout] Lookup for User ID: ${user.id}`)
-
-        // 1. Get supplier
-        const { data: supplier, error: fetchError } = await supabaseAdmin
+        const { data: supplier, error: supplierError } = await supabase
             .from('suppliers')
-            .select('stripe_customer_id, company_name')
-            .eq('id', user.id)
+            .select('stripe_customer_id')
+            .eq('id', userId)
             .single()
 
-        console.log('[Stripe Checkout] Supplier Fetch Result:', { supplier, fetchError })
-
-        if (fetchError || !supplier) {
-            console.error('Error fetching supplier:', fetchError)
-            return NextResponse.json({
-                error: 'Supplier profile not found',
-                details: fetchError ? JSON.stringify(fetchError) : 'No supplier data returned',
-                userId: user.id
-            }, { status: 404 })
-        }
-
-        let customerId = supplier.stripe_customer_id
-
-        if (!customerId) {
-            console.log('[Stripe Checkout] Creating new Stripe Customer')
+        if (supplier?.stripe_customer_id) {
+            customerId = supplier.stripe_customer_id
+        } else {
             const customer = await stripe.customers.create({
-                email: user.email,
-                name: supplier.company_name,
+                email: userEmail,
                 metadata: {
-                    supabase_user_id: user.id
-                }
+                    supabase_user_id: userId,
+                },
             })
             customerId = customer.id
-            console.log(`[Stripe Checkout] Created Customer: ${customerId}`)
 
-            await supabaseAdmin
+            await supabase
                 .from('suppliers')
                 .update({ stripe_customer_id: customerId })
-                .eq('id', user.id)
+                .eq('id', userId)
         }
 
-        console.log('[Stripe Checkout] Creating Checkout Session')
-        // 2. Create Checkout Session
+        // 2. Construct Line Items
+        const line_items = [
+            {
+                price: basePriceId,
+                quantity: 1,
+            },
+        ]
+
+        const addOnQty = Math.max(0, totalSlotsQuantity - 1)
+        if (addOnQty > 0) {
+            line_items.push({
+                price: addOnPriceId,
+                quantity: addOnQty,
+            })
+        }
+
+        // 3. Create Checkout Session
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
-            client_reference_id: user.id, // Explicitly set client reference ID
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                },
-            ],
+            client_reference_id: userId,
+            payment_method_types: ['card'],
             mode: 'subscription',
-            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/portal?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-init`,
+            line_items: line_items,
+            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/approval-pending?payment=success`,
+            cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-init?payment=cancelled`,
             metadata: {
-                supabase_user_id: user.id
-            }
+                userId: userId,
+                totalSlots: totalSlotsQuantity
+            },
+            subscription_data: {
+                trial_period_days: 30,
+                description: `ArkAlliance Subscription (${totalSlotsQuantity} Slots)`
+            },
         })
 
         return NextResponse.json({ url: session.url })
 
-    } catch (error) {
-        console.error('Stripe API Error:', error)
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    } catch (err: any) {
+        console.error('Stripe API Error:', err)
+        return NextResponse.json({ error: err.message }, { status: 500 })
     }
 }
