@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { FaFacebook, FaLinkedin, FaYoutube, FaInstagram, FaDiscord, FaTwitter } from 'react-icons/fa'
 
 import { useLanguage } from '@/context/LanguageContext'
@@ -235,7 +236,14 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Brand Column */}
                     <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-3">
+                            <Image
+                                src="/ark-logo-icon.jpg"
+                                alt="ArkAlliance Logo"
+                                width={40}
+                                height={40}
+                                className="h-10 w-auto object-contain rounded-md"
+                            />
                             <span className="text-2xl font-bold tracking-tight">
                                 Ark<span className="text-blue-300">Alliance</span>
                             </span>

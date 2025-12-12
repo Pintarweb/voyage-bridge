@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { FaGlobe, FaUserCircle, FaSignOutAlt, FaBars, FaTimes, FaLanguage } from 'react-icons/fa'
 import { useCurrency } from '@/context/CurrencyContext'
@@ -112,8 +113,15 @@ export default function GlobalHeader() {
 
                     {/* Logo */}
                     <div className="flex-shrink-0 flex items-center">
-                        <Link href={type === 'public' ? '/' : (type === 'portal' ? '/portal' : '/supplier/dashboard')} className="text-2xl font-bold text-foreground tracking-tight">
-                            Ark<span className="text-primary">Alliance</span>
+                        <Link href={type === 'public' ? '/' : (type === 'portal' ? '/portal' : '/supplier/dashboard')} className="flex items-center gap-2 text-2xl font-bold text-foreground tracking-tight">
+                            <Image
+                                src="/ark-logo-icon.jpg"
+                                alt="ArkAlliance Logo"
+                                width={56}
+                                height={56}
+                                className="h-14 w-auto object-contain rounded-md"
+                            />
+                            <span>Ark<span className="text-primary">Alliance</span></span>
                         </Link>
                     </div>
 

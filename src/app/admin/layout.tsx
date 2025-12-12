@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import LogoutButton from '@/components/admin/LogoutButton'
 
 export default async function AdminLayout({
@@ -35,7 +36,16 @@ export default async function AdminLayout({
     return (
         <div className="flex min-h-screen bg-gray-100">
             <nav className="w-64 bg-gray-900 text-white p-6 flex-shrink-0 flex flex-col">
-                <h2 className="text-2xl font-bold mb-8 text-teal-500">ArkAlliance Admin</h2>
+                <div className="flex items-center gap-3 mb-8">
+                    <Image
+                        src="/ark-logo-icon.jpg"
+                        alt="ArkAlliance Logo"
+                        width={40}
+                        height={40}
+                        className="h-10 w-auto object-contain rounded-md bg-white p-0.5"
+                    />
+                    <h2 className="text-xl font-bold text-teal-500">ArkAlliance Admin</h2>
+                </div>
                 <ul className="space-y-4 flex-1">
                     <li>
                         <Link href="/admin" className="flex items-center space-x-2 p-2 rounded hover:bg-gray-800 hover:text-teal-400 transition-colors">
