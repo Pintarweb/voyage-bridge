@@ -7,6 +7,8 @@ import { rejectAgent } from '@/app/actions/reject-agent'
 import ConfirmationModal from '@/components/ui/ConfirmationModal'
 import RejectionModal from '@/components/ui/RejectionModal'
 
+import VerificationDetailsModal from '@/components/admin/VerificationDetailsModal'
+
 type UserRequest = {
     id: string
     full_name?: string
@@ -19,6 +21,7 @@ type UserRequest = {
     rejected_at?: string
     approved_at?: string
     profile_type: 'agent' | 'supplier'
+    details: any // Store full object for modal
 }
 
 type TimeFilter = 'all' | 'today' | 'week' | 'month'
@@ -40,7 +43,7 @@ export default function AdminVerificationPage() {
     // Modal State
     const [modal, setModal] = useState<{
         isOpen: boolean
-        type: 'approve' | 'reject' | null
+        type: 'approve' | 'reject' | 'view' | null
         user: UserRequest | null
     }>({
         isOpen: false,
@@ -74,7 +77,6 @@ export default function AdminVerificationPage() {
 
                 // Fetch Paid, Pending Suppliers
                 const { data: allSuppliers } = await supabase.from('suppliers').select('id, payment_status, is_approved')
-                console.log('DEBUG: All Visible Suppliers:', allSuppliers)
 
                 const { data: suppliers, error: supplierError } = await supabase
                     .from('suppliers')
@@ -98,7 +100,6 @@ export default function AdminVerificationPage() {
                 else agentQuery = agentQuery.in('verification_status', ['approved', 'rejected'])
 
                 const { data: agents, error: agentError } = await agentQuery
-                console.log('DEBUG: History Agents:', agents, 'Error:', agentError)
                 if (agentError) throw agentError
                 fetchedAgents = agents || []
 
@@ -118,7 +119,6 @@ export default function AdminVerificationPage() {
                 }
 
                 const { data: suppliers, error: supplierError } = await supplierQuery
-                console.log('DEBUG: History Suppliers:', suppliers, 'Error:', supplierError)
                 if (supplierError) throw supplierError
                 fetchedSuppliers = suppliers || []
             }
@@ -159,7 +159,8 @@ export default function AdminVerificationPage() {
                 rejection_reason: a.rejection_reason,
                 rejected_at: a.rejected_at,
                 approved_at: a.approved_at,
-                profile_type: 'agent'
+                profile_type: 'agent',
+                details: a
             }))
 
             const formattedSuppliers: UserRequest[] = fetchedSuppliers.map(s => ({
@@ -171,7 +172,8 @@ export default function AdminVerificationPage() {
                 status: s.is_approved ? 'approved' : (s.payment_status === 'refunded' ? 'rejected' : 'pending'),
                 approved_at: s.approved_at, // If schema has this? If not, fallback
                 rejection_reason: s.rejection_reason, // If schema has this?
-                profile_type: 'supplier'
+                profile_type: 'supplier',
+                details: s
             }))
 
             // Merge & Sort
@@ -197,9 +199,21 @@ export default function AdminVerificationPage() {
         })
     }
 
+    const openDetails = (user: UserRequest) => {
+        setModal({
+            isOpen: true,
+            type: 'view',
+            user: user
+        })
+    }
+
     const executeAction = async (reason?: string) => {
         const { user, type } = modal
         if (!user || !type) return
+        if (type === 'view') {
+            setModal({ ...modal, isOpen: false })
+            return
+        }
 
         setProcessingId(user.id)
         let success = false
@@ -342,14 +356,16 @@ export default function AdminVerificationPage() {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
                                 )}
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                {activeTab === 'pending' && (
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                )}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {requests.map((req) => (
-                                <tr key={req.id} className="hover:bg-gray-50 transition-colors">
+                                <tr
+                                    key={req.id}
+                                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                                    onClick={() => openDetails(req)}
+                                >
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${req.profile_type === 'agent'
                                             ? 'bg-blue-100 text-blue-800'
@@ -382,26 +398,35 @@ export default function AdminVerificationPage() {
                                         {new Date(req.created_at!).toLocaleDateString()}
                                     </td>
 
-                                    {activeTab === 'pending' && (
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => confirmAction(req, 'approve')}
-                                                disabled={!!processingId}
-                                                className="text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded text-xs transition-colors disabled:opacity-50"
-                                            >
-                                                {processingId === req.id ? '...' : 'Approve'}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => confirmAction(req, 'reject')}
-                                                disabled={!!processingId}
-                                                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs transition-colors disabled:opacity-50"
-                                            >
-                                                Reject
-                                            </button>
-                                        </td>
-                                    )}
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2" onClick={(e) => e.stopPropagation()}>
+                                        <button
+                                            type="button"
+                                            onClick={() => openDetails(req)}
+                                            className="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1.5 rounded text-xs transition-colors"
+                                        >
+                                            View
+                                        </button>
+                                        {activeTab === 'pending' && (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => confirmAction(req, 'approve')}
+                                                    disabled={!!processingId}
+                                                    className="text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded text-xs transition-colors disabled:opacity-50"
+                                                >
+                                                    {processingId === req.id ? '...' : 'Approve'}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => confirmAction(req, 'reject')}
+                                                    disabled={!!processingId}
+                                                    className="text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs transition-colors disabled:opacity-50"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </>
+                                        )}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -410,6 +435,13 @@ export default function AdminVerificationPage() {
             )}
 
             {/* Modals */}
+            <VerificationDetailsModal
+                isOpen={modal.isOpen && modal.type === 'view'}
+                onClose={() => setModal({ ...modal, isOpen: false, type: null })}
+                data={modal.user?.details}
+                type={modal.user?.profile_type as 'agent' | 'supplier'}
+            />
+
             <ConfirmationModal
                 isOpen={modal.isOpen && modal.type === 'approve'}
                 onClose={() => setModal({ ...modal, isOpen: false })}
