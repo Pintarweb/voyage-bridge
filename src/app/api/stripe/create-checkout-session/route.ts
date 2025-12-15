@@ -75,7 +75,10 @@ export async function POST(req: Request) {
             },
             subscription_data: {
                 trial_period_days: 30,
-                description: `ArkAlliance Subscription (${totalSlotsQuantity} Slots)`
+                description: `ArkAlliance Subscription (${totalSlotsQuantity} Slots)`,
+                metadata: {
+                    supabase_user_id: userId
+                }
             },
         })
 

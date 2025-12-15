@@ -1,4 +1,4 @@
-import { stripe, handleCheckoutSessionCompleted } from '@/lib/stripe'
+import { stripe, handleCheckoutSessionCompleted, handleSubscriptionChange } from '@/lib/stripe'
 import { headers as getHeaders } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
@@ -40,6 +40,13 @@ export async function POST(req: Request) {
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object as Stripe.Checkout.Session
             const result = await handleCheckoutSessionCompleted(session)
+
+            if (!result.success) {
+                return NextResponse.json({ error: result.error }, { status: 500 })
+            }
+        } else if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
+            const subscription = event.data.object as Stripe.Subscription
+            const result = await handleSubscriptionChange(subscription)
 
             if (!result.success) {
                 return NextResponse.json({ error: result.error }, { status: 500 })

@@ -1,0 +1,6 @@
+[2025-12-15T02:24:15.239Z] [Subscription API] Request: Action=update_slots, User=27586e1b-e724-4371-bd5a-673601c7a54f
+[2025-12-15T02:24:15.668Z] [Subscription API] DB Lookup Result: {"stripe_customer_id":"cus_TbeZ6yeqLcRM74","subscription_id":null}
+[2025-12-15T02:24:16.052Z] [Subscription API] ERROR: Subscription not found for user 27586e1b-e724-4371-bd5a-673601c7a54f
+[2025-12-15T02:24:27.311Z] [Subscription API] Request: Action=pause, User=27586e1b-e724-4371-bd5a-673601c7a54f
+[2025-12-15T02:24:27.656Z] [Subscription API] DB Lookup Result: {"stripe_customer_id":"cus_TbeZ6yeqLcRM74","subscription_id":null}
+[2025-12-15T02:24:27.934Z] [Subscription API] ERROR: Subscription not found for user 27586e1b-e724-4371-bd5a-673601c7a54f

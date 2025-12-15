@@ -21,12 +21,20 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
     const supabase = createAdminClient()
 
     // Update supplier status and return data for email
+    const totalSlots = session.metadata?.totalSlots ? parseInt(session.metadata.totalSlots) : undefined
+
+    const updateData: any = {
+        payment_status: 'completed',
+        subscription_status: 'active',
+    }
+
+    if (totalSlots) {
+        updateData.total_slots = totalSlots
+    }
+
     const { error, data } = await supabase
         .from('suppliers')
-        .update({
-            payment_status: 'completed',
-            subscription_status: 'active',
-        })
+        .update(updateData)
         .eq('id', userId)
         .select()
         .single()
@@ -54,5 +62,120 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         console.warn('[Stripe Logic] No email found in session.customer_details, skipping email.')
     }
 
+    return { success: true }
+}
+
+export async function handleSubscriptionChange(subscription: Stripe.Subscription, explicitUserId?: string) {
+    const supabase = createAdminClient()
+    let userId = explicitUserId || subscription.metadata?.supabase_user_id
+
+    // Fallback: If not in subscription metadata, fetch customer
+    if (!userId && typeof subscription.customer === 'string') {
+        try {
+            const customer = await stripe.customers.retrieve(subscription.customer) as Stripe.Customer
+            userId = customer.metadata?.supabase_user_id
+        } catch (err) {
+            console.error('[Stripe Logic] Error fetching customer:', err)
+        }
+    }
+
+    if (!userId) {
+        console.error('[Stripe Logic] No supabase_user_id found for subscription update')
+        return { success: false, error: 'User ID not found' }
+    }
+
+    console.log(`[Stripe Logic] Processing Subscription Update for User: ${userId}`)
+
+    console.log(`[Stripe Logic] Processing Subscription Update for User: ${userId}`)
+
+    // Refresh subscription to ensure we have all fields (sometimes update response is partial or older API version behavior)
+    let freshSub = subscription
+    try {
+        freshSub = await stripe.subscriptions.retrieve(subscription.id, { expand: ['customer'] })
+    } catch (e) {
+        console.error('[Stripe Logic] Failed to refresh subscription, using original object', e)
+    }
+
+    // Calculate total slots
+    let totalSlots = 0
+    if (freshSub.items && freshSub.items.data) {
+        freshSub.items.data.forEach(item => {
+            totalSlots += item.quantity || 0
+        })
+    }
+
+    // Determine status
+    // Map Stripe status to our internal status
+    // active, trialing -> active
+    // past_due, unpaid, canceled, incomplete, incomplete_expired -> inactive/canceled
+    let status = 'active'
+    if (['canceled', 'unpaid', 'past_due', 'incomplete_expired'].includes(freshSub.status)) {
+        status = 'canceled'
+    } else if (freshSub.status === 'trialing') {
+        status = 'active' // Treat trial as active for access
+    }
+
+    const isPaused = freshSub.pause_collection?.behavior === 'void'
+
+    // Debug logging for date issue
+    console.log('[Stripe Logic] Subscription current_period_end raw:', freshSub.current_period_end)
+
+    // Use current_period_end directly from subscription object (it exists on Stripe.Subscription)
+    let periodEnd = (freshSub as any).current_period_end
+    if (!periodEnd) {
+        console.warn('[Stripe Logic] current_period_end is missing even after refresh! Using cancel_at or fallback.')
+        periodEnd = freshSub.cancel_at || Math.floor(Date.now() / 1000)
+    }
+
+    const currentPeriodEnd = new Date(periodEnd * 1000).toISOString()
+
+    // Update Access
+    const updateData: any = {
+        subscription_id: freshSub.id,
+        subscription_status: status,
+        total_slots: totalSlots,
+        is_paused: isPaused,
+        current_period_end: currentPeriodEnd
+    }
+
+    const { data: currentSupplier } = await supabase
+        .from('suppliers')
+        .select('payment_status')
+        .eq('id', userId)
+        .single()
+
+    // Fallback: If checkout webhook failed, ensure payment_status is completed for active subs
+    let shouldSendEmail = false
+    if (status === 'active') {
+        if (currentSupplier && currentSupplier.payment_status !== 'completed') {
+            console.warn('[Stripe Logic] Found active subscription with incomplete payment_status. Applying fallback fix.')
+            updateData.payment_status = 'completed'
+            shouldSendEmail = true
+        }
+    }
+
+    const { error } = await supabase
+        .from('suppliers')
+        .update(updateData)
+        .eq('id', userId)
+
+    if (error) {
+        console.error('[Stripe Logic] Error updating supplier subscription:', error)
+        return { success: false, error: error.message }
+    }
+
+    if (shouldSendEmail) {
+        const customer = freshSub.customer as unknown as Stripe.Customer
+        if (customer && customer.email) {
+            console.log(`[Stripe Logic] Sending fallback confirmation email to ${customer.email}`)
+            try {
+                await sendPaymentConfirmationEmail(customer.email, customer.name || 'Supplier')
+            } catch (emailError) {
+                console.error('[Stripe Logic] Failed to send fallback email:', emailError)
+            }
+        }
+    }
+
+    console.log(`[Stripe Logic] Successfully updated supplier ${userId}: Status=${status}, Slots=${totalSlots}`)
     return { success: true }
 }

@@ -3,15 +3,12 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import ProductHistoryTable, { Product } from '@/components/supplier/product-history/ProductHistoryTable'
-import { FaPlus, FaEye, FaHeart, FaMoneyBillWave, FaChartLine, FaMapMarkerAlt, FaTag, FaBox, FaArchive, FaTrashRestore, FaSignOutAlt, FaUserCircle } from 'react-icons/fa'
-import { LineChart, Line, ResponsiveContainer } from 'recharts'
+import { FaArchive, FaTrashRestore } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
+import AccountProfileSection from '@/components/supplier/dashboard/AccountProfileSection'
+import ProductManagementSection from '@/components/supplier/dashboard/ProductManagementSection'
 
-// Mock Data for Sparklines
-const MOCK_SPARK_DATA = [
-    { value: 10 }, { value: 15 }, { value: 12 }, { value: 20 }, { value: 25 }, { value: 22 }, { value: 30 }
-]
+
 
 export default function Dashboard() {
     const [user, setUser] = useState<any>(null)
@@ -1020,261 +1017,32 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen bg-background">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Welcome Section */}
-                <div className="mb-8 flex justify-between items-start">
-                    <div>
-                        <h1 className="text-3xl font-bold text-foreground">
-                            {content.welcomeBack}, {supplier?.company_name || supplier?.name || content.partner}
-                        </h1>
-
-                        <p className="mt-2 text-muted-foreground">
-                            {content.manageYour} {(() => {
-                                const type = supplier?.supplier_type || 'Supplier';
-                                let key = '';
-                                const lowerType = type.toLowerCase();
-
-                                // Normalize supplier type
-                                if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Hotel';
-                                else if (lowerType.includes('airline')) key = 'Airline';
-                                else if (lowerType.includes('transport')) key = 'Transportation';
-                                else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
-
-                                // Try direct lookup if no key found
-                                if (!key) {
-                                    key = Object.keys(content.supplierTypes).find(k => k.toLowerCase() === lowerType) || '';
-                                }
-
-                                return key ? content.supplierTypes[key as keyof typeof content.supplierTypes] : type;
-                            })()} {content.inventory} {content.trackPerformance}
-                        </p>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        {user?.email && (
-                            <div className="flex items-center space-x-2 bg-muted/50 px-3 py-1.5 rounded-full border border-border/50">
-                                <FaUserCircle className="text-muted-foreground h-4 w-4" />
-                                <span className="text-xs font-medium text-foreground">{user.email}</span>
-                            </div>
-                        )}
-                        <div className="flex space-x-3">
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
-                            >
-                                <FaSignOutAlt className="mr-2" />
-                                {content.logout}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-8">
-                    {/* Active Inventory */}
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-6 shadow-[0_8px_0_0_rgba(0,0,0,0.2)] transition-transform hover:-translate-y-1 border-t border-white/20">
-                        <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
-                        <div className="relative flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.activeInventory}</p>
-                                <p className="mt-2 text-5xl font-black text-white">{activeProducts.length}</p>
-                            </div>
-                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
-                                <FaBox className="h-8 w-8 text-yellow-300 drop-shadow-lg" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Views */}
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-6 shadow-[0_8px_0_0_rgba(0,0,0,0.2)] transition-transform hover:-translate-y-1 border-t border-white/20">
-                        <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
-                        <div className="relative flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.views}</p>
-                                <p className="mt-2 text-5xl font-black text-white">
-                                    {products.reduce((acc, curr) => acc + (curr.view_count || 0), 0)}
-                                </p>
-                            </div>
-                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
-                                <FaEye className="h-8 w-8 text-cyan-300 drop-shadow-lg" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Wishlisted */}
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-6 shadow-[0_8px_0_0_rgba(0,0,0,0.2)] transition-transform hover:-translate-y-1 border-t border-white/20">
-                        <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 translate-y-[-50%] rounded-full bg-white/10 blur-3xl"></div>
-                        <div className="relative flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-blue-100 uppercase tracking-wider">{content.wishlisted}</p>
-                                <p className="mt-2 text-5xl font-black text-white">
-                                    {products.reduce((acc, curr) => acc + (curr.wishlist_count || 0), 0)}
-                                </p>
-                            </div>
-                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md shadow-inner border border-white/10">
-                                <FaHeart className="h-8 w-8 text-pink-400 drop-shadow-lg" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex space-x-1 bg-muted/50 p-1 rounded-lg w-fit mb-6">
-                    <button
-                        onClick={() => setActiveTab('active')}
-                        className={`
-                            px-4 py-2 text-sm font-medium rounded-md transition-all duration-200
-                            ${activeTab === 'active'
-                                ? 'bg-background text-foreground shadow-sm'
-                                : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
-                            }
-                        `}
-                    >
-                        {content.activeInventory}
-                        <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${activeTab === 'active' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                            }`}>
-                            {activeProducts.length}
-                        </span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('history')}
-                        className={`
-                            px-4 py-2 text-sm font-medium rounded-md transition-all duration-200
-                            ${activeTab === 'history'
-                                ? 'bg-background text-foreground shadow-sm'
-                                : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
-                            }
-                        `}
-                    >
-                        {content.productHistory}
-                        <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${activeTab === 'history' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                            }`}>
-                            {historyProducts.length}
-                        </span>
-                    </button>
-                </div>
-
-                {activeTab === 'active' ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {activeProducts.map((product) => (
-                            <div key={product.id} className="bg-gradient-to-br from-orange-100 via-amber-50 to-yellow-100 rounded-lg border border-orange-200 overflow-hidden hover:border-orange-300 hover:shadow-md transition-all duration-300 flex flex-col">
-                                {/* Top Section: Details */}
-                                <div className="p-6 flex flex-col md:flex-row justify-between items-start flex-grow">
-                                    <div className="flex items-start space-x-4 w-full">
-                                        {product.photo_urls && product.photo_urls[0] ? (
-                                            <img src={product.photo_urls[0]} alt={product.product_name} className="w-20 h-20 object-cover rounded-md flex-shrink-0" />
-                                        ) : (
-                                            <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground flex-shrink-0">No Img</div>
-                                        )}
-                                        <div className="flex-grow min-w-0">
-                                            <h3 className="text-lg font-semibold text-foreground truncate" title={product.product_name}>
-                                                {(() => {
-                                                    // Smart Title Logic
-                                                    const type = product.product_category || supplier?.supplier_type || 'Supplier';
-                                                    let key = '';
-                                                    const lowerType = type.toLowerCase();
-
-                                                    // Normalize supplier type
-                                                    if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Hotel';
-                                                    else if (lowerType.includes('airline')) key = 'Airline';
-                                                    else if (lowerType.includes('transport')) key = 'Transportation';
-                                                    else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
-
-                                                    // Try direct lookup if no key found
-                                                    if (!key) {
-                                                        key = Object.keys(content.supplierTypes).find(k => k.toLowerCase() === lowerType) || '';
-                                                    }
-
-                                                    const translatedType = key ? content.supplierTypes[key as keyof typeof content.supplierTypes] : type;
-                                                    // Use product city if available (Hotels), otherwise fallback to supplier city (Airlines etc)
-                                                    const cityToUse = product.city || supplier?.city || '';
-                                                    const translatedCity = translateCity(cityToUse);
-
-                                                    return `${translatedType} ${content.in_location} ${translatedCity}`;
-                                                })()}
-                                            </h3>
-                                            <p className="text-sm text-muted-foreground truncate">
-                                                {translateCity(product.city)}, {new Intl.DisplayNames([language], { type: 'region' }).of(product.country_code)}
-                                            </p>
-                                            <div className="mt-2 flex flex-col space-y-1">
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                                                        {content.statusValues[product.status as keyof typeof content.statusValues] || product.status.toUpperCase()}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4 md:mt-0 flex flex-col space-y-2 ml-4 flex-shrink-0">
-                                        <button
-                                            className="px-3 py-1.5 border border-blue-500 rounded text-sm text-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-colors w-full text-center"
-                                            onClick={() => router.push(`/supplier/dashboard/products/edit/${product.id}`)}
-                                        >
-                                            {content.edit}
-                                        </button>
-                                        <button
-                                            className="px-3 py-1.5 border border-border rounded text-sm text-red-500 hover:bg-red-500/10 hover:border-red-500 transition-colors w-full text-center"
-                                            onClick={() => handleArchive(product.id)}
-                                        >
-                                            {content.archive}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Bottom Section: Performance Strip */}
-                                <div className="bg-muted/30 border-t border-border px-6 py-3 grid grid-cols-2 gap-4">
-                                    {/* Views + Sparkline */}
-                                    <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-muted rounded-full text-blue-500">
-                                            <FaEye />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground uppercase font-medium">{content.views}</p>
-                                            <div className="flex items-center space-x-2">
-                                                <span className="text-lg font-bold text-foreground">{product.view_count || 0}</span>
-                                                <div className="w-16 h-8">
-                                                    <ResponsiveContainer width="100%" height="100%">
-                                                        <LineChart data={MOCK_SPARK_DATA}>
-                                                            <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} />
-                                                        </LineChart>
-                                                    </ResponsiveContainer>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Wishlisted */}
-                                    <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-muted rounded-full text-pink-500">
-                                            <FaHeart />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground uppercase font-medium">{content.wishlisted}</p>
-                                            <p className="text-lg font-bold text-foreground">{product.wishlist_count || 0}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    /* History Tab */
-                    <div className="bg-card rounded-lg p-6 border border-border">
-                        <ProductHistoryTable
-                            products={historyProducts}
-                            onRestore={handleRestore}
-                            onArchive={() => { }}
-                            supplierType={supplier?.supplier_type}
+                <div className="space-y-12">
+                    <section>
+                        <AccountProfileSection
+                            user={user}
+                            supplier={supplier}
+                            content={content}
+                            handleLogout={handleLogout}
                         />
-                    </div>
-                )}
+                    </section>
 
-                {/* Floating Action Button */}
-                <button
-                    onClick={() => router.push('/supplier/dashboard/products/create')}
-                    className="fixed bottom-8 right-8 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center space-x-3 z-50 animate-pulse"
-                >
-                    <FaPlus className="h-5 w-5" />
-                    <span className="text-lg font-bold">{content.createWinningProduct}</span>
-                </button>
+                    <section>
+                        <ProductManagementSection
+                            content={content}
+                            activeProducts={activeProducts}
+                            historyProducts={historyProducts}
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                            totalSlots={supplier?.total_slots || 1}
+                            handleArchive={handleArchive}
+                            handleRestore={handleRestore}
+                            supplier={supplier}
+                            language={language as string}
+                            translateCity={translateCity}
+                        />
+                    </section>
+                </div>
 
                 {/* Archive Confirmation Modal */}
                 {isArchiveModalOpen && (

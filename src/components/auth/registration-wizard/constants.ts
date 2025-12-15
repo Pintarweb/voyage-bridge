@@ -44,6 +44,7 @@ export const CURRENCIES = [
     { code: 'MYR', name: 'Malaysian Ringgit', flagCode: 'my' },
     { code: 'SGD', name: 'Singapore Dollar', flagCode: 'sg' },
     { code: 'GBP', name: 'British Pound', flagCode: 'gb' },
+    { code: 'EUR', name: 'Euro', flagCode: 'eu' },
     { code: 'AUD', name: 'Australian Dollar', flagCode: 'au' },
     { code: 'CNY', name: 'Chinese Yuan', flagCode: 'cn' },
     { code: 'JPY', name: 'Japanese Yen', flagCode: 'jp' },
