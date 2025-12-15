@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import ProductForm from '@/components/supplier/product-form'
 import HotelProductForm from '@/components/supplier/HotelProductForm'
+import TransportProductForm from '@/components/supplier/TransportProductForm'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
 import { createClient } from '@/utils/supabase/client'
@@ -138,6 +139,7 @@ export default function CreateProductPage() {
 
     // Determine which form to show
     const isHotel = supplierType?.toLowerCase().includes('hotel')
+    const isTransport = supplierType?.toLowerCase().includes('transport') || supplierType?.toLowerCase().includes('transfer') || supplierType?.toLowerCase().includes('car')
 
     if (!supplierType) {
         return (
@@ -180,6 +182,8 @@ export default function CreateProductPage() {
 
                 {isHotel ? (
                     <HotelProductForm supplier={supplier} onSuccess={() => router.push('/supplier/dashboard')} />
+                ) : isTransport ? (
+                    <TransportProductForm supplier={supplier} onSuccess={() => router.push('/supplier/dashboard')} />
                 ) : (
                     <ProductForm onSuccess={() => router.push('/supplier/dashboard')} />
                 )}

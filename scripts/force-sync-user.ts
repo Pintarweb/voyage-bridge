@@ -88,4 +88,5 @@ async function syncUser(userId: string) {
 }
 
 // User ID from logs: d6ed0e77-8f74-467c-b510-29be7cb1fb89
-syncUser('d6ed0e77-8f74-467c-b510-29be7cb1fb89')
+const userIdArg = process.argv[2] || 'd6ed0e77-8f74-467c-b510-29be7cb1fb89'
+syncUser(userIdArg)

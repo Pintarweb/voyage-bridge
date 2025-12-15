@@ -10,11 +10,30 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 })
 
 export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-    const userId = session.metadata?.userId || session.metadata?.supabase_user_id
+    let userId = session.metadata?.userId || session.metadata?.supabase_user_id
     console.log(`[Stripe Logic] Processing Session for User: ${userId}`)
 
     if (!userId) {
-        console.error('[Stripe Logic] No userId found in session metadata')
+        console.warn('[Stripe Logic] No userId found in session metadata. Attempting fallback lookup by email.')
+
+        const email = session.customer_details?.email
+        if (email) {
+            const supabase = createAdminClient()
+            const { data: supplier } = await supabase
+                .from('suppliers')
+                .select('id')
+                .eq('contact_email', email)
+                .single()
+
+            if (supplier) {
+                userId = supplier.id
+                console.log(`[Stripe Logic] Found user via email lookup: ${userId}`)
+            }
+        }
+    }
+
+    if (!userId) {
+        console.error('[Stripe Logic] Failed to identify user from session.')
         return { success: false, error: 'No userId found' }
     }
 
