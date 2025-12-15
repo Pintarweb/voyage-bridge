@@ -118,13 +118,26 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
     const isPaused = freshSub.pause_collection?.behavior === 'void'
 
     // Debug logging for date issue
-    console.log('[Stripe Logic] Subscription current_period_end raw:', freshSub.current_period_end)
+    console.log('[Stripe Logic] Subscription Date Data:')
+    console.log(`- current_period_start: ${(freshSub as any).current_period_start}`)
+    console.log(`- current_period_end:   ${(freshSub as any).current_period_end}`)
 
     // Use current_period_end directly from subscription object (it exists on Stripe.Subscription)
     let periodEnd = (freshSub as any).current_period_end
+
+    // Fallback order: trial_end -> cancel_at -> now
     if (!periodEnd) {
-        console.warn('[Stripe Logic] current_period_end is missing even after refresh! Using cancel_at or fallback.')
-        periodEnd = freshSub.cancel_at || Math.floor(Date.now() / 1000)
+        console.warn('[Stripe Logic] current_period_end is missing. Checking fallbacks.')
+        if ((freshSub as any).trial_end) {
+            periodEnd = (freshSub as any).trial_end
+            console.log(`[Stripe Logic] Using trial_end: ${periodEnd}`)
+        } else if (freshSub.cancel_at) {
+            periodEnd = freshSub.cancel_at
+            console.log(`[Stripe Logic] Using cancel_at: ${periodEnd}`)
+        } else {
+            console.warn('[Stripe Logic] No date found, using Date.now()')
+            periodEnd = Math.floor(Date.now() / 1000)
+        }
     }
 
     const currentPeriodEnd = new Date(periodEnd * 1000).toISOString()

@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/utils/supabase/admin'
 import { stripe, handleSubscriptionChange } from '@/lib/stripe'
+import { sendSubscriptionUpdateEmail } from '@/lib/emailSender'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
@@ -21,13 +22,12 @@ export async function POST(req: Request) {
         const supabase = createAdminClient()
         const { data: supplier, error } = await supabase
             .from('suppliers')
-            .select('stripe_customer_id, subscription_id')
+            .select('stripe_customer_id, subscription_id, company_name')
             .eq('id', userId)
             .maybeSingle()
 
         if (error) {
             console.error('[Subscription API] Supabase error fetching supplier:', error)
-            console.error('[Subscription API] Queried userId:', userId)
             return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 })
         }
 
@@ -35,7 +35,6 @@ export async function POST(req: Request) {
 
         // Fallback: If no subscription_id in DB, try to find one via Stripe Customer ID
         if (!subscriptionId && supplier?.stripe_customer_id) {
-            console.log(`[Subscription API] No subscription_id in DB, searching Stripe for customer: ${supplier.stripe_customer_id}`)
             const subs = await stripe.subscriptions.list({
                 customer: supplier.stripe_customer_id,
                 status: 'active',
@@ -43,7 +42,6 @@ export async function POST(req: Request) {
             })
             if (subs.data.length > 0) {
                 subscriptionId = subs.data[0].id
-                console.log(`[Subscription API] Found active subscription: ${subscriptionId}`)
 
                 // Optional: Update DB to save this ID for next time
                 supabase.from('suppliers').update({ subscription_id: subscriptionId }).eq('id', userId).then(() => { })
@@ -54,7 +52,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Subscription not found. Please verify you have an active plan.' }, { status: 404 })
         }
 
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId, { expand: ['customer'] })
+        const customer = subscription.customer as Stripe.Customer
+        const customerEmail = customer.email
+        const companyName = supplier?.company_name || customer.name
 
         if (action === 'update_slots') {
             if (typeof newSlotCount !== 'number' || newSlotCount < 1) {
@@ -68,16 +69,7 @@ export async function POST(req: Request) {
             let baseItem = subscription.items.data.find(item => item.price.id === BASE_PRICE_ID)
             let addOnItem = subscription.items.data.find(item => item.price.id === ADD_ON_PRICE_ID)
 
-            // 1. Maintain Base Item (Ensure it exists and has qty 1)
-            // If for some reason base item is missing or wrong quantity, we fix it.
-            // But usually we just leave it alone if it's correct.
-            /* 
-               NOTE: If the user subscribed with a different price ID initially, this logic might need adjustment.
-               For now we assume the standard setup.
-            */
             if (!baseItem) {
-                // If base item is missing, we might be in a weird state or using a different price. 
-                // We'll proceed with add-on logic primarily.
                 console.warn('[Subscription API] Base item not found matching constant.')
             }
 
@@ -105,6 +97,14 @@ export async function POST(req: Request) {
 
                 // Sync to DB immediately
                 await handleSubscriptionChange(updatedSub, userId)
+
+                // Send Email
+                if (customerEmail) {
+                    await sendSubscriptionUpdateEmail(customerEmail, 'plan_change', {
+                        newSlotCount: newSlotCount,
+                        companyName: companyName
+                    })
+                }
             }
 
             return NextResponse.json({ success: true })
@@ -114,6 +114,27 @@ export async function POST(req: Request) {
                 pause_collection: { behavior: 'void' },
             })
             await handleSubscriptionChange(updatedSub, userId)
+
+            if (customerEmail) {
+                let periodEnd = updatedSub.current_period_end
+
+                // Fallback logic
+                if (!periodEnd) {
+                    if ((updatedSub as any).trial_end) {
+                        periodEnd = (updatedSub as any).trial_end
+                    } else {
+                        periodEnd = (updatedSub as any).cancel_at || Math.floor(Date.now() / 1000)
+                    }
+                }
+
+                const endDate = new Date(periodEnd * 1000).toISOString()
+
+                await sendSubscriptionUpdateEmail(customerEmail, 'pause', {
+                    endDate: endDate,
+                    companyName: companyName
+                })
+            }
+
             return NextResponse.json({ success: true, status: 'paused' })
 
         } else if (action === 'resume') {
@@ -121,6 +142,13 @@ export async function POST(req: Request) {
                 pause_collection: '', // Unset pause_collection
             })
             await handleSubscriptionChange(updatedSub, userId)
+
+            if (customerEmail) {
+                await sendSubscriptionUpdateEmail(customerEmail, 'resume', {
+                    companyName: companyName
+                })
+            }
+
             return NextResponse.json({ success: true, status: 'active' })
         }
 

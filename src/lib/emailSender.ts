@@ -136,3 +136,82 @@ export async function sendPaymentConfirmationEmail(recipientEmail: string, suppl
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Sends a subscription update notification to the supplier.
+ * @param recipientEmail The supplier's email address.
+ * @param updateType The type of update ('plan_change', 'pause', 'resume', 'cancel').
+ * @param details Object containing details like new slot count, end date, etc.
+ */
+export async function sendSubscriptionUpdateEmail(
+    recipientEmail: string,
+    updateType: 'plan_change' | 'pause' | 'resume' | 'cancel',
+    details: { newSlotCount?: number, endDate?: string, companyName?: string }
+) {
+    const companyName = details.companyName || 'Valued Partner';
+    let subject = 'Subscription Update - ArkAlliance';
+    let content = '';
+
+    const formattedDate = details.endDate ? new Date(details.endDate).toLocaleDateString() : 'the end of the billing cycle';
+
+    switch (updateType) {
+        case 'plan_change':
+            subject = 'Plan Updated - ArkAlliance';
+            content = `
+                <p>Your subscription plan has been successfully updated.</p>
+                <p><strong>New Slot Count:</strong> ${details.newSlotCount}</p>
+                <p>Any prorated charges or credits will be applied to your next invoice.</p>
+            `;
+            break;
+        case 'pause':
+            subject = 'Subscription Paused - ArkAlliance';
+            content = `
+                <p>Your subscription has been scheduled to <strong>PAUSE</strong>.</p>
+                <p><strong>Effective Date:</strong> ${formattedDate}</p>
+                <p>Your products will remain visible until this date. After this date, your listings will be hidden and you will not be billed.</p>
+                <p>You can resume your subscription at any time from your dashboard.</p>
+            `;
+            break;
+        case 'resume':
+            subject = 'Subscription Resumed - ArkAlliance';
+            content = `
+                <p>Great news! Your subscription has been <strong>RESUMED</strong>.</p>
+                <p>Your listings are now active and visible on the marketplace.</p>
+            `;
+            break;
+        case 'cancel':
+            subject = 'Subscription Cancelled - ArkAlliance';
+            content = `
+                <p>Your subscription has been cancelled.</p>
+                <p>Your access will continue until <strong>${formattedDate}</strong>.</p>
+                <p>We're sorry to see you go. If you change your mind, you can resubscribe from your dashboard.</p>
+            `;
+            break;
+    }
+
+    const mailOptions = {
+        from: 'no-reply@arkalliance.com',
+        to: recipientEmail,
+        subject: subject,
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h1>Subscription Update</h1>
+                <p>Dear ${companyName},</p>
+                ${content}
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 0.9em; color: #666;">
+                    Manage your subscription: <a href="${process.env.NEXT_PUBLIC_SITE_URL}/supplier/dashboard">Supplier Dashboard</a>
+                </p>
+            </div>
+        `,
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`Subscription update email (${updateType}) sent to ${recipientEmail}. ID: ${info.messageId}`);
+        return { success: true, messageId: info.messageId };
+    } catch (error: any) {
+        console.error(`Error sending subscription email to ${recipientEmail}:`, error);
+        return { success: false, error: error.message };
+    }
+}
