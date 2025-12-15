@@ -62,12 +62,12 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
         // 3. Details & Pricing
         description: '',
         room_type: [] as string[],
-        min_occupancy: 1,
-        max_occupancy: 2,
-        base_price: 0,
+        min_occupancy: '' as string | number,
+        max_occupancy: '' as string | number,
+        base_price: '' as string | number,
         currency: 'USD', // Default, ideally from supplier preference
-        check_in_time: '15:00',
-        check_out_time: '12:00',
+        check_in_time: '',
+        check_out_time: '',
         amenities: [] as string[],
         custom_amenity: '',
 
@@ -108,12 +108,12 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
 
                     description: data.product_description || '',
                     room_type: data.room_type || [],
-                    min_occupancy: data.min_occupancy || 1,
-                    max_occupancy: data.max_occupancy || 2,
-                    base_price: data.base_price || 0,
+                    min_occupancy: data.min_occupancy || '',
+                    max_occupancy: data.max_occupancy || '',
+                    base_price: data.base_price || '',
                     currency: data.currency || 'USD',
-                    check_in_time: data.check_in_time || '15:00',
-                    check_out_time: data.check_out_time || '12:00',
+                    check_in_time: data.check_in_time || '',
+                    check_out_time: data.check_out_time || '',
                     amenities: data.amenities || [],
                     custom_amenity: '',
                     special_offer: data.special_offer || ''
@@ -228,12 +228,12 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
 
                 product_description: formData.description,
                 room_type: formData.room_type,
-                min_occupancy: formData.min_occupancy,
-                max_occupancy: formData.max_occupancy,
-                base_price: formData.base_price,
+                min_occupancy: formData.min_occupancy === '' ? null : formData.min_occupancy,
+                max_occupancy: formData.max_occupancy === '' ? null : formData.max_occupancy,
+                base_price: formData.base_price === '' ? null : formData.base_price,
                 currency: formData.currency,
-                check_in_time: formData.check_in_time,
-                check_out_time: formData.check_out_time,
+                check_in_time: formData.check_in_time === '' ? null : formData.check_in_time,
+                check_out_time: formData.check_out_time === '' ? null : formData.check_out_time,
                 amenities: formData.amenities,
 
                 special_offer: formData.special_offer,
@@ -445,7 +445,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-2">Available Room Type *</label>
+                            <label className="block text-sm font-medium mb-2">Available Room Type</label>
                             <div className="flex flex-wrap gap-2">
                                 {ROOM_TYPES.map(type => (
                                     <button
@@ -464,7 +464,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1">Available Occupancy Limit *</label>
+                            <label className="block text-sm font-medium mb-1">Available Occupancy Limit</label>
                             <div className="flex items-center gap-2">
                                 <div className="flex-1 flex items-center rounded-lg border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/50 transition-shadow">
                                     <div className="bg-muted/50 px-3 py-2 border-r border-border text-xs text-muted-foreground font-medium select-none text-center min-w-[3rem]">
@@ -474,7 +474,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                                         type="number"
                                         min="1"
                                         value={formData.min_occupancy}
-                                        onChange={(e) => handleChange('min_occupancy', parseInt(e.target.value))}
+                                        onChange={(e) => handleChange('min_occupancy', e.target.value === '' ? '' : parseInt(e.target.value))}
                                         className="flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/50 w-full"
                                     />
                                 </div>
@@ -487,7 +487,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                                         type="number"
                                         min="1"
                                         value={formData.max_occupancy}
-                                        onChange={(e) => handleChange('max_occupancy', parseInt(e.target.value))}
+                                        onChange={(e) => handleChange('max_occupancy', e.target.value === '' ? '' : parseInt(e.target.value))}
                                         className="flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/50 w-full"
                                     />
                                 </div>
@@ -495,7 +495,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1">Starting Price (per night) *</label>
+                            <label className="block text-sm font-medium mb-1">Starting Price (per night)</label>
                             <div className="grid grid-cols-[7rem_1fr] w-full rounded-lg border border-border bg-background transition-shadow focus-within:ring-2 focus-within:ring-primary/50 overflow-hidden">
                                 <div className="relative h-full border-r border-border bg-muted/50">
                                     <select
@@ -518,14 +518,14 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                                     step="0.01"
                                     placeholder="0.00"
                                     value={formData.base_price}
-                                    onChange={(e) => handleChange('base_price', parseFloat(e.target.value))}
+                                    onChange={(e) => handleChange('base_price', e.target.value === '' ? '' : parseFloat(e.target.value))}
                                     className="w-full bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/50"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1">Check-in Time *</label>
+                            <label className="block text-sm font-medium mb-1">Check-in Time</label>
                             <input
                                 type="time"
                                 value={formData.check_in_time}
@@ -535,7 +535,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1">Check-out Time *</label>
+                            <label className="block text-sm font-medium mb-1">Check-out Time</label>
                             <input
                                 type="time"
                                 value={formData.check_out_time}
