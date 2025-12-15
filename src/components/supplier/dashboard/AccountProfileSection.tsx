@@ -119,7 +119,7 @@ export default function AccountProfileSection({ user, supplier, content, handleL
                     {/* Actions */}
                     <div className="flex flex-wrap gap-3">
                         <button
-                            onClick={() => alert("Profile editing page coming soon.")}
+                            onClick={() => router.push('/supplier/dashboard/profile')}
                             className="flex items-center px-4 py-2 text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg transition-colors"
                         >
                             <FaEdit className="mr-2" />
