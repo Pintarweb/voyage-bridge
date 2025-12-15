@@ -103,25 +103,7 @@ export default function ProductManagementSection({
                                     )}
                                     <div className="flex-grow min-w-0">
                                         <h3 className="text-lg font-semibold text-foreground truncate" title={product.product_name}>
-                                            {(() => {
-                                                // Smart Title Logic (Copied from page.tsx)
-                                                const type = product.product_category || supplier?.supplier_type || 'Supplier';
-                                                let key = '';
-                                                const lowerType = type.toLowerCase();
-                                                if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Hotel';
-                                                else if (lowerType.includes('airline')) key = 'Airline';
-                                                else if (lowerType.includes('transport')) key = 'Transportation';
-                                                else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
-
-                                                if (!key) {
-                                                    key = Object.keys(content.supplierTypes).find(k => k.toLowerCase() === lowerType) || '';
-                                                }
-                                                const translatedType = key ? content.supplierTypes[key as keyof typeof content.supplierTypes] : type;
-                                                const cityToUse = product.city || supplier?.city || '';
-                                                const translatedCity = translateCity(cityToUse);
-
-                                                return `${translatedType} ${content.in_location} ${translatedCity}`;
-                                            })()}
+                                            {product.product_name}
                                         </h3>
                                         <p className="text-sm text-muted-foreground truncate">
                                             {translateCity(product.city)}, {new Intl.DisplayNames([language], { type: 'region' }).of(product.country_code)}

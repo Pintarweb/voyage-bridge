@@ -57,7 +57,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'ARCHIVED'
             },
             categoryValues: {
-                'Accommodation': 'Accommodation',
+                'Hotel': 'Hotel',
                 'Transportation': 'Transportation',
                 'Land Operator': 'Land Operator',
                 'Airline': 'Airline'
@@ -99,7 +99,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: '已归档'
             },
             categoryValues: {
-                'Accommodation': '住宿',
+                'Hotel': '酒店',
                 'Transportation': '交通',
                 'Land Operator': '地接社',
                 'Airline': '航空公司'
@@ -141,7 +141,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'DIARKIBKAN'
             },
             categoryValues: {
-                'Accommodation': 'Penginapan',
+                'Hotel': 'Hotel',
                 'Transportation': 'Pengangkutan',
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Syarikat Penerbangan'
@@ -183,7 +183,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'ARCHIVADO'
             },
             categoryValues: {
-                'Accommodation': 'Alojamiento',
+                'Hotel': 'Hotel',
                 'Transportation': 'Transporte',
                 'Land Operator': 'Operador Terrestre',
                 'Airline': 'Aerolínea'
@@ -225,7 +225,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'ARCHIVÉ'
             },
             categoryValues: {
-                'Accommodation': 'Hébergement',
+                'Hotel': 'Hôtel',
                 'Transportation': 'Transport',
                 'Land Operator': 'Opérateur Terrestre',
                 'Airline': 'Compagnie Aérienne'
@@ -267,7 +267,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'ARCHIVIERT'
             },
             categoryValues: {
-                'Accommodation': 'Unterkunft',
+                'Hotel': 'Hotel',
                 'Transportation': 'Transport',
                 'Land Operator': 'Landoperator',
                 'Airline': 'Fluggesellschaft'
@@ -309,7 +309,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'アーカイブ済み'
             },
             categoryValues: {
-                'Accommodation': '宿泊施設',
+                'Hotel': 'ホテル',
                 'Transportation': '交通機関',
                 'Land Operator': 'ランドオペレーター',
                 'Airline': '航空会社'
@@ -351,7 +351,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: '보관됨'
             },
             categoryValues: {
-                'Accommodation': '숙박',
+                'Hotel': '호텔',
                 'Transportation': '교통',
                 'Land Operator': '랜드 오퍼레이터',
                 'Airline': '항공사'
@@ -393,7 +393,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'مؤرشف'
             },
             categoryValues: {
-                'Accommodation': 'إقامة',
+                'Hotel': 'فندق',
                 'Transportation': 'نقل',
                 'Land Operator': 'مشغل بري',
                 'Airline': 'شركة طيران'
@@ -435,7 +435,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'เก็บถาวร'
             },
             categoryValues: {
-                'Accommodation': 'ที่พัก',
+                'Hotel': 'โรงแรม',
                 'Transportation': 'การขนส่ง',
                 'Land Operator': 'ผู้ให้บริการทางบก',
                 'Airline': 'สายการบิน'
@@ -477,7 +477,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'ĐÃ LƯU TRỮ'
             },
             categoryValues: {
-                'Accommodation': 'Chỗ ở',
+                'Hotel': 'Khách sạn',
                 'Transportation': 'Vận tải',
                 'Land Operator': 'Nhà điều hành mặt đất',
                 'Airline': 'Hãng hàng không'
@@ -519,7 +519,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                 archived: 'DIARSIPKAN'
             },
             categoryValues: {
-                'Accommodation': 'Akomodasi',
+                'Hotel': 'Hotel',
                 'Transportation': 'Transportasi',
                 'Land Operator': 'Operator Darat',
                 'Airline': 'Maskapai Penerbangan'
@@ -566,7 +566,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                         const lowerType = type.toLowerCase();
 
                         // Normalize supplier type
-                        if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Accommodation';
+                        if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Hotel';
                         else if (lowerType.includes('airline')) key = 'Airline';
                         else if (lowerType.includes('transport')) key = 'Transportation';
                         else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
@@ -593,7 +593,7 @@ export default function ProductHistoryTable({ products, onRestore, onArchive, su
                     const lowerType = type.toLowerCase();
                     let key = '';
 
-                    if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Accommodation';
+                    if (lowerType.includes('hotel') || lowerType.includes('accommodation')) key = 'Hotel';
                     else if (lowerType.includes('airline')) key = 'Airline';
                     else if (lowerType.includes('transport')) key = 'Transportation';
                     else if (lowerType.includes('land operator') || lowerType.includes('tour')) key = 'Land Operator';
