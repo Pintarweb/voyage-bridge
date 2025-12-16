@@ -6,6 +6,7 @@ import ProductForm from '@/components/supplier/product-form'
 import HotelProductForm from '@/components/supplier/HotelProductForm'
 import TransportProductForm from '@/components/supplier/TransportProductForm'
 import LandOperatorProductForm from '@/components/supplier/LandOperatorProductForm'
+import AirlineProductPlaceholder from '@/components/supplier/AirlineProductPlaceholder'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
 import { createClient } from '@/utils/supabase/client'
@@ -143,6 +144,7 @@ export default function CreateProductPage() {
     // Determine which form to show
     const isHotel = supplierType?.toLowerCase().includes('hotel')
     const isTransport = supplierType?.toLowerCase().includes('transport') || supplierType?.toLowerCase().includes('transfer') || supplierType?.toLowerCase().includes('car')
+    const isAirline = supplierType?.toLowerCase().includes('airline') || supplierType?.toLowerCase().includes('flight')
     const isLandOperator = supplierType?.toLowerCase().includes('tour') || supplierType?.toLowerCase().includes('land') || supplierType?.toLowerCase().includes('operator') || supplierType?.toLowerCase().includes('activity')
 
     if (!supplierType) {
@@ -188,6 +190,8 @@ export default function CreateProductPage() {
                     <HotelProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
                 ) : isTransport ? (
                     <TransportProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                ) : isAirline ? (
+                    <AirlineProductPlaceholder supplier={supplier} />
                 ) : isLandOperator ? (
                     <LandOperatorProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
                 ) : (

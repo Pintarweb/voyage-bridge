@@ -95,16 +95,22 @@ export async function updateSession(request: NextRequest) {
     // Check for Supplier Profile
     const { data: supplierProfile } = await supabase
         .from('suppliers')
-        .select('subscription_status')
+        .select('subscription_status, supplier_type')
         .eq('id', user.id)
         .single()
 
     if (supplierProfile) {
         const status = supplierProfile.subscription_status
+        const supplierType = supplierProfile.supplier_type?.toLowerCase() || ''
+        const isAirline = supplierType.includes('airline') || supplierType.includes('flight')
 
         if (status === 'pending' || status === 'pending_payment') {
             // Allow access to payment-init page for pending suppliers so they can complete registration
             if (path === '/payment-init') {
+                return response
+            }
+            // Allow Airline suppliers to access product creation (to see placeholder)
+            if (isAirline && path === '/supplier/dashboard/products/create') {
                 return response
             }
             return NextResponse.redirect(new URL('/approval-pending', request.url))

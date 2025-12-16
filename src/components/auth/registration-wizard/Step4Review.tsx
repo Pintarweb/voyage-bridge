@@ -333,7 +333,11 @@ export default function Step4Review() {
                 throw new Error(errorMessage)
             }
 
-            router.push('/payment-init')
+            if (formData.supplier_type?.toLowerCase().includes('airline') || formData.supplier_type?.toLowerCase().includes('flight')) {
+                router.push('/supplier/dashboard/products/create')
+            } else {
+                router.push('/payment-init')
+            }
 
         } catch (err: any) {
             console.error('Registration error:', err)
