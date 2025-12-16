@@ -47,6 +47,25 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         subscription_status: 'active',
     }
 
+    // Capture subscription details if available
+    if (session.subscription) {
+        if (typeof session.subscription === 'string') {
+            updateData.subscription_id = session.subscription
+            // We can't get date unless we expand or fetch, but usually checkout session expansion is tricky here without fetching.
+            // Let's fetch the subscription to be sure we get the period end.
+            try {
+                const sub = await stripe.subscriptions.retrieve(session.subscription)
+                updateData.current_period_end = new Date(sub.current_period_end * 1000).toISOString()
+            } catch (e) {
+                console.error('[Stripe Logic] Failed to fetch subscription details', e)
+            }
+        } else {
+            // If expanded (rare for standard checkout webhook unless configured)
+            updateData.subscription_id = session.subscription.id
+            updateData.current_period_end = new Date(session.subscription.current_period_end * 1000).toISOString()
+        }
+    }
+
     if (totalSlots) {
         updateData.total_slots = totalSlots
     }

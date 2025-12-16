@@ -7,13 +7,13 @@ import Stripe from 'stripe'
 export async function POST(req: Request) {
     try {
         const body = await req.text()
-        const headerPayload = await getHeaders()
-        const signature = headerPayload.get('stripe-signature')
+        const signature = req.headers.get('stripe-signature')
 
         console.log('[Stripe Webhook] Received request')
+        console.log('[Stripe Webhook] Headers:', Object.fromEntries(req.headers.entries()))
 
         if (!signature) {
-            console.error('[Stripe Webhook] No signature found')
+            console.error('[Stripe Webhook] No signature found in headers')
             return NextResponse.json({ error: 'No signature' }, { status: 400 })
         }
 
