@@ -8,7 +8,7 @@ type Product = {
     id: string
     product_name: string
     product_description: string
-    photo_urls: string[]
+    photo_urls: string[] | string
     city: string
     country_code: string
     product_category: string
@@ -19,6 +19,20 @@ type Product = {
         website_url: string | null
         contact_email: string | null
     }
+    duration?: string
+    activity_level?: string
+    max_group_size?: number
+    starting_price?: number
+    base_price?: number
+    currency?: string
+    meeting_point?: string
+    languages?: string[]
+    itinerary?: any
+    inclusions?: string[]
+    exclusions?: string[]
+    service_type?: string
+    coverage_area?: string
+    vehicle_config?: any[]
 }
 
 export default function ProductList({ products, initialWishlist }: { products: Product[], initialWishlist: string[] }) {

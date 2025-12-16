@@ -21,6 +21,21 @@ type Product = {
         website_url: string | null
         contact_email: string | null
     } | null
+    // Extended fields
+    duration?: string
+    activity_level?: string
+    max_group_size?: number
+    starting_price?: number
+    base_price?: number
+    currency?: string
+    meeting_point?: string
+    languages?: string[]
+    itinerary?: any
+    inclusions?: string[]
+    exclusions?: string[]
+    service_type?: string
+    coverage_area?: string
+    vehicle_config?: any[]
 }
 
 type ProductCardProps = {
@@ -33,6 +48,7 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [showContactInfo, setShowContactInfo] = useState(false)
 
     // Parse photo_urls - handle both array and JSON string
     let images: string[] = []
@@ -54,8 +70,7 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
         setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
     }
 
-    const handleRequest = async () => {
-        // Increment view count regardless of supplier status
+    const incrementViewCount = async () => {
         try {
             await fetch('/api/products/view', {
                 method: 'POST',
@@ -65,6 +80,29 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
         } catch (error) {
             console.error('Error incrementing view count:', error)
         }
+    }
+
+    const handleCardClick = async (e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault()
+            // Don't trigger if clicking navigation buttons
+            if ((e.target as HTMLElement).closest('button')) return
+        }
+
+        await incrementViewCount()
+
+        if (!product.supplier) return
+
+        setShowContactInfo(false)
+        setIsModalOpen(true)
+    }
+
+    const handleRequest = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        // Increment view count regardless of supplier status
+        await incrementViewCount()
 
         // If no supplier data, just show an alert
         if (!product.supplier) {
@@ -85,11 +123,13 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
                 })
             })
 
-            // Show supplier modal
+            // Show supplier modal with contact info
+            setShowContactInfo(true)
             setIsModalOpen(true)
         } catch (error) {
             console.error('Error tracking click:', error)
             // Still show modal even if tracking fails
+            setShowContactInfo(true)
             setIsModalOpen(true)
         } finally {
             setIsLoading(false)
@@ -98,10 +138,13 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
 
     return (
         <>
-            <div className="group bg-white rounded-xl overflow-hidden border border-slate-200 hover:border-blue-400 transition-all duration-300 hover:shadow-xl flex flex-col h-full">
+            <div
+                className="group bg-white rounded-xl overflow-hidden border border-slate-200 hover:border-blue-400 transition-all duration-300 hover:shadow-xl flex flex-col h-full cursor-pointer"
+                onClick={handleCardClick}
+            >
                 {/* Image Carousel */}
                 <div className="relative h-64 overflow-hidden bg-slate-100">
-                    <Link href={`/portal/product/${product.id}`} className="block h-full w-full cursor-pointer">
+                    <div className="block h-full w-full">
                         {images.length > 0 ? (
                             <>
                                 <div
@@ -115,7 +158,7 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
                                 No image available
                             </div>
                         )}
-                    </Link>
+                    </div>
 
                     {/* Category Badge */}
                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide text-slate-700 shadow-md pointer-events-none">
@@ -193,11 +236,11 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-grow">
-                    <Link href={`/portal/product/${product.id}`} className="block group-hover:text-blue-600 transition-colors">
+                    <div className="block group-hover:text-blue-600 transition-colors">
                         <h3 className="text-xl font-bold text-slate-900 mb-3">
                             {product.product_name}
                         </h3>
-                    </Link>
+                    </div>
                     <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-grow whitespace-pre-wrap">
                         {product.product_description}
                     </p>
@@ -223,6 +266,7 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     productUrl={product.product_url}
+                    showContactInfo={showContactInfo}
                 />
             )}
         </>
