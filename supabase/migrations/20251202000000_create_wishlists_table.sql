@@ -17,6 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_wishlists_product ON public.wishlists(product_id)
 ALTER TABLE public.wishlists ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can view their own wishlist items
+DROP POLICY IF EXISTS "Users can view own wishlist" ON public.wishlists;
 CREATE POLICY "Users can view own wishlist"
     ON public.wishlists
     FOR SELECT
@@ -24,6 +25,7 @@ CREATE POLICY "Users can view own wishlist"
     USING (auth.uid() = user_id);
 
 -- Policy: Users can insert their own wishlist items
+DROP POLICY IF EXISTS "Users can insert own wishlist" ON public.wishlists;
 CREATE POLICY "Users can insert own wishlist"
     ON public.wishlists
     FOR INSERT
@@ -31,6 +33,7 @@ CREATE POLICY "Users can insert own wishlist"
     WITH CHECK (auth.uid() = user_id);
 
 -- Policy: Users can delete their own wishlist items
+DROP POLICY IF EXISTS "Users can delete own wishlist" ON public.wishlists;
 CREATE POLICY "Users can delete own wishlist"
     ON public.wishlists
     FOR DELETE

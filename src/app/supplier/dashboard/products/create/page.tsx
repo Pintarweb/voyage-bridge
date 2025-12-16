@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import ProductForm from '@/components/supplier/product-form'
 import HotelProductForm from '@/components/supplier/HotelProductForm'
 import TransportProductForm from '@/components/supplier/TransportProductForm'
+import LandOperatorProductForm from '@/components/supplier/LandOperatorProductForm'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
 import { createClient } from '@/utils/supabase/client'
@@ -12,6 +13,8 @@ import { createClient } from '@/utils/supabase/client'
 export default function CreateProductPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const mode = searchParams.get('edit') === 'true' ? 'edit' : 'create'
+    const editProductId = searchParams.get('id')
     const { language } = useLanguage()
     const [supplierType, setSupplierType] = useState<string | null>(null)
     const [supplier, setSupplier] = useState<any>(null)
@@ -140,6 +143,7 @@ export default function CreateProductPage() {
     // Determine which form to show
     const isHotel = supplierType?.toLowerCase().includes('hotel')
     const isTransport = supplierType?.toLowerCase().includes('transport') || supplierType?.toLowerCase().includes('transfer') || supplierType?.toLowerCase().includes('car')
+    const isLandOperator = supplierType?.toLowerCase().includes('tour') || supplierType?.toLowerCase().includes('land') || supplierType?.toLowerCase().includes('operator') || supplierType?.toLowerCase().includes('activity')
 
     if (!supplierType) {
         return (
@@ -181,11 +185,13 @@ export default function CreateProductPage() {
                 </div>
 
                 {isHotel ? (
-                    <HotelProductForm supplier={supplier} onSuccess={() => router.push('/supplier/dashboard')} />
+                    <HotelProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
                 ) : isTransport ? (
-                    <TransportProductForm supplier={supplier} onSuccess={() => router.push('/supplier/dashboard')} />
+                    <TransportProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                ) : isLandOperator ? (
+                    <LandOperatorProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
                 ) : (
-                    <ProductForm onSuccess={() => router.push('/supplier/dashboard')} />
+                    <ProductForm productId={editProductId || undefined} mode={mode} onSuccess={() => router.push('/supplier/dashboard')} />
                 )}
             </main>
         </div>

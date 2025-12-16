@@ -29,6 +29,7 @@ BEGIN
 END $$;
 
 -- Create single permissive policy for agent_profiles
+DROP POLICY IF EXISTS "Allow all authenticated access to agent_profiles" ON agent_profiles;
 CREATE POLICY "Allow all authenticated access to agent_profiles"
 ON agent_profiles
 FOR ALL
@@ -37,6 +38,7 @@ USING (true)
 WITH CHECK (true);
 
 -- Create single permissive policy for suppliers
+DROP POLICY IF EXISTS "Allow all authenticated access to suppliers" ON suppliers;
 CREATE POLICY "Allow all authenticated access to suppliers"
 ON suppliers
 FOR ALL
@@ -45,6 +47,7 @@ USING (true)
 WITH CHECK (true);
 
 -- Allow anon to view active suppliers (for public portal)
+DROP POLICY IF EXISTS "Allow anon to view active suppliers" ON suppliers;
 CREATE POLICY "Allow anon to view active suppliers"
 ON suppliers
 FOR SELECT

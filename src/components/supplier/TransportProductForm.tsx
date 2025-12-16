@@ -67,6 +67,49 @@ export default function TransportProductForm({ supplier, productId, onSuccess }:
         special_offer: '',
     })
 
+    // Load existing product data if editing
+    useEffect(() => {
+        const loadProductData = async () => {
+            if (productId) {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) return
+
+                const { data: product, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('id', productId)
+                    .single()
+
+                if (product) {
+                    setFormData(prev => ({
+                        ...prev,
+                        product_name: product.product_name || '',
+                        product_url: product.product_url || '',
+                        service_type: product.service_type || '',
+                        country: product.country_code || '',
+                        city: product.city || '',
+                        coverage_area: product.coverage_area || '',
+                        contact_name: product.contact_name || '',
+                        contact_phone: product.contact_phone || '',
+                        contact_email: product.contact_email || '',
+                        description: product.product_description || '',
+                        vehicle_config: product.vehicle_config || [],
+                        price_model: product.price_model || '',
+                        base_price: product.base_price || '',
+                        currency: product.currency || 'USD',
+                        inclusions: product.inclusions || '',
+                        special_offer: product.special_offer || ''
+                    }))
+
+                    if (product.photo_urls && product.photo_urls.length > 0) {
+                        setPreviews(product.photo_urls)
+                    }
+                }
+            }
+        }
+        loadProductData()
+    }, [productId, supabase])
+
     // Helper for vehicle config management
     const handleAddVehicle = () => {
         setFormData(prev => ({
@@ -179,8 +222,22 @@ export default function TransportProductForm({ supplier, productId, onSuccess }:
                 status: status
             }
 
-            const { error } = await supabase.from('products').insert(dataToSubmit)
-            if (error) throw error
+            if (productId) {
+                const { error: updateError } = await supabase
+                    .from('products')
+                    .update({
+                        ...dataToSubmit,
+                        photo_urls: [...previews.filter(url => !url.startsWith('blob:')), ...imageUrls]
+                    })
+                    .eq('id', productId)
+                if (updateError) throw updateError
+            } else {
+                const { error: insertError } = await supabase.from('products').insert({
+                    ...dataToSubmit,
+                    photo_urls: imageUrls
+                })
+                if (insertError) throw insertError
+            }
 
             if (onSuccess) onSuccess()
             else router.push('/supplier/dashboard')

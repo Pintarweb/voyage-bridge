@@ -120,7 +120,7 @@ export default function ProductManagementSection({
                                 <div className="mt-4 md:mt-0 flex flex-col space-y-2 ml-4 flex-shrink-0">
                                     <button
                                         className="px-3 py-1.5 border border-blue-500 rounded text-sm text-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-colors w-full text-center flex items-center justify-center"
-                                        onClick={() => router.push(`/supplier/dashboard/products/edit/${product.id}`)}
+                                        onClick={() => router.push(`/supplier/dashboard/products/create?edit=true&id=${product.id}`)}
                                     >
                                         <FaEdit className="mr-1.5" />
                                         {content.edit}
