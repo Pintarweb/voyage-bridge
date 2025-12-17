@@ -18,7 +18,7 @@ export default function PortalHeader({ userEmail }: PortalHeaderProps) {
     }
 
     return (
-        <div className="absolute top-0 right-0 z-50 p-6 w-full flex justify-end pointer-events-none">
+        <div className="fixed top-24 right-0 z-50 p-6 w-full flex justify-end pointer-events-none">
             <div className="bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full shadow-lg border border-white/50 flex items-center gap-4 pointer-events-auto transition-all hover:shadow-xl hover:bg-white">
                 <div className="flex flex-col items-end">
                     <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Logged in as</span>

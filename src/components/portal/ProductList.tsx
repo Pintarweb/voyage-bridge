@@ -33,6 +33,17 @@ type Product = {
     service_type?: string
     coverage_area?: string
     vehicle_config?: any[]
+
+    // Hotel fields
+    accommodation_type?: string[]
+    star_rating?: number
+    address?: string
+    room_type?: string[]
+    min_occupancy?: number
+    max_occupancy?: number
+    check_in_time?: string
+    check_out_time?: string
+    amenities?: string[]
 }
 
 export default function ProductList({ products, initialWishlist }: { products: Product[], initialWishlist: string[] }) {

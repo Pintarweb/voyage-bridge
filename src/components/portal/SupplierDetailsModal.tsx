@@ -1,4 +1,6 @@
-import { FaExternalLinkAlt, FaTimes, FaBuilding, FaEnvelope, FaGlobe, FaStar, FaMapMarkerAlt, FaTag } from 'react-icons/fa'
+import { FaExternalLinkAlt, FaTimes, FaBuilding, FaEnvelope, FaGlobe, FaStar, FaMapMarkerAlt, FaTag, FaChevronLeft, FaChevronRight, FaWifi, FaSwimmingPool, FaSpa, FaDumbbell, FaParking, FaCoffee, FaSnowflake, FaUtensils, FaGlassMartini, FaCheckCircle } from 'react-icons/fa'
+import Image from 'next/image'
+import { useState } from 'react'
 
 type Supplier = {
     id: string
@@ -30,6 +32,16 @@ type Product = {
     service_type?: string
     coverage_area?: string
     vehicle_config?: any[]
+    // Hotel Fields
+    accommodation_type?: string[]
+    star_rating?: number
+    address?: string
+    room_type?: string[]
+    min_occupancy?: number
+    max_occupancy?: number
+    check_in_time?: string
+    check_out_time?: string
+    amenities?: string[]
 }
 
 type SupplierDetailsModalProps = {
@@ -42,6 +54,8 @@ type SupplierDetailsModalProps = {
 }
 
 export default function SupplierDetailsModal({ supplier, product, isOpen, onClose, productUrl, showContactInfo = false }: SupplierDetailsModalProps) {
+    const [lightboxImage, setLightboxImage] = useState<string | null>(null)
+
     if (!isOpen) return null
 
     // Parse photo_urls
@@ -56,6 +70,26 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
         }
     }
 
+    // Prepare looping images for marquee
+    // Ensure we have enough density for smooth looping
+    const displayImages = images.length > 0
+        ? (images.length < 5 ? [...images, ...images, ...images, ...images] : [...images, ...images])
+        : []
+
+    const getAmenityIcon = (amenity: string) => {
+        const text = amenity.toLowerCase()
+        if (text.includes('wifi') || text.includes('internet')) return <FaWifi className="text-blue-500" />
+        if (text.includes('pool') || text.includes('swim')) return <FaSwimmingPool className="text-cyan-500" />
+        if (text.includes('spa') || text.includes('wellness')) return <FaSpa className="text-pink-500" />
+        if (text.includes('gym') || text.includes('fitness')) return <FaDumbbell className="text-slate-600" />
+        if (text.includes('park')) return <FaParking className="text-slate-600" />
+        if (text.includes('breakfast') || text.includes('coffee')) return <FaCoffee className="text-amber-700" />
+        if (text.includes('ac') || text.includes('air') || text.includes('cool')) return <FaSnowflake className="text-sky-300" />
+        if (text.includes('restaurant') || text.includes('dining') || text.includes('food')) return <FaUtensils className="text-orange-500" />
+        if (text.includes('bar') || text.includes('drink')) return <FaGlassMartini className="text-purple-500" />
+        return <FaCheckCircle className="text-green-500" />
+    }
+
     const handleWriteReview = () => {
         // Placeholder for review functionality
         alert('Review feature coming soon!')
@@ -64,10 +98,22 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
     const price = product.starting_price ?? product.base_price
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full my-8 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-hidden">
+            <style>{`
+                @keyframes scroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-scroll {
+                    animation: scroll 40s linear infinite;
+                }
+                .animate-scroll:hover {
+                    animation-play-state: paused;
+                }
+            `}</style>
+            <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full my-8 animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
                 {/* Header */}
-                <div className="sticky top-0 z-10 bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-t-2xl flex items-start justify-between shadow-md">
+                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white p-6 rounded-t-2xl flex items-start justify-between shadow-md shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
                             <FaTag className="text-2xl" />
@@ -87,26 +133,34 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-8">
-                    {/* Images Grid */}
-                    {images.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="md:col-span-2 relative aspect-video rounded-xl overflow-hidden shadow-md">
-                                <img
-                                    src={images[0]}
-                                    alt={product.product_name}
-                                    className="w-full h-full object-cover"
-                                />
+                <div className="p-6 space-y-8 overflow-y-auto">
+                    {/* Continuous Image Scroll */}
+                    {displayImages.length > 0 && (
+                        <div className="relative h-56 md:h-64 w-full rounded-xl overflow-hidden shadow-inner bg-neutral-100 shrink-0 group">
+                            {/* Scrolling Track */}
+                            <div className="flex h-full w-max animate-scroll">
+                                {/* Original + Duplicate for seamless loop */}
+                                {displayImages.map((img, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="relative h-full w-64 md:w-80 cursor-zoom-in shrink-0"
+                                        onClick={() => setLightboxImage(img)}
+                                    >
+                                        <Image
+                                            src={img}
+                                            alt={`Product image ${idx}`}
+                                            fill
+                                            className="object-cover"
+                                            sizes="(max-width: 768px) 256px, 320px"
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                            {images.slice(1).map((img, idx) => (
-                                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden shadow-sm">
-                                    <img
-                                        src={img}
-                                        alt={`${product.product_name} ${idx + 2}`}
-                                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                                    />
-                                </div>
-                            ))}
+
+                            {/* Hover Overlay Hint */}
+                            <div className="absolute inset-x-0 bottom-4 pointer-events-none flex justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                <span className="bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">Click to expand • Pauses on hover</span>
+                            </div>
                         </div>
                     )}
 
@@ -176,7 +230,79 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
                                 </p>
                             </div>
                         )}
+                        {/* Hotel Specific Fields */}
+                        {product.star_rating && (
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p className="text-xs text-slate-500 uppercase font-bold text-center">Rating</p>
+                                <div className="flex justify-center text-yellow-500 mt-1">
+                                    {[...Array(Math.round(product.star_rating))].map((_, i) => <FaStar key={i} size={14} />)}
+                                </div>
+                            </div>
+                        )}
+                        {product.accommodation_type && product.accommodation_type.length > 0 && (
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p className="text-xs text-slate-500 uppercase font-bold text-center">Property Type</p>
+                                <p className="text-sm font-semibold text-slate-800 text-center">
+                                    {Array.isArray(product.accommodation_type) ? product.accommodation_type.join(', ') : product.accommodation_type}
+                                </p>
+                            </div>
+                        )}
+                        {product.check_in_time && (
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p className="text-xs text-slate-500 uppercase font-bold text-center">Check-in</p>
+                                <p className="text-sm font-semibold text-slate-800 text-center">{product.check_in_time}</p>
+                            </div>
+                        )}
+                        {product.check_out_time && (
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p className="text-xs text-slate-500 uppercase font-bold text-center">Check-out</p>
+                                <p className="text-sm font-semibold text-slate-800 text-center">{product.check_out_time}</p>
+                            </div>
+                        )}
+                        {(product.min_occupancy || product.max_occupancy) && (
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p className="text-xs text-slate-500 uppercase font-bold text-center">Occupancy</p>
+                                <p className="text-sm font-semibold text-slate-800 text-center">
+                                    {product.min_occupancy} - {product.max_occupancy} Guests
+                                </p>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Hotel Amenities */}
+                    {product.amenities && product.amenities.length > 0 && (
+                        <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                            <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                                <FaBuilding className="text-slate-500" />
+                                Amenities
+                            </h4>
+                            <div className="flex flex-wrap gap-3">
+                                {product.amenities.map((amenity, i) => (
+                                    <span key={i} className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 shadow-sm flex items-center gap-2 hover:border-slate-300 transition-colors">
+                                        {getAmenityIcon(amenity)}
+                                        {amenity}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Hotel Room Types */}
+                    {product.room_type && product.room_type.length > 0 && (
+                        <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                            <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                                <FaBuilding className="text-slate-500" />
+                                Available Room Types
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                                {Array.isArray(product.room_type) ? product.room_type.map((type, i) => (
+                                    <span key={i} className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 shadow-sm">
+                                        {type}
+                                    </span>
+                                )) : <span className="text-sm text-slate-600">{String(product.room_type)}</span>}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Vehicle Configuration (Transport) */}
                     {product.vehicle_config && product.vehicle_config.length > 0 && (
@@ -284,7 +410,7 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
                 </div>
 
                 {/* Action Buttons */}
-                <div className="space-y-3 pt-4 border-t border-slate-200">
+                <div className="space-y-3 pt-4 border-t border-slate-200 p-6">
                     <div className="flex gap-3">
                         {(productUrl || supplier.website_url) && (
                             <button
@@ -316,6 +442,33 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
                     </button>
                 </div>
             </div>
+
+            {/* Lightbox Overlay */}
+            {lightboxImage && (
+                <div
+                    className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-200"
+                    onClick={() => setLightboxImage(null)}
+                >
+                    <button
+                        onClick={() => setLightboxImage(null)}
+                        className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors p-2 z-50"
+                        title="Close"
+                    >
+                        <FaTimes className="text-4xl" />
+                    </button>
+                    <div className="relative w-full h-full max-w-7xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                        <Image
+                            src={lightboxImage}
+                            alt="Full screen view"
+                            fill
+                            className="object-contain"
+                            quality={100}
+                            sizes="100vw"
+                            priority
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

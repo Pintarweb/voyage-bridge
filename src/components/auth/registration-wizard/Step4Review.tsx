@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useWizard } from './WizardContext'
 import { FaFacebook, FaInstagram, FaTiktok, FaLinkedin, FaTripadvisor, FaWhatsapp } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
+import { registerSupplier } from '@/app/actions/register-supplier'
 
 export default function Step4Review() {
     const { formData, setStep } = useWizard()
@@ -320,8 +321,7 @@ export default function Step4Review() {
         setError(null)
 
         try {
-            const { registerSupplier } = await import('@/app/actions/register-supplier')
-
+            console.log('Submitting registration with data:', formData)
             const result = await registerSupplier(formData)
 
             if (result.error) {
