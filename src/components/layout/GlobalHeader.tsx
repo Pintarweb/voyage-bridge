@@ -119,8 +119,7 @@ export default function GlobalHeader() {
                                 alt="ArkAlliance Logo"
                                 width={56}
                                 height={56}
-                                className="h-14 w-auto object-contain rounded-md"
-                                style={{ width: 'auto' }}
+                                className="object-contain rounded-md"
                             />
                             <span>Ark<span className="text-primary">Alliance</span></span>
                         </Link>

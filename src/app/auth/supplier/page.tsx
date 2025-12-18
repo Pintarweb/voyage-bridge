@@ -127,6 +127,24 @@ export default function SupplierAuthPage() {
                 router.push('/supplier/dashboard')
             } else {
                 // Registration / Trial Flow
+
+                // Check if email is already currently in use by a supplier
+                const { data: existingSupplier, error: checkError } = await supabase
+                    .from('suppliers')
+                    .select('id')
+                    .eq('contact_email', email)
+                    .maybeSingle()
+
+                if (checkError) {
+                    console.error('Error checking supplier status:', checkError)
+                    throw new Error('Unable to verify email. Please try again.')
+                }
+
+                if (existingSupplier) {
+                    setIsLogin(true)
+                    throw new Error('This email is already associated with a supplier account. Please sign in.')
+                }
+
                 router.push(`/auth/register?email=${encodeURIComponent(email)}`)
             }
 
@@ -270,23 +288,25 @@ export default function SupplierAuthPage() {
                                         style={{ colorScheme: 'dark' }}
                                     />
                                 </div>
-                                <div>
-                                    <label
-                                        className="block text-xs font-bold text-white uppercase tracking-wider mb-2 ml-1 drop-shadow-md"
-                                        style={{ color: '#ffffff' }}
-                                    >
-                                        Password
-                                    </label>
-                                    <input
-                                        type="password"
-                                        required
-                                        className="w-full px-4 py-3 bg-blue-950/50 border border-blue-400/30 rounded-xl focus:ring-2 focus:ring-teal-400 focus:border-transparent text-white placeholder-blue-200/50 transition-all font-medium backdrop-blur-sm"
-                                        placeholder="••••••••"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        style={{ colorScheme: 'dark' }}
-                                    />
-                                </div>
+                                {isLogin && (
+                                    <div>
+                                        <label
+                                            className="block text-xs font-bold text-white uppercase tracking-wider mb-2 ml-1 drop-shadow-md"
+                                            style={{ color: '#ffffff' }}
+                                        >
+                                            Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            required={isLogin}
+                                            className="w-full px-4 py-3 bg-blue-950/50 border border-blue-400/30 rounded-xl focus:ring-2 focus:ring-teal-400 focus:border-transparent text-white placeholder-blue-200/50 transition-all font-medium backdrop-blur-sm"
+                                            placeholder="••••••••"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            style={{ colorScheme: 'dark' }}
+                                        />
+                                    </div>
+                                )}
 
                                 <button
                                     type="submit"

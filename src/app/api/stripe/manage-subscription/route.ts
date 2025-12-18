@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         if (!subscriptionId && supplier?.stripe_customer_id) {
             const subs = await stripe.subscriptions.list({
                 customer: supplier.stripe_customer_id,
-                status: 'active',
+                status: 'all',
                 limit: 1
             })
             if (subs.data.length > 0) {
