@@ -173,6 +173,26 @@ export default function LandOperatorProductForm({ supplier, productId, onSuccess
         e.preventDefault()
         setLoading(true)
 
+        // Validation
+        const required = [
+            formData.product_name, formData.product_url, formData.product_type,
+            formData.country, formData.city, formData.meeting_point,
+            formData.contact_name, formData.contact_phone, formData.contact_email,
+            formData.description
+        ];
+
+        if (required.some(field => !field || field.trim() === '')) {
+            alert('Please fill in all required fields marked with *');
+            setLoading(false);
+            return;
+        }
+
+        if (previews.length === 0) {
+            alert('Please upload at least one image.');
+            setLoading(false);
+            return;
+        }
+
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Not authenticated')

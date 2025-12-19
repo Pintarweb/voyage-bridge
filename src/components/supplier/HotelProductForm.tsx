@@ -190,6 +190,19 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
         e.preventDefault()
         setLoading(true)
 
+        // Validation
+        if (!formData.product_name || !formData.product_url || !formData.city || !formData.contact_name || !formData.contact_phone || !formData.contact_email || !formData.description) {
+            alert('Please fill in all required fields marked with *');
+            setLoading(false);
+            return;
+        }
+
+        if (previews.length === 0) {
+            alert('Please upload at least one image.');
+            setLoading(false);
+            return;
+        }
+
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Not authenticated')

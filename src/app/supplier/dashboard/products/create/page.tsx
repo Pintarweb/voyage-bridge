@@ -159,45 +159,82 @@ export default function CreateProductPage() {
     }
 
     return (
-        <div className="text-foreground">
-            <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-                {/* Welcome Banner */}
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 p-8 shadow-lg mb-8">
-                    <div className="relative z-10">
-                        <h1 className="text-3xl font-bold text-white mb-2">
-                            {content.greeting}
-                        </h1>
-                        <p className="text-blue-100 text-lg">
-                            {content.instruction}
-                        </p>
-                    </div>
-                    {/* Decorative circles */}
-                    <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-                    <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-                </div>
+        <div className="min-h-screen relative flex flex-col font-sans text-white bg-blue-950 overflow-hidden">
+            {/* Background - Consistent with Dashboard */}
+            {/* Background - Consistent with Dashboard */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                {/* Lighter overlay for brighter background */}
+                <div className="absolute inset-0 bg-blue-950/10 z-10" />
+                <style jsx global>{`
+                  @keyframes pan-slow {
+                    0% { transform: scale(1.1) translate(0, 0); }
+                    100% { transform: scale(1.25) translate(-2%, -2%); }
+                  }
+                  .animate-pan-slow {
+                    animation: pan-slow 40s ease-in-out infinite alternate;
+                  }
+                  /* Autofill Transparency Fix */
+                  input:-webkit-autofill,
+                  input:-webkit-autofill:hover, 
+                  input:-webkit-autofill:focus, 
+                  input:-webkit-autofill:active {
+                      -webkit-box-shadow: 0 0 0 30px rgba(23, 37, 84, 0.8) inset !important;
+                      -webkit-text-fill-color: white !important;
+                      caret-color: white !important;
+                      transition: background-color 5000s ease-in-out 0s;
+                  }
+                `}</style>
+                <img
+                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
+                    alt="Global Trade Network"
+                    className="w-full h-full object-cover animate-pan-slow"
+                />
+            </div>
 
-                <div className="mb-6">
-                    <button
-                        onClick={() => router.back()}
-                        className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        <FaArrowLeft className="mr-2" />
-                        {content.back}
-                    </button>
-                </div>
+            <div className="relative z-20 w-full">
+                <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+                    {/* Welcome Banner - Hidden for Transport as it has custom design */}
+                    {!isTransport && (
+                        <>
+                            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 p-8 shadow-lg mb-8">
+                                <div className="relative z-10">
+                                    <h1 className="text-3xl font-bold text-white mb-2">
+                                        {content.greeting}
+                                    </h1>
+                                    <p className="text-blue-100 text-lg">
+                                        {content.instruction}
+                                    </p>
+                                </div>
+                                {/* Decorative circles */}
+                                <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
+                                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
+                            </div>
 
-                {isHotel ? (
-                    <HotelProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
-                ) : isTransport ? (
-                    <TransportProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
-                ) : isAirline ? (
-                    <AirlineProductPlaceholder supplier={supplier} />
-                ) : isLandOperator ? (
-                    <LandOperatorProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
-                ) : (
-                    <ProductForm productId={editProductId || undefined} mode={mode} onSuccess={() => router.push('/supplier/dashboard')} />
-                )}
-            </main>
+                            <div className="mb-6">
+                                <button
+                                    onClick={() => router.back()}
+                                    className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    <FaArrowLeft className="mr-2" />
+                                    {content.back}
+                                </button>
+                            </div>
+                        </>
+                    )}
+
+                    {isHotel ? (
+                        <HotelProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                    ) : isTransport ? (
+                        <TransportProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                    ) : isAirline ? (
+                        <AirlineProductPlaceholder supplier={supplier} />
+                    ) : isLandOperator ? (
+                        <LandOperatorProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                    ) : (
+                        <ProductForm productId={editProductId || undefined} mode={mode} onSuccess={() => router.push('/supplier/dashboard')} />
+                    )}
+                </main>
+            </div>
         </div>
     )
 }

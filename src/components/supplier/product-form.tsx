@@ -622,22 +622,17 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         e.preventDefault()
         setLoading(true)
 
-        // Basic validation
-        if (!formData.product_category || previews.length === 0) {
+        // Validation
+        const isHotel = formData.product_category?.toLowerCase().includes('hotel')
+
+        if (!formData.product_name || !formData.product_description || !formData.product_category || previews.length === 0) {
             alert(content.errorMissingFields)
             setLoading(false)
             return
         }
 
-        // Hotels require city
         if (isHotel && !formData.city) {
-            alert(content.errorMissingFields)
-            setLoading(false)
-            return
-        }
-
-        if (isHotel && !formData.product_name) {
-            alert(content.errorMissingFields)
+            alert('City is required for hotels.')
             setLoading(false)
             return
         }
@@ -677,14 +672,8 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
             // Construct description
             let finalDescription = formData.product_description
 
-
-            console.log('Debug - formData.product_name:', formData.product_name)
-            console.log('Debug - formData.product_category:', formData.product_category)
-            console.log('Debug - formData.city:', formData.city)
-            console.log('Debug - supplierCity:', supplierCity)
-
             const productData = {
-                product_name: formData.product_name || `${formData.product_category} in ${formData.city || supplierCity}`,
+                product_name: formData.product_name,
                 product_description: finalDescription,
                 product_category: formData.product_category,
                 photo_urls: imageUrls.length > 0 ? imageUrls : previews,
@@ -873,8 +862,21 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 p-8 shadow-xl border border-white/10">
                         <div className="relative space-y-6">
                             <div>
+                                <label className="block text-sm font-medium !text-white mb-2">Product Name</label>
+                                <input
+                                    required
+                                    type="text"
+                                    value={formData.product_name}
+                                    onChange={e => setFormData({ ...formData, product_name: e.target.value })}
+                                    className="block w-full rounded-xl border-white/20 bg-white/10 p-4 text-white placeholder-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all"
+                                    placeholder="e.g. Guided City Tour"
+                                />
+                            </div>
+
+                            <div>
                                 <label className="block text-sm font-medium !text-white mb-2">Product URL</label>
                                 <input
+                                    required
                                     type="url"
                                     value={formData.product_url}
                                     onChange={e => setFormData({ ...formData, product_url: e.target.value })}
@@ -886,6 +888,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                             <div>
                                 <label className="block text-lg font-bold text-white mb-4">{content.productDescription}</label>
                                 <textarea
+                                    required
                                     rows={6}
                                     value={formData.product_description}
                                     onChange={e => setFormData({ ...formData, product_description: e.target.value })}

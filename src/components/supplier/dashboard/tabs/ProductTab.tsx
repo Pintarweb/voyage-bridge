@@ -1,0 +1,237 @@
+'use client'
+
+import React, { useState } from 'react'
+import { FaSearch, FaFilter, FaPlus, FaFolder, FaBox, FaArchive, FaEye, FaHeart, FaMapMarkerAlt, FaEdit, FaTrashRestore, FaFileAlt, FaTrash } from 'react-icons/fa'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { createClient } from '@/utils/supabase/client'
+
+export default function ProductTab({ products, supplier, content, onProductUpdate, onOpenSlotModal }: { products: any[], supplier: any, content: any, onProductUpdate: () => void, onOpenSlotModal: () => void }) {
+    const router = useRouter()
+    const supabase = createClient()
+    const [searchQuery, setSearchQuery] = useState('')
+    const [filterStatus, setFilterStatus] = useState('all') // 'all', 'active', 'archived', 'draft'
+
+    // Mock Folders State
+    const [folders, setFolders] = useState([
+        { id: 1, name: 'Summer 2025', count: 3 },
+        { id: 2, name: 'VIP Packages', count: 1 },
+        { id: 3, name: 'Archive 2024', count: 12 }
+    ])
+
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.product_name?.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesStatus = filterStatus === 'all' || p.status === filterStatus
+        return matchesSearch && matchesStatus
+    })
+
+    const getMainImage = (urls: any) => {
+        try {
+            if (Array.isArray(urls) && urls.length > 0) return urls[0]
+            if (typeof urls === 'string') {
+                const parsed = JSON.parse(urls)
+                return parsed[0] || null
+            }
+        } catch (e) { return null }
+        return null
+    }
+
+    const handleUpdateStatus = async (id: string, newStatus: string) => {
+        // Confirmation Logic
+        if (newStatus === 'active') {
+            const message = "Are you sure you want to restore and publish this product? It will become visible to all agents."
+            if (!confirm(message)) return
+        } else if (newStatus === 'archived') {
+            if (!confirm("Are you sure you want to archive this product? It will no longer be visible.")) return
+        } else if (newStatus === 'draft') {
+            if (!confirm("Are you sure you want to revert to draft? Agents will no longer see it.")) return
+        }
+
+        if (newStatus === 'active') {
+            // Check slots
+            const activeCount = products.filter(p => p.status === 'active').length
+            const totalSlots = supplier?.total_slots || 1
+            if (activeCount >= totalSlots) {
+                // Slots Full Logic
+                // Use a custom alert or modal, then trigger the upgrade modal
+                alert("You have reached your active slot limit! \n\nTo publish this product, you need to acquire more slots. \n\nMaximize your reach and sales potential by expanding your inventory now!")
+                onOpenSlotModal()
+                return
+            }
+        }
+
+        const { error } = await supabase
+            .from('products')
+            .update({ status: newStatus })
+            .eq('id', id)
+
+        if (error) {
+            console.error('Error updating status:', error)
+            alert('Failed to update product status')
+        } else {
+            onProductUpdate() // Refresh data in parent
+        }
+    }
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to DELETE this product? This action cannot be undone.")) return
+        if (!confirm("Double Confirmation: This product will be permanently removed from your account. Click OK to delete.")) return
+
+        const { error } = await supabase
+            .from('products')
+            .delete()
+            .eq('id', id)
+
+        if (error) {
+            console.error('Error deleting product:', error)
+            alert('Failed to delete product')
+        } else {
+            onProductUpdate()
+        }
+    }
+
+    return (
+        <div className="space-y-8">
+            {/* Toolbar */}
+            <div className="flex flex-col md:flex-row justify-between gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
+                <div className="flex gap-4 flex-1">
+                    <div className="relative flex-1 max-w-md">
+                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+                        <input
+                            type="text"
+                            placeholder={content.searchPlaceholder || "Search products..."}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-amber-500/50 transition-colors"
+                        />
+                    </div>
+                    <div className="relative">
+                        <FaFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="pl-10 pr-8 py-2.5 bg-black/20 border border-white/10 rounded-xl text-white appearance-none focus:outline-none focus:border-amber-500/50 cursor-pointer"
+                        >
+                            <option value="all">All Products</option>
+                            <option value="active">Active</option>
+                            <option value="draft">Drafts</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="flex gap-3">
+                    <button onClick={() => alert("Folder creation coming soon!")} className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-xl transition-colors flex items-center gap-2">
+                        <FaFolder className="text-amber-400" /> New Folder
+                    </button>
+                    <Link href="/supplier/dashboard/products/create" className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-blue-950 font-bold rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                        <FaPlus /> New Product
+                    </Link>
+                </div>
+            </div>
+
+            {/* Folders Row (Mock) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {folders.map(folder => (
+                    <div key={folder.id} className="bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl cursor-pointer transition-all group">
+                        <FaFolder className="text-amber-500/50 group-hover:text-amber-400 mb-3 text-3xl transition-colors" />
+                        <div className="font-bold text-white text-sm truncate">{folder.name}</div>
+                        <div className="text-xs text-white/40">{folder.count} items</div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProducts.map((product) => (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                        key={product.id}
+                        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden group hover:border-amber-500/30 transition-all hover:-translate-y-1"
+                    >
+                        {/* Image */}
+                        <div className="relative h-48 bg-black/40">
+                            {getMainImage(product.photo_urls) ? (
+                                <img src={getMainImage(product.photo_urls)} alt={product.product_name} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-white/20">
+                                    <FaBox size={40} />
+                                </div>
+                            )}
+                            <div className="absolute top-3 right-3 flex gap-2">
+                                <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase backdrop-blur-md ${product.status === 'active' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                                    product.status === 'draft' ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30' :
+                                        'bg-red-500/20 text-red-400 border border-red-500/30'
+                                    }`}>
+                                    {product.status}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="p-5">
+                            <h3 className="font-bold text-white text-lg mb-1 truncate">{product.product_name}</h3>
+                            <div className="flex items-center text-xs text-white/50 mb-4">
+                                <FaMapMarkerAlt className="mr-1" /> {product.city || 'No location'}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 mb-4 py-4 border-y border-white/5">
+                                <div className="text-center border-r border-white/5">
+                                    <div className="text-lg font-bold text-white">{product.views || 0}</div>
+                                    <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold">Views</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-lg font-bold text-white">{product.wishlist_count || 0}</div>
+                                    <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold">Wishlists</div>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2 text-xs font-bold pt-4 border-t border-white/5 mt-4">
+                                <Link href={`/supplier/dashboard/products/create?id=${product.id}`} className="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-colors flex items-center justify-center gap-1">
+                                    <FaEdit /> Edit
+                                </Link>
+
+                                {product.status === 'active' && (
+                                    <button onClick={() => handleUpdateStatus(product.id, 'draft')} className="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/60 hover:text-white transition-colors flex items-center justify-center gap-1" title="Set to Draft">
+                                        <FaFileAlt /> Draft
+                                    </button>
+                                )}
+
+                                {product.status === 'draft' && (
+                                    <button onClick={() => handleUpdateStatus(product.id, 'active')} className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg text-green-400 transition-colors flex items-center justify-center gap-1" title="Publish">
+                                        <FaPlus /> Publish
+                                    </button>
+                                )}
+
+                                {product.status !== 'archived' ? (
+                                    <button onClick={() => handleUpdateStatus(product.id, 'archived')} className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/60 hover:text-red-400 transition-colors" title="Archive">
+                                        <FaArchive />
+                                    </button>
+                                ) : (
+                                    <button onClick={() => handleUpdateStatus(product.id, 'draft')} className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg text-green-400 transition-colors flex items-center justify-center gap-1" title="Restore to Draft">
+                                        <FaTrashRestore /> Restore
+                                    </button>
+                                )}
+
+                                <button onClick={() => handleDelete(product.id)} className="px-4 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-red-400 transition-colors" title="Permanently Delete">
+                                    <FaTrash />
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+
+                {/* Empty State */}
+                {filteredProducts.length === 0 && (
+                    <div className="col-span-full py-20 text-center">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
+                            <FaBox className="text-white/20 text-3xl" />
+                        </div>
+                        <h3 className="text-white font-bold text-lg">No products found</h3>
+                        <p className="text-white/40 text-sm">Try adjusting your search or filters.</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
