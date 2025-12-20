@@ -57,7 +57,7 @@ export default function Home() {
             100% { transform: scale(1.1) translate(0, 0); }
           }
           .animate-pan-zoom {
-            animation: pan-zoom 60s ease-in-out infinite alternate;
+            animation: pan-zoom 30s ease-in-out infinite alternate;
           }
         `}</style>
         <img
