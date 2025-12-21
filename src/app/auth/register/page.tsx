@@ -1,13 +1,15 @@
 'use client'
 
 import RegistrationWizard from '@/components/auth/registration-wizard/RegistrationWizard'
-import GlobalHeader from '@/components/layout/GlobalHeader'
-import Footer from '@/components/layout/Footer'
-import TourismBackground from '@/components/ui/TourismBackground'
+
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
-export default function RegisterPage() {
+function RegisterPageContent() {
     const { language } = useLanguage()
+    const searchParams = useSearchParams()
+    const email = searchParams.get('email') || ''
 
     const t = {
         'en-US': {
@@ -75,26 +77,62 @@ export default function RegisterPage() {
     const content = t[language as keyof typeof t] || t['en-US']
 
     return (
-        <div className="flex-grow relative flex items-center justify-center px-4 py-12">
-            <TourismBackground />
+        <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen bg-blue-950 overflow-hidden">
+            {/* Background Map/Video Placeholder */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                {/* Lighter overlay for brighter background */}
+                <div className="absolute inset-0 bg-blue-950/10 z-10" />
+                <style jsx global>{`
+                  @keyframes pan-slow {
+                    0% { transform: scale(1.1) translate(0, 0); }
+                    100% { transform: scale(1.25) translate(-2%, -2%); }
+                  }
+                  .animate-pan-slow {
+                    animation: pan-slow 40s ease-in-out infinite alternate;
+                  }
+                  /* Autofill Transparency Fix */
+                  input:-webkit-autofill,
+                  input:-webkit-autofill:hover, 
+                  input:-webkit-autofill:focus, 
+                  input:-webkit-autofill:active {
+                      -webkit-box-shadow: 0 0 0 30px rgba(23, 37, 84, 0.8) inset !important;
+                      -webkit-text-fill-color: white !important;
+                      caret-color: white !important;
+                      transition: background-color 5000s ease-in-out 0s;
+                  }
+                `}</style>
+                <img
+                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
+                    alt="Global Trade Network"
+                    className="w-full h-full object-cover animate-pan-slow"
+                />
+            </div>
 
             <div className="relative z-10 w-full max-w-4xl space-y-8">
                 <div className="text-center mb-8">
-                    <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">
+                    <h2 className="mt-6 text-3xl font-bold tracking-tight text-white drop-shadow-md">
                         {content.title}
                     </h2>
-                    <p className="mt-2 text-sm text-slate-600">
+                    <p className="mt-2 text-sm text-blue-200">
                         {content.subtitle}
                     </p>
-                    <p className="mt-6 text-xl md:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500 animate-fade-in-up drop-shadow-sm">
-                        {content.welcome}
+                    <p className="mt-6 text-xl md:text-2xl font-extrabold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)] animate-fade-in-up">
+                        Welcome to the future of <span className="text-amber-400">B2B travel</span>. We're excited to have you on <span className="text-amber-400">board</span>!
                     </p>
                 </div>
 
-                <div className="bg-gradient-to-br from-orange-400 to-yellow-400 backdrop-blur-sm p-6 rounded-xl border border-orange-300 shadow-2xl">
-                    <RegistrationWizard />
+                <div className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-amber-400/30 shadow-[0_0_60px_rgba(245,158,11,0.15)] ring-1 ring-white/10">
+                    <RegistrationWizard initialEmail={email} />
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <RegisterPageContent />
+        </Suspense>
     )
 }

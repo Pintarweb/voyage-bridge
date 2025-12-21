@@ -385,40 +385,40 @@ export default function Step3Profile() {
     }
 
     return (
-        <form onSubmit={handleNext} className="space-y-6">
-            <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-white">{content.title}</h2>
+        <form onSubmit={handleNext} className="space-y-8">
+            <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-white mb-6 drop-shadow-md border-b border-white/10 pb-4">{content.title}</h2>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">{content.category} *</label>
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.category} *</label>
                     <select
                         name="supplier_type"
                         value={formData.supplier_type}
                         onChange={handleSupplierTypeChange}
                         required
-                        className={`mt-1 block w-full rounded-md border ${errors.supplier_type ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                        className={`block w-full rounded-xl border ${errors.supplier_type ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm [&>option]:bg-gray-900`}
                     >
                         <option value="">{content.selectCategory}</option>
                         {SUPPLIER_TYPES.map((type) => (
                             <option key={type} value={type}>{type}</option>
                         ))}
                     </select>
-                    {errors.supplier_type && <p className="mt-1 text-xs text-red-500">{errors.supplier_type}</p>}
+                    {errors.supplier_type && <p className="mt-1 text-xs text-red-400 ml-1">{errors.supplier_type}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">{content.about}</label>
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.about}</label>
                     <textarea
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
                         rows={4}
-                        className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">{content.website} *</label>
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.website} *</label>
                     <input
                         type="url"
                         name="website_url"
@@ -426,138 +426,74 @@ export default function Step3Profile() {
                         onChange={handleChange}
                         required
                         placeholder="https://example.com"
-                        className={`mt-1 block w-full rounded-md border ${errors.website_url ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                        className={`block w-full rounded-xl border ${errors.website_url ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
                     />
-                    {errors.website_url && <p className="mt-1 text-xs text-red-500">{errors.website_url}</p>}
+                    {errors.website_url && <p className="mt-1 text-xs text-red-400 ml-1">{errors.website_url}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-2">{content.social}</label>
-                    <div className="space-y-3">
-                        {/* Instagram */}
-                        <div className="flex rounded-md shadow-sm">
-                            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-600 bg-gray-700 px-3 text-gray-400">
-                                <FaInstagram className="h-4 w-4" />
-                            </span>
-                            <input
-                                type="url"
-                                name="social_instagram"
-                                placeholder="Instagram URL"
-                                value={formData.social_instagram}
-                                onChange={handleChange}
-                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                            />
-                        </div>
-
-                        {/* Facebook */}
-                        <div className="flex rounded-md shadow-sm">
-                            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-600 bg-gray-700 px-3 text-gray-400">
-                                <FaFacebook className="h-4 w-4" />
-                            </span>
-                            <input
-                                type="url"
-                                name="social_facebook"
-                                placeholder="Facebook URL"
-                                value={formData.social_facebook}
-                                onChange={handleChange}
-                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                            />
-                        </div>
-
-                        {/* TikTok */}
-                        <div className="flex rounded-md shadow-sm">
-                            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-600 bg-gray-700 px-3 text-gray-400">
-                                <FaTiktok className="h-4 w-4" />
-                            </span>
-                            <input
-                                type="url"
-                                name="social_tiktok"
-                                placeholder="TikTok URL"
-                                value={formData.social_tiktok}
-                                onChange={handleChange}
-                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                            />
-                        </div>
-
-                        {/* LinkedIn */}
-                        <div className="flex rounded-md shadow-sm">
-                            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-600 bg-gray-700 px-3 text-gray-400">
-                                <FaLinkedin className="h-4 w-4" />
-                            </span>
-                            <input
-                                type="url"
-                                name="social_linkedin"
-                                placeholder="LinkedIn URL"
-                                value={formData.social_linkedin}
-                                onChange={handleChange}
-                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                            />
-                        </div>
-
-                        {/* TripAdvisor */}
-                        <div className="flex rounded-md shadow-sm">
-                            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-600 bg-gray-700 px-3 text-gray-400">
-                                <FaTripadvisor className="h-4 w-4" />
-                            </span>
-                            <input
-                                type="url"
-                                name="social_tripadvisor"
-                                placeholder="TripAdvisor URL"
-                                value={formData.social_tripadvisor}
-                                onChange={handleChange}
-                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                            />
-                        </div>
-
-                        {/* WhatsApp */}
-                        <div className="flex rounded-md shadow-sm">
-                            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-600 bg-gray-700 px-3 text-gray-400">
-                                <FaWhatsapp className="h-4 w-4" />
-                            </span>
-                            <input
-                                type="url"
-                                name="whatsapp_business_url"
-                                placeholder="WhatsApp Business URL (https://wa.me/...)"
-                                value={formData.whatsapp_business_url}
-                                onChange={handleChange}
-                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-2">{content.languages}</label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                        {LANGUAGES.map((lang) => (
-                            <div key={lang} className="flex items-center">
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-4 ml-1">{content.social}</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                            { name: 'social_instagram', icon: FaInstagram, color: 'text-pink-500', placeholder: 'Instagram URL' },
+                            { name: 'social_facebook', icon: FaFacebook, color: 'text-blue-500', placeholder: 'Facebook URL' },
+                            { name: 'social_tiktok', icon: FaTiktok, color: 'text-white', placeholder: 'TikTok URL' },
+                            { name: 'social_linkedin', icon: FaLinkedin, color: 'text-blue-400', placeholder: 'LinkedIn URL' },
+                            { name: 'social_tripadvisor', icon: FaTripadvisor, color: 'text-green-500', placeholder: 'TripAdvisor URL' },
+                            { name: 'whatsapp_business_url', icon: FaWhatsapp, color: 'text-green-400', placeholder: 'WhatsApp URL (wa.me/...)' },
+                        ].map((social) => (
+                            <div key={social.name} className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <social.icon className={`h-5 w-5 ${social.color} opacity-70 group-focus-within:opacity-100 transition-opacity`} />
+                                </div>
                                 <input
-                                    type="checkbox"
-                                    id={`lang-${lang}`}
-                                    checked={formData.languages_spoken.includes(lang)}
-                                    onChange={() => handleLanguageToggle(lang)}
-                                    className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-teal-600 focus:ring-teal-500"
+                                    type="url"
+                                    name={social.name}
+                                    placeholder={social.placeholder}
+                                    value={(formData as any)[social.name]}
+                                    onChange={handleChange}
+                                    className="block w-full rounded-xl border border-white/10 bg-white/5 pl-12 pr-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm text-xs"
                                 />
-                                <label htmlFor={`lang-${lang}`} className="ml-2 text-xs text-gray-300">
-                                    {content.languageOptions[lang as keyof typeof content.languageOptions] || lang}
-                                </label>
                             </div>
                         ))}
                     </div>
                 </div>
+
+                <div>
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-4 ml-1">{content.languages}</label>
+                    <div className="flex flex-wrap gap-3">
+                        {LANGUAGES.map((lang) => {
+                            const isSelected = formData.languages_spoken.includes(lang)
+                            return (
+                                <button
+                                    key={lang}
+                                    type="button"
+                                    onClick={() => handleLanguageToggle(lang)}
+                                    className={`px-4 py-2 rounded-full border text-xs font-bold transition-all flex items-center gap-2 ${isSelected
+                                        ? 'bg-blue-500/20 border-blue-500 text-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.5)]'
+                                        : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:text-white hover:border-white/30'
+                                        }`}
+                                >
+                                    {isSelected && <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />}
+                                    {content.languageOptions[lang as keyof typeof content.languageOptions] || lang}
+                                </button>
+                            )
+                        })}
+                    </div>
+                </div>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-4">
                 <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="rounded-lg bg-gradient-to-r from-blue-900 to-blue-500 hover:from-blue-800 hover:to-blue-400 px-6 py-2 text-sm font-bold text-white focus:outline-none transition-all shadow-md border-none"
+                    className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/40 text-white font-bold rounded-xl transition-all backdrop-blur-md"
                 >
                     {content.previous}
                 </button>
                 <button
                     type="submit"
-                    className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
+                    className="px-10 py-4 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all transform hover:-translate-y-1"
                 >
                     {content.next}
                 </button>

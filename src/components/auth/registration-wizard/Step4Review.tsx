@@ -357,85 +357,108 @@ export default function Step4Review() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-white">{content.title}</h2>
+            <h2 className="text-2xl font-bold text-white mb-6 drop-shadow-md border-b border-white/10 pb-4">{content.title}</h2>
 
             {error && (
-                <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-md text-sm">
+                <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl text-sm backdrop-blur-md shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                     {error}
                 </div>
             )}
 
-            <div className="space-y-6 text-sm text-gray-300">
+            <div className="space-y-6 text-sm">
                 {/* Identity Section */}
-                <div className="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-lg border border-orange-400/50 shadow-lg">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-bold text-white text-lg">{content.identity}</h3>
-                        <button onClick={() => setStep(1)} className="text-xs font-bold text-white/80 hover:text-white underline">{content.edit}</button>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md hover:border-white/20 transition-all group">
+                    <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+                        <h3 className="font-bold text-white text-lg tracking-tight group-hover:text-blue-200 transition-colors">{content.identity}</h3>
+                        <button onClick={() => setStep(1)} className="text-amber-400 font-bold hover:text-amber-300 transition-colors drop-shadow-[0_0_5px_rgba(251,191,36,0.3)] uppercase text-xs tracking-wider">{content.edit}</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 font-bold text-white">
-                        <p><span className="text-white/80">{content.labels.company}</span> {formData.company_name}</p>
-                        <p><span className="text-white/80">{content.labels.country}</span> {formData.country_code}</p>
-                        <p><span className="text-white/80">{content.labels.email}</span> {formData.email}</p>
-                        <p><span className="text-white/80">{content.labels.currency}</span> {formData.base_currency}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-medium text-white/90">
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.company}</span>
+                            <span className="text-base">{formData.company_name}</span>
+                        </div>
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.country}</span>
+                            <span className="text-base">{formData.country_code}</span>
+                        </div>
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.email}</span>
+                            <span className="text-base">{formData.email}</span>
+                        </div>
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.currency}</span>
+                            <span className="text-base">{formData.base_currency}</span>
+                        </div>
                     </div>
                 </div>
 
                 {/* Legal Section */}
-                <div className="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-lg border border-orange-400/50 shadow-lg">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-bold text-white text-lg">{content.legal}</h3>
-                        <button onClick={() => setStep(2)} className="text-xs font-bold text-white/80 hover:text-white underline">{content.edit}</button>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md hover:border-white/20 transition-all group">
+                    <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+                        <h3 className="font-bold text-white text-lg tracking-tight group-hover:text-blue-200 transition-colors">{content.legal}</h3>
+                        <button onClick={() => setStep(2)} className="text-amber-400 font-bold hover:text-amber-300 transition-colors drop-shadow-[0_0_5px_rgba(251,191,36,0.3)] uppercase text-xs tracking-wider">{content.edit}</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 font-bold text-white">
-                        <p><span className="text-white/80">{content.labels.regNo}</span> {formData.company_reg_no}</p>
-
-                        <p><span className="text-white/80">{content.labels.phone}</span> {formData.phone_number}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-medium text-white/90">
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.regNo}</span>
+                            <span className="text-base">{formData.company_reg_no}</span>
+                        </div>
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.phone}</span>
+                            <span className="text-base font-mono bg-white/5 px-2 py-1 rounded-lg inline-block border border-white/5">{formData.phone_number}</span>
+                        </div>
                     </div>
                 </div>
 
                 {/* Profile Section */}
-                <div className="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-lg border border-orange-400/50 shadow-lg">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-bold text-white text-lg">{content.profile}</h3>
-                        <button onClick={() => setStep(3)} className="text-xs font-bold text-white/80 hover:text-white underline">{content.edit}</button>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md hover:border-white/20 transition-all group">
+                    <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+                        <h3 className="font-bold text-white text-lg tracking-tight group-hover:text-blue-200 transition-colors">{content.profile}</h3>
+                        <button onClick={() => setStep(3)} className="text-amber-400 font-bold hover:text-amber-300 transition-colors drop-shadow-[0_0_5px_rgba(251,191,36,0.3)] uppercase text-xs tracking-wider">{content.edit}</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 mb-2 font-bold text-white">
-                        <p><span className="text-white/80">{content.labels.type}</span> {formData.supplier_type}</p>
-                        <p><span className="text-white/80">{content.labels.website}</span> {formData.website_url}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 font-medium text-white/90">
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.type}</span>
+                            <span className="text-base px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs font-bold border border-blue-500/30 inline-block">{formData.supplier_type}</span>
+                        </div>
+                        <div>
+                            <span className="block text-xs !text-white uppercase tracking-wider mb-1">{content.labels.website}</span>
+                            <span className="text-base text-blue-400 truncate block">{formData.website_url}</span>
+                        </div>
                     </div>
 
                     {/* Social Icons Display */}
-                    <div className="flex space-x-3 mt-2">
-                        {formData.social_facebook && <FaFacebook className="text-white hover:text-blue-200" title="Facebook" />}
-                        {formData.social_instagram && <FaInstagram className="text-white hover:text-pink-200" title="Instagram" />}
-                        {formData.social_tiktok && <FaTiktok className="text-white hover:text-gray-200" title="TikTok" />}
-                        {formData.social_linkedin && <FaLinkedin className="text-white hover:text-blue-200" title="LinkedIn" />}
-                        {formData.social_tripadvisor && <FaTripadvisor className="text-white hover:text-green-200" title="TripAdvisor" />}
-                        {formData.whatsapp_business_url && <FaWhatsapp className="text-white hover:text-green-200" title="WhatsApp" />}
+                    <div className="flex gap-4 pt-2 border-t border-white/5">
+                        {formData.social_facebook && <FaFacebook className="text-blue-500 text-xl hover:text-blue-400 transition-colors" title="Facebook" />}
+                        {formData.social_instagram && <FaInstagram className="text-pink-500 text-xl hover:text-pink-400 transition-colors" title="Instagram" />}
+                        {formData.social_tiktok && <FaTiktok className="text-white text-xl hover:text-gray-300 transition-colors" title="TikTok" />}
+                        {formData.social_linkedin && <FaLinkedin className="text-blue-400 text-xl hover:text-blue-300 transition-colors" title="LinkedIn" />}
+                        {formData.social_tripadvisor && <FaTripadvisor className="text-green-500 text-xl hover:text-green-400 transition-colors" title="TripAdvisor" />}
+                        {formData.whatsapp_business_url && <FaWhatsapp className="text-green-400 text-xl hover:text-green-300 transition-colors" title="WhatsApp" />}
                     </div>
                 </div>
             </div>
 
-            <div className="flex justify-between pt-4">
+            <div className="flex justify-between pt-6">
                 <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="rounded-lg bg-gradient-to-r from-blue-900 to-blue-500 hover:from-blue-800 hover:to-blue-400 px-6 py-2 text-sm font-bold text-white focus:outline-none transition-all shadow-md border-none"
+                    className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/40 text-white font-bold rounded-xl transition-all backdrop-blur-md"
                 >
                     {content.previous}
                 </button>
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
+                    className="px-12 py-4 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.5)] transition-all transform hover:-translate-y-1 animate-pulse hover:animate-none"
                 >
                     {loading ? (
-                        <span className="flex items-center">
-                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <span className="flex items-center gap-2">
+                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Processing...
+                            {content.submitting}
                         </span>
                     ) : (
                         'Register My Company'

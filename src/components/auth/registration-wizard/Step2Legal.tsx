@@ -248,103 +248,105 @@ export default function Step2Legal() {
     const countryName = formData.country_code ? COUNTRY_DATA[formData.country_code]?.name : 'Unknown'
 
     return (
-        <form onSubmit={handleNext} className="space-y-6">
-            <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-white">{content.title}</h2>
+        <form onSubmit={handleNext} className="space-y-8">
+            <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-white mb-6 drop-shadow-md border-b border-white/10 pb-4">{content.title}</h2>
 
-                <div className="bg-gray-800 p-4 rounded-md border border-gray-700">
-                    <p className="text-xs text-gray-400">{content.regCountry}</p>
-                    <p className="text-base font-medium text-white">{countryName} ({formData.country_code})</p>
+                {/* Country Highlight */}
+                <div className="bg-gradient-to-r from-amber-500/10 to-amber-600/5 backdrop-blur-md border border-amber-500/30 p-6 rounded-2xl relative overflow-hidden group shadow-[0_0_30px_rgba(245,158,11,0.1)]">
+                    <div className="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors"></div>
+                    <p className="text-amber-200/60 text-xs font-bold uppercase tracking-wider mb-1 z-10 relative">{content.regCountry}</p>
+                    <p className="text-2xl font-bold text-amber-100 z-10 relative tracking-tight">{countryName} <span className="text-amber-400">({formData.country_code})</span></p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.regNo} *</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.regNo} *</label>
                         <input
                             type="text"
                             name="company_reg_no"
                             value={formData.company_reg_no}
                             onChange={handleChange}
                             required
-                            className={`mt-1 block w-full rounded-md border ${errors.company_reg_no ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                            className={`block w-full rounded-xl border ${errors.company_reg_no ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
                         />
-                        {errors.company_reg_no && <p className="mt-1 text-xs text-red-500">{errors.company_reg_no}</p>}
+                        {errors.company_reg_no && <p className="mt-1 text-xs text-red-400 ml-1">{errors.company_reg_no}</p>}
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.licenseNo}</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.licenseNo}</label>
                         <input
                             type="text"
                             name="license_no"
                             value={formData.license_no}
                             onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                            className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
                         />
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">{content.taxId}</label>
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.taxId}</label>
                     <input
                         type="text"
                         name="tax_id"
                         value={formData.tax_id}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
                     />
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.phone} *</label>
-                        <div className={`mt-1 text-black phone-input-container ${errors.phone_number ? 'border-red-500' : ''}`}>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.phone} *</label>
+                        <div className={`phone-input-container rounded-xl border ${errors.phone_number ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 transition-all backdrop-blur-sm focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 focus-within:shadow-[0_0_15px_rgba(59,130,246,0.3)]`}>
                             <PhoneInput
                                 international
                                 defaultCountry={formData.country_code as any}
                                 value={formData.phone_number}
                                 onChange={handlePhoneChange}
-                                className={`flex h-9 w-full rounded-md border ${errors.phone_number ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:cursor-not-allowed disabled:opacity-50`}
+                                className="flex h-full w-full bg-transparent text-white placeholder-white/30 focus:outline-none"
                                 numberInputProps={{
-                                    className: "bg-transparent border-none text-white focus:ring-0 text-xs w-full ml-2 placeholder-gray-500"
+                                    className: "bg-transparent border-none text-white focus:ring-0 text-base w-full ml-3 placeholder-white/30 h-full p-0"
                                 }}
                             />
                         </div>
-                        {errors.phone_number && <p className="mt-1 text-xs text-red-500">{errors.phone_number}</p>}
+                        {errors.phone_number && <p className="mt-1 text-xs text-red-400 ml-1">{errors.phone_number}</p>}
                     </div>
                 </div>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-4">
                 <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="rounded-lg bg-gradient-to-r from-blue-900 to-blue-500 hover:from-blue-800 hover:to-blue-400 px-6 py-2 text-sm font-bold text-white focus:outline-none transition-all shadow-md border-none"
+                    className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/40 text-white font-bold rounded-xl transition-all backdrop-blur-md"
                 >
                     {content.previous}
                 </button>
                 <button
                     type="submit"
-                    className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
+                    className="px-10 py-4 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all transform hover:-translate-y-1"
                 >
                     {content.next}
                 </button>
             </div>
 
             <style jsx global>{`
-        .PhoneInputCountry {
-            margin-right: 0.5rem;
+        .PhoneInputCountryIcon {
+            box-shadow: 0 0 5px rgba(255,255,255,0.2);
+        }
+        .PhoneInputCountrySelectArrow {
+            color: rgba(255,255,255,0.7);
+            opacity: 1;
         }
         .PhoneInputCountrySelect {
             background-color: #1f2937;
             color: white;
         }
-        .PhoneInputInput {
-            background-color: transparent;
-            color: white;
-            border: none;
-        }
-        .PhoneInputInput:focus {
-            outline: none;
+        /* Custom overrides for the phone input structure */
+        .phone-input-container .PhoneInput {
+            display: flex;
+            align-items: center;
         }
       `}</style>
         </form>

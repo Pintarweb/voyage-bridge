@@ -84,8 +84,8 @@ type WizardContextType = {
 
 const WizardContext = createContext<WizardContextType | undefined>(undefined)
 
-export function WizardProvider({ children }: { children: ReactNode }) {
-    const [formData, setFormData] = useState<SupplierFormData>(INITIAL_DATA)
+export function WizardProvider({ children, initialEmail = '' }: { children: ReactNode; initialEmail?: string }) {
+    const [formData, setFormData] = useState<SupplierFormData>({ ...INITIAL_DATA, email: initialEmail })
     const [currentStep, setCurrentStep] = useState(1)
     const totalSteps = 4
 

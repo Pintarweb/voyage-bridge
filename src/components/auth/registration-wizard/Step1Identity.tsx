@@ -416,13 +416,13 @@ export default function Step1Identity() {
 
     return (
         <form onSubmit={handleNext} className="space-y-6">
-            <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-white">{content.title}</h2>
+            <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-white mb-6 drop-shadow-md border-b border-white/10 pb-4">{content.title}</h2>
 
                 {/* Auth Fields */}
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.email} *</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.email} *</label>
                         <input
                             type="email"
                             name="email"
@@ -430,117 +430,120 @@ export default function Step1Identity() {
                             onChange={handleChange}
                             required
                             autoComplete="off"
-                            className={`mt-1 block w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                            className={`block w-full rounded-xl border ${errors.email ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                            placeholder="e.g. name@company.com"
                         />
-                        {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                        {errors.email && <p className="mt-1 text-xs text-red-400 ml-1">{errors.email}</p>}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.companyName} *</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.companyName} *</label>
                         <input
                             type="text"
                             name="company_name"
                             value={formData.company_name}
                             onChange={handleChange}
                             required
-                            className={`mt-1 block w-full rounded-md border ${errors.company_name ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                            className={`block w-full rounded-xl border ${errors.company_name ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
                         />
-                        {errors.company_name && <p className="mt-1 text-xs text-red-500">{errors.company_name}</p>}
+                        {errors.company_name && <p className="mt-1 text-xs text-red-400 ml-1">{errors.company_name}</p>}
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.tradingName}</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.tradingName}</label>
                         <input
                             type="text"
                             name="trading_name"
                             value={formData.trading_name}
                             onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                            className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
                         />
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.country} *</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.country} *</label>
                         <CountrySelect
                             value={formData.country_code}
                             onChange={handleCountryChange}
                             theme="dark"
-                            className={errors.country_code ? 'border-red-500' : ''}
+                            className={`rounded-xl border ${errors.country_code ? 'border-red-500' : 'border-white/10'} bg-white/5 text-white focus:border-blue-400 focus:ring-blue-400 transition-all backdrop-blur-sm`}
                         />
-                        {errors.country_code && <p className="mt-1 text-xs text-red-500">{errors.country_code}</p>}
+                        {errors.country_code && <p className="mt-1 text-xs text-red-400 ml-1">{errors.country_code}</p>}
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.currency} *</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.currency} *</label>
                         <CurrencySelect
                             value={formData.base_currency}
                             onChange={handleCurrencyChange}
                             currencies={CURRENCIES}
                             theme="dark"
-                            className={errors.base_currency ? 'border-red-500' : ''}
+                            className={`rounded-xl border ${errors.base_currency ? 'border-red-500' : 'border-white/10'} bg-white/5 text-white focus:border-blue-400 focus:ring-blue-400 transition-all backdrop-blur-sm`}
                         />
-                        {errors.base_currency && <p className="mt-1 text-xs text-red-500">{errors.base_currency}</p>}
+                        {errors.base_currency && <p className="mt-1 text-xs text-red-400 ml-1">{errors.base_currency}</p>}
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-gray-300">{content.address} *</label>
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.address} *</label>
                     <input
                         type="text"
                         name="address_line_1"
                         value={formData.address_line_1}
                         onChange={handleChange}
                         required
-                        className={`mt-1 block w-full rounded-md border ${errors.address_line_1 ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                        className={`block w-full rounded-xl border ${errors.address_line_1 ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
                     />
-                    {errors.address_line_1 && <p className="mt-1 text-xs text-red-500">{errors.address_line_1}</p>}
+                    {errors.address_line_1 && <p className="mt-1 text-xs text-red-400 ml-1">{errors.address_line_1}</p>}
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.city} *</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.city} *</label>
                         <input
                             type="text"
                             name="city"
                             value={formData.city}
                             onChange={handleChange}
                             required
-                            className={`mt-1 block w-full rounded-md border ${errors.city ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                            className={`block w-full rounded-xl border ${errors.city ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
                         />
-                        {errors.city && <p className="mt-1 text-xs text-red-500">{errors.city}</p>}
+                        {errors.city && <p className="mt-1 text-xs text-red-400 ml-1">{errors.city}</p>}
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-gray-300">{content.postcode} *</label>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.postcode} *</label>
                         <input
                             type="text"
                             name="postcode"
                             value={formData.postcode}
                             onChange={handleChange}
                             required
-                            className={`mt-1 block w-full rounded-md border ${errors.postcode ? 'border-red-500' : 'border-gray-600'} bg-gray-800 px-3 py-2 text-white text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                            className={`block w-full rounded-xl border ${errors.postcode ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
                         />
-                        {errors.postcode && <p className="mt-1 text-xs text-red-500">{errors.postcode}</p>}
+                        {errors.postcode && <p className="mt-1 text-xs text-red-400 ml-1">{errors.postcode}</p>}
                     </div>
                 </div>
 
                 {/* Timezone moved to its own spacious row */}
                 <div>
-                    <label className="block text-xs font-medium text-gray-300 mb-1">{content.timezone} *</label>
-                    <div className="text-black text-xs">
+                    <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.timezone} *</label>
+                    <div className="text-black text-sm">
                         {mounted && (
                             <TimezoneSelect
                                 value={formData.timezone}
                                 onChange={handleTimezoneChange}
-                                className="text-xs"
+                                className="text-sm"
                                 styles={{
-                                    control: (provided) => ({
+                                    control: (provided, state) => ({
                                         ...provided,
-                                        backgroundColor: '#1f2937', // gray-800
-                                        borderColor: errors.timezone ? '#ef4444' : '#4b5563', // red-500 or gray-600
+                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                        borderColor: errors.timezone ? '#ef4444' : (state.isFocused ? '#60a5fa' : 'rgba(255, 255, 255, 0.1)'),
                                         color: 'white',
-                                        minHeight: '38px',
+                                        minHeight: '46px',
+                                        borderRadius: '0.75rem',
+                                        boxShadow: state.isFocused ? '0 0 15px rgba(59,130,246,0.3)' : 'none',
                                     }),
                                     singleValue: (provided) => ({
                                         ...provided,
@@ -548,13 +551,17 @@ export default function Step1Identity() {
                                     }),
                                     menu: (provided) => ({
                                         ...provided,
-                                        backgroundColor: '#1f2937',
+                                        backgroundColor: '#1f2937', // Fallback solid for readability
                                         color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '0.75rem',
+                                        backdropFilter: 'blur(10px)',
                                     }),
                                     option: (provided, state) => ({
                                         ...provided,
-                                        backgroundColor: state.isFocused ? '#374151' : '#1f2937',
+                                        backgroundColor: state.isFocused ? 'rgba(96, 165, 250, 0.2)' : 'transparent',
                                         color: 'white',
+                                        cursor: 'pointer',
                                     }),
                                     input: (provided) => ({
                                         ...provided,
@@ -564,15 +571,15 @@ export default function Step1Identity() {
                             />
                         )}
                     </div>
-                    {errors.timezone && <p className="mt-1 text-xs text-red-500">{errors.timezone}</p>}
+                    {errors.timezone && <p className="mt-1 text-xs text-red-400 ml-1">{errors.timezone}</p>}
                 </div>
 
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-4">
                 <button
                     type="submit"
-                    className="btn-md bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-lg transition-all duration-200 ease-in-out"
+                    className="px-10 py-4 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all transform hover:-translate-y-1"
                 >
                     {content.next}
                 </button>
