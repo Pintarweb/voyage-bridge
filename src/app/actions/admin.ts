@@ -18,7 +18,12 @@ type AdminActionResponse = {
 export async function handleUserApproval(
     userId: string,
     profileType: 'agent' | 'supplier',
-    userEmail: string
+    userEmail: string,
+    verificationData?: {
+        riskLevel: number;
+        internalNotes: string;
+        checklist: any;
+    }
 ): Promise<AdminActionResponse> {
     const supabase = await createClient()
     const supabaseAdmin = createAdminClient()
@@ -61,6 +66,10 @@ export async function handleUserApproval(
                     is_approved: true,
                     role: 'supplier', // Set role to full supplier
                     subscription_status: 'active', // Update subscription status to allow access
+                    // Add verification data if present
+                    verification_notes: verificationData?.internalNotes || null,
+                    risk_level: verificationData?.riskLevel || 1,
+                    verification_checklist: verificationData?.checklist || {},
                     // payment_status should already be 'completed' if they are in this list, 
                     // but we can enforce it or leave as is.
                 })
@@ -225,6 +234,79 @@ export async function rejectSupplier(userId: string, reason?: string): Promise<A
 
     } catch (error: any) {
         console.error('Rejection Action Error:', error)
+        return { success: false, error: error.message || 'Unexpected error' }
+    }
+}
+
+/**
+ * Handle User Management Actions (Freeze, Deactivate, Reset Password)
+ */
+export async function manageUserStatus(
+    userId: string,
+    action: 'freeze' | 'deactivate' | 'reset_password',
+    userType: 'Agent' | 'Supplier'
+): Promise<AdminActionResponse> {
+    const supabase = await createClient()
+    const supabaseAdmin = createAdminClient()
+
+    try {
+        // 1. Verify Caller is Admin
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) throw new Error('Unauthorized')
+
+        const isMetadataAdmin = user.app_metadata.role === 'admin'
+        if (!isMetadataAdmin) {
+            const { data: adminProfile } = await supabase.from('admin_profiles').select('id').eq('id', user.id).single()
+            if (!adminProfile) throw new Error('Unauthorized')
+        }
+
+        // 2. Perform Action
+        if (action === 'reset_password') {
+            const table = userType === 'Agent' ? 'agent_profiles' : 'suppliers'
+            const { data: userData, error: fetchError } = await supabase
+                .from(table)
+                .select(userType === 'Agent' ? 'email' : 'contact_email')
+                .eq('id', userId)
+                .single()
+
+            if (fetchError || !userData) throw new Error('User not found')
+
+            const email = userType === 'Agent' ? userData.email : userData.contact_email
+            if (!email) throw new Error('User email not found')
+
+            const { error: resetError } = await supabaseAdmin.auth.admin.resetPasswordForEmail(email, {
+                redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/update-password`
+            })
+
+            if (resetError) throw new Error('Failed to send reset email: ' + resetError.message)
+
+            return { success: true, message: `Password reset email sent to ${email}` }
+        }
+
+        if (action === 'freeze' || action === 'deactivate') {
+            const updates: any = { is_approved: false }
+            if (userType === 'Agent') {
+                updates.verification_status = action === 'deactivate' ? 'rejected' : 'pending'
+            } else {
+                updates.subscription_status = action === 'deactivate' ? 'canceled' : 'past_due'
+            }
+
+            const table = userType === 'Agent' ? 'agent_profiles' : 'suppliers'
+            const { error: updateError } = await supabaseAdmin
+                .from(table)
+                .update(updates)
+                .eq('id', userId)
+
+            if (updateError) throw new Error(`Failed to ${action} user: ` + updateError.message)
+
+            revalidatePath('/admin')
+            return { success: true, message: `User ${action === 'freeze' ? 'frozen' : 'deactivated'} successfully.` }
+        }
+
+        return { success: false, error: 'Invalid action' }
+
+    } catch (error: any) {
+        console.error('Management Action Error:', error)
         return { success: false, error: error.message || 'Unexpected error' }
     }
 }

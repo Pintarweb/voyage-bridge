@@ -1,98 +1,51 @@
 
 import { createClient } from '@/utils/supabase/server'
-import Link from 'next/link'
+import AdminCommandCenter from '@/components/admin/AdminCommandCenter'
 
 export default async function AdminDashboardPage() {
     const supabase = await createClient()
 
-    // Count pending agents (exclude admins)
-    const { count: pendingAgentCount } = await supabase
+    // 1. Fetch Pending Agents
+    const { data: pendingAgents } = await supabase
         .from('agent_profiles')
-        .select('*', { count: 'exact', head: true })
+        .select('*')
         .eq('is_approved', false)
         .eq('role', 'pending_agent')
         .neq('verification_status', 'rejected')
 
-    // Count pending suppliers (paid but not approved)
-    const { count: pendingSupplierCount } = await supabase
+    // 2. Fetch Pending Suppliers
+    const { data: pendingSuppliers } = await supabase
         .from('suppliers')
-        .select('*', { count: 'exact', head: true })
+        .select('*')
         .eq('is_approved', false)
         .eq('payment_status', 'completed')
 
-    const totalPending = (pendingAgentCount || 0) + (pendingSupplierCount || 0)
-
-    // Count approved agents (exclude admins)
-    const { count: agentCount } = await supabase
+    // 3. Fetch All Agents (for User Management)
+    const { data: allAgents } = await supabase
         .from('agent_profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('verification_status', 'approved')
-        .neq('role', 'admin')
+        .select('*')
+        .neq('role', 'admin') // Exclude super admins from list for now
 
-    // Count active suppliers (assuming 'active' or 'trial' status - easier to count all non-pending/rejected)
-    const { count: supplierCount } = await supabase
+    // 4. Fetch All Suppliers (for User Management)
+    const { data: allSuppliers } = await supabase
         .from('suppliers')
+        .select('*')
+
+    // 5. Fetch Total Active Products
+    // Using count instead of fetching all rows for performance
+    const { count: activeProductsCount } = await supabase
+        .from('products')
         .select('*', { count: 'exact', head: true })
-        .eq('is_approved', true)
-
-    const totalUsers = (agentCount || 0) + (supplierCount || 0)
-
-    console.log('Dashboard Counts:', { pendingAgentCount, pendingSupplierCount, totalPending })
+        .eq('status', 'active')
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600">Welcome to the ArkAlliance Admin Portal.</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <Link href="/admin/verification" className="block">
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-medium text-gray-700">Pending Approvals</h3>
-                            <span className="text-2xl">✅</span>
-                        </div>
-                        <p className="text-4xl font-bold text-teal-600 mt-4">
-                            {totalPending}
-                        </p>
-                        <div className="flex gap-4 mt-2 text-sm text-gray-500">
-                            <span>Agents: <b>{pendingAgentCount || 0}</b></span>
-                            <span>•</span>
-                            <span>Suppliers: <b>{pendingSupplierCount || 0}</b></span>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-1">Awaiting verification</p>
-                    </div>
-                </Link>
-
-                <Link href="/admin/users" className="block">
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-medium text-gray-700">Total Users</h3>
-                            <span className="text-2xl">👥</span>
-                        </div>
-                        <p className="text-4xl font-bold text-blue-600 mt-4">
-                            {totalUsers}
-                        </p>
-                        <div className="flex gap-4 mt-2 text-sm text-gray-500">
-                            <span>Agents: <b>{agentCount || 0}</b></span>
-                            <span>•</span>
-                            <span>Suppliers: <b>{supplierCount || 0}</b></span>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-1">Manage system users</p>
-                    </div>
-                </Link>
-
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-700">System Status</h3>
-                        <span className="text-2xl">🖥️</span>
-                    </div>
-                    <div className="mt-4 flex items-center text-green-600 font-medium">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                        Operational
-                    </div>
-                    <p className="text-sm text-gray-500 mt-2">All systems running</p>
-                </div>
-            </div>
-        </div>
+        <AdminCommandCenter
+            pendingAgents={pendingAgents || []}
+            pendingSuppliers={pendingSuppliers || []}
+            allAgents={allAgents || []}
+            allAgents={allAgents || []}
+            allSuppliers={allSuppliers || []}
+            initialActiveProductsCount={activeProductsCount || 0}
+        />
     )
 }
