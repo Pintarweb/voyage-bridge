@@ -64,6 +64,19 @@ function AgentAuthContent() {
             const wasRedirected = await checkAndRedirect(data.user.id)
             if (wasRedirected) return
 
+            // Verify user is actually an agent
+            const { data: agentProfile, error: agentError } = await supabase
+                .from('agent_profiles')
+                .select('id')
+                .eq('id', data.user.id)
+                .single()
+
+            if (agentError || !agentProfile) {
+                await supabase.auth.signOut()
+                throw new Error('No agent account found. Please check your credentials or register.')
+            }
+
+            router.refresh()
             router.push('/portal')
         } catch (err: any) {
             setError(err.message)

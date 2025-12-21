@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 export default function OverviewTab({ supplier, products, content, handleLogout }: { supplier: any, products: any[], content: any, handleLogout: () => void }) {
 
     // Derived Stats
-    const totalViews = products.reduce((acc, curr) => acc + (curr.views || 0), 0)
+    const totalViews = products.reduce((acc, curr) => acc + (curr.view_count || 0), 0)
     const totalWishlisted = products.reduce((acc, curr) => acc + (curr.wishlist_count || 0), 0)
     const activeProducts = products.filter(p => p.status === 'active')
     const activeCount = activeProducts.length
@@ -104,7 +104,7 @@ export default function OverviewTab({ supplier, products, content, handleLogout 
                                     </div>
                                     <div className="grid grid-cols-2 gap-4 mb-4 py-4 border-y border-white/5">
                                         <div className="text-center border-r border-white/5">
-                                            <div className="text-lg font-bold text-white">{item.views || 0}</div>
+                                            <div className="text-lg font-bold text-white">{item.view_count || 0}</div>
                                             <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold">Views</div>
                                         </div>
                                         <div className="text-center">

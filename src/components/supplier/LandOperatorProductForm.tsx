@@ -2,7 +2,11 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { FaCloudUploadAlt, FaTimes, FaCheckCircle, FaMapMarkedAlt, FaPhone, FaEnvelope, FaUser, FaInfoCircle, FaHiking, FaListUl, FaGlobe, FaClock, FaUsers } from 'react-icons/fa'
+import {
+    FaCloudUploadAlt, FaTimes, FaCheckCircle, FaMapMarkedAlt,
+    FaPhone, FaEnvelope, FaUser, FaInfoCircle, FaHiking,
+    FaGlobe, FaClock, FaUsers, FaArrowLeft, FaRocket, FaChevronDown, FaPlus
+} from 'react-icons/fa'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -19,6 +23,11 @@ const ACTIVITY_LEVELS = [
 // Common Languages
 const LANGUAGES = [
     'English', 'Mandarin', 'Malay', 'Spanish', 'French', 'German', 'Japanese', 'Korean', 'Arabic', 'Hindi'
+]
+
+// Duration Options
+const DURATION_OPTIONS = [
+    'Half Day', 'Full Day', 'Multi-Day', '1 Hour', '2 Hours', '3 Hours', '4 Hours'
 ]
 
 interface LandOperatorProductFormProps {
@@ -169,28 +178,30 @@ export default function LandOperatorProductForm({ supplier, productId, onSuccess
         setPreviews(newPreviews)
     }
 
-    const handleSubmit = async (e: React.FormEvent, status: 'draft' | 'active') => {
+    const handleSubmit = async (e: React.SyntheticEvent, status: 'draft' | 'active') => {
         e.preventDefault()
         setLoading(true)
 
-        // Validation
-        const required = [
-            formData.product_name, formData.product_url, formData.product_type,
-            formData.country, formData.city, formData.meeting_point,
-            formData.contact_name, formData.contact_phone, formData.contact_email,
-            formData.description
-        ];
+        // Validation only for active
+        if (status === 'active') {
+            const required = [
+                formData.product_name, formData.product_url, formData.product_type,
+                formData.country, formData.city, formData.meeting_point,
+                formData.contact_name, formData.contact_phone, formData.contact_email,
+                formData.description
+            ];
 
-        if (required.some(field => !field || field.trim() === '')) {
-            alert('Please fill in all required fields marked with *');
-            setLoading(false);
-            return;
-        }
+            if (required.some(field => !field || field.trim() === '')) {
+                alert('Please fill in all required fields marked with *');
+                setLoading(false);
+                return;
+            }
 
-        if (previews.length === 0) {
-            alert('Please upload at least one image.');
-            setLoading(false);
-            return;
+            if (previews.length === 0) {
+                alert('Please upload at least one image.');
+                setLoading(false);
+                return;
+            }
         }
 
         try {
@@ -263,418 +274,446 @@ export default function LandOperatorProductForm({ supplier, productId, onSuccess
     }
 
     return (
-        <form className="space-y-8 max-w-5xl mx-auto pb-20">
-            {/* 1. Identification & Location */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaHiking className="text-primary" />
-                    <h2 className="font-bold text-lg">Product Identification & Location</h2>
-                </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Product Name *</label>
-                        <input
-                            required
-                            value={formData.product_name}
-                            onChange={(e) => handleChange('product_name', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="e.g. Mount Bromo Sunrise Trek and Safari"
-                        />
-                    </div>
+        <div className="space-y-8 pb-32 land-form-container">
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Product URL *</label>
-                        <input
-                            required
-                            type="url"
-                            value={formData.product_url}
-                            onChange={(e) => handleChange('product_url', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="https://..."
-                        />
-                    </div>
+            {/* 1. Header & Navigation */}
+            <div className="space-y-4">
+                <button
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group mb-2"
+                >
+                    <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                    <span className="text-sm font-medium tracking-wide">Back to Dashboard</span>
+                </button>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Product Type *</label>
-                        <select
-                            required
-                            value={formData.product_type}
-                            onChange={(e) => handleChange('product_type', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                        >
-                            <option value="">Select Type</option>
-                            {PRODUCT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
-                    </div>
+                <div className="relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl p-8">
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-transparent to-amber-500/10 pointer-events-none" />
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Country *</label>
-                        <input
-                            value={formData.country}
-                            onChange={(e) => handleChange('country', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="e.g. Indonesia"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">State / City *</label>
-                        <input
-                            required
-                            value={formData.city}
-                            onChange={(e) => handleChange('city', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="e.g. Probolinggo"
-                        />
-                    </div>
-
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Meeting / Start Point *</label>
-                        <textarea
-                            required
-                            value={formData.meeting_point}
-                            onChange={(e) => handleChange('meeting_point', e.target.value)}
-                            rows={2}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Detailed description of the primary pick-up or meeting location..."
-                        />
+                    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                        <div className="space-y-1">
+                            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-md">
+                                Create Your Next Product!
+                            </h1>
+                            <p className="text-amber-400 font-medium text-lg tracking-wide">
+                                Add a new land tour or activity listing to showcase to global agents.
+                            </p>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-full border border-white/10 shadow-lg shadow-amber-500/20 backdrop-blur-md">
+                            <FaRocket className="text-4xl text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)] transform -rotate-12" />
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            {/* 2. Key Contact Information */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaUser className="text-primary" />
-                    <h2 className="font-bold text-lg">Key Contact Information</h2>
-                </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Contact Name *</label>
-                        <input
-                            required
-                            value={formData.contact_name}
-                            onChange={(e) => handleChange('contact_name', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                        />
+            <form className="space-y-8">
+
+                {/* Card 1: Product Identification & Location */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaMapMarkedAlt className="text-blue-400 text-lg" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white tracking-wide">Product Identification & Location</h2>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Phone Number (Contact) *</label>
-                        <div className="relative">
-                            <FaPhone className="absolute left-3 top-3 text-muted-foreground text-xs" />
+
+                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="md:col-span-2 space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Product Name</label>
+                            <input
+                                required
+                                value={formData.product_name}
+                                onChange={(e) => handleChange('product_name', e.target.value)}
+                                className="glass-input w-full"
+                                placeholder="e.g. Mount Bromo Sunrise Trek"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Product URL</label>
+                            <input
+                                required
+                                type="url"
+                                value={formData.product_url}
+                                onChange={(e) => handleChange('product_url', e.target.value)}
+                                className="glass-input w-full"
+                                placeholder="https://..."
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Product Type</label>
+                            <div className="relative">
+                                <select
+                                    required
+                                    value={formData.product_type}
+                                    onChange={(e) => handleChange('product_type', e.target.value)}
+                                    className="glass-input w-full appearance-none cursor-pointer"
+                                >
+                                    <option className="bg-gray-800" value="">Select Type</option>
+                                    {PRODUCT_TYPES.map(t => <option className="bg-gray-800" key={t} value={t}>{t}</option>)}
+                                </select>
+                                <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 text-xs pointer-events-none" />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Country</label>
+                            <input
+                                value={formData.country}
+                                onChange={(e) => handleChange('country', e.target.value)}
+                                className="glass-input w-full"
+                                placeholder="e.g. Indonesia"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">State / City</label>
+                            <input
+                                value={formData.city}
+                                onChange={(e) => handleChange('city', e.target.value)}
+                                className="glass-input w-full"
+                                placeholder="e.g. Probolinggo"
+                            />
+                        </div>
+
+                        <div className="md:col-span-2 space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Meeting / Start Point</label>
+                            <textarea
+                                required
+                                value={formData.meeting_point}
+                                onChange={(e) => handleChange('meeting_point', e.target.value)}
+                                rows={2}
+                                className="glass-input w-full resize-none"
+                                placeholder="Detailed description of meeting location..."
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Card 2: Key Contact Information */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaUser className="text-blue-400 text-lg" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white tracking-wide">Key Contact Information</h2>
+                    </div>
+
+                    <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Contact Name</label>
+                            <input
+                                required
+                                value={formData.contact_name}
+                                onChange={(e) => handleChange('contact_name', e.target.value)}
+                                className="glass-input w-full"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Phone Number</label>
                             <input
                                 required
                                 value={formData.contact_phone}
                                 onChange={(e) => handleChange('contact_phone', e.target.value)}
-                                className="w-full bg-background border border-border rounded-lg py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                                style={{ paddingLeft: '3rem' }}
+                                className="glass-input w-full"
                             />
                         </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Email Address (Contact) *</label>
-                        <div className="relative">
-                            <FaEnvelope className="absolute left-3 top-3 text-muted-foreground text-xs" />
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Email Address</label>
                             <input
                                 required
                                 type="email"
                                 value={formData.contact_email}
                                 onChange={(e) => handleChange('contact_email', e.target.value)}
-                                className="w-full bg-background border border-border rounded-lg py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                                style={{ paddingLeft: '3rem' }}
+                                className="glass-input w-full"
                             />
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* 3. Experience Details & Pricing */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaInfoCircle className="text-primary" />
-                    <h2 className="font-bold text-lg">Experience Details & Pricing</h2>
-                </div>
-                <div className="p-6 space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Product Description *</label>
-                        <textarea
-                            required
-                            value={formData.description}
-                            onChange={(e) => handleChange('description', e.target.value)}
-                            rows={4}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Detailed write-up highlighting the experience..."
-                        />
+                {/* Card 3: Experience Details & Pricing */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaHiking className="text-blue-400 text-lg" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white tracking-wide">Experience Details & Pricing</h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Duration</label>
-                            <div className="relative">
-                                <select
-                                    value={formData.duration}
-                                    onChange={(e) => handleChange('duration', e.target.value)}
-                                    className="w-full bg-background border border-border rounded-lg pl-3 pr-10 py-2 text-sm focus:ring-2 focus:ring-primary/50 outline-none"
-                                    style={{
-                                        appearance: 'none',
-                                        WebkitAppearance: 'none',
-                                        MozAppearance: 'none'
-                                    }}
-                                >
-                                    <option value="">Select Duration</option>
-                                    <option value="Half Day">Half Day</option>
-                                    <option value="Full Day">Full Day</option>
-                                    <option value="Multi-Day">Multi-Day</option>
-                                    <option value="1 Hour">1 Hour</option>
-                                    <option value="2 Hours">2 Hours</option>
-                                    <option value="3 Hours">3 Hours</option>
-                                    <option value="4 Hours">4 Hours</option>
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                    <div className="p-8 space-y-8">
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Product Description</label>
+                            <textarea
+                                required
+                                value={formData.description}
+                                onChange={(e) => handleChange('description', e.target.value)}
+                                rows={4}
+                                className="glass-input w-full"
+                                placeholder="Highlight your best features..."
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Duration</label>
+                                <div className="relative">
+                                    <select
+                                        value={formData.duration}
+                                        onChange={(e) => handleChange('duration', e.target.value)}
+                                        className="glass-input w-full appearance-none cursor-pointer"
+                                    >
+                                        <option className="bg-gray-800" value="">Select Duration</option>
+                                        {DURATION_OPTIONS.map(d => <option className="bg-gray-800" key={d} value={d}>{d}</option>)}
+                                    </select>
+                                    <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 text-xs pointer-events-none" />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Activity Level</label>
+                                <div className="relative">
+                                    <select
+                                        value={formData.activity_level}
+                                        onChange={(e) => handleChange('activity_level', e.target.value)}
+                                        className="glass-input w-full appearance-none cursor-pointer"
+                                    >
+                                        <option className="bg-gray-800" value="">Select Level</option>
+                                        {ACTIVITY_LEVELS.map(l => <option className="bg-gray-800" key={l} value={l}>{l}</option>)}
+                                    </select>
+                                    <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 text-xs pointer-events-none" />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Max Group Size</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={formData.max_group_size}
+                                        onChange={(e) => handleChange('max_group_size', e.target.value)}
+                                        className="glass-input w-full"
+                                        style={{ paddingLeft: '3.5rem' }}
+                                        placeholder="e.g. 15"
+                                    />
+                                    <FaUsers className="absolute left-4 top-1/2 -translate-y-1/2 text-teal-400 text-xl" />
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Activity Level</label>
-                            <div className="relative">
-                                <select
-                                    value={formData.activity_level}
-                                    onChange={(e) => handleChange('activity_level', e.target.value)}
-                                    className="w-full border border-border rounded-lg pl-3 pr-10 py-2 text-sm focus:ring-2 focus:ring-primary/50 outline-none transition-colors duration-200"
-                                    style={{
-                                        appearance: 'none',
-                                        WebkitAppearance: 'none',
-                                        MozAppearance: 'none',
-                                        backgroundColor:
-                                            formData.activity_level === 'Easy' ? '#fef9c3' : // yellow-100
-                                                formData.activity_level === 'Moderate' ? '#dcfce7' : // green-100
-                                                    formData.activity_level === 'Strenuous' ? '#fee2e2' : // red-100
-                                                        'var(--background)',
-                                        color:
-                                            formData.activity_level === 'Easy' ? '#854d0e' : // yellow-800
-                                                formData.activity_level === 'Moderate' ? '#166534' : // green-800
-                                                    formData.activity_level === 'Strenuous' ? '#991b1b' : // red-800
-                                                        'inherit'
-                                    }}
+
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-white/90">Tour Language(s)</label>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {LANGUAGES.map(lang => (
+                                    <button
+                                        key={lang}
+                                        type="button"
+                                        onClick={() => handleMultiSelect('languages', lang)}
+                                        className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border transition-all duration-300 ${formData.languages.includes(lang)
+                                            ? 'bg-blue-600/30 border-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                                            : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:border-white/30'
+                                            }`}
+                                    >
+                                        {lang}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="flex gap-2 max-w-md">
+                                <input
+                                    value={customLanguage}
+                                    onChange={(e) => setCustomLanguage(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomLanguage(); } }}
+                                    placeholder="Add other language..."
+                                    className="glass-input flex-1"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddCustomLanguage}
+                                    className="px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/50 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all font-medium flex items-center gap-2"
                                 >
-                                    <option value="" style={{ backgroundColor: 'var(--background)', color: 'inherit' }}>Select Level</option>
-                                    {ACTIVITY_LEVELS.map(l => (
-                                        <option
-                                            key={l}
-                                            value={l}
-                                            style={{
-                                                backgroundColor:
-                                                    l === 'Easy' ? '#fef9c3' :
-                                                        l === 'Moderate' ? '#dcfce7' :
-                                                            l === 'Strenuous' ? '#fee2e2' : undefined,
-                                                color:
-                                                    l === 'Easy' ? '#854d0e' :
-                                                        l === 'Moderate' ? '#166534' :
-                                                            l === 'Strenuous' ? '#991b1b' : undefined
-                                            }}
-                                        >
-                                            {l}
-                                        </option>
+                                    <FaPlus /> Add
+                                </button>
+                            </div>
+                            {formData.languages.filter(l => !LANGUAGES.includes(l)).length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {formData.languages.filter(l => !LANGUAGES.includes(l)).map((lang, idx) => (
+                                        <span key={idx} className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-200 text-xs">
+                                            <FaGlobe /> {lang}
+                                            <button onClick={() => handleMultiSelect('languages', lang)} className="hover:text-white"><FaTimes /></button>
+                                        </span>
                                     ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                                 </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Itinerary Overview</label>
+                            <textarea
+                                value={formData.itinerary}
+                                onChange={(e) => handleChange('itinerary', e.target.value)}
+                                rows={4}
+                                className="glass-input w-full"
+                                placeholder="Brief itemized summary of the schedule..."
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Inclusions</label>
+                                <textarea
+                                    value={formData.inclusions}
+                                    onChange={(e) => handleChange('inclusions', e.target.value)}
+                                    rows={3}
+                                    className="glass-input w-full"
+                                    placeholder="What is included?"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Exclusions</label>
+                                <textarea
+                                    value={formData.exclusions}
+                                    onChange={(e) => handleChange('exclusions', e.target.value)}
+                                    rows={3}
+                                    className="glass-input w-full"
+                                    placeholder="What is NOT included?"
+                                />
                             </div>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Maximum Group Size</label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-0 bottom-0 flex items-center justify-center pointer-events-none text-muted-foreground">
-                                    <FaUsers size={14} />
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Starting Price (per person)</label>
+                            <div className="flex items-center gap-3">
+                                <div className="relative">
+                                    <select
+                                        value={formData.currency}
+                                        onChange={(e) => handleChange('currency', e.target.value)}
+                                        className="glass-input px-1 bg-white/5 text-center text-sm flex-none appearance-none cursor-pointer"
+                                        style={{ width: '90px', paddingRight: '1.5rem' }}
+                                    >
+                                        <option className="bg-gray-800">USD</option>
+                                        <option className="bg-gray-800">EUR</option>
+                                        <option className="bg-gray-800">MYR</option>
+                                        <option className="bg-gray-800">SGD</option>
+                                    </select>
+                                    <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 text-xs pointer-events-none" />
                                 </div>
                                 <input
                                     type="number"
-                                    value={formData.max_group_size}
-                                    onChange={(e) => handleChange('max_group_size', e.target.value)}
-                                    className="w-full bg-background border border-border rounded-lg py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                                    style={{ paddingLeft: '4rem' }}
-                                    placeholder="e.g. 15"
+                                    min="0"
+                                    step="0.01"
+                                    value={formData.base_price}
+                                    onChange={(e) => handleChange('base_price', e.target.value)}
+                                    className="glass-input flex-1"
+                                    placeholder="0.00"
                                 />
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-2">Tour Language(s)</label>
-                        <div className="flex flex-wrap gap-2 mb-3">
-                            {LANGUAGES.map(lang => (
-                                <button
-                                    key={lang}
-                                    type="button"
-                                    onClick={() => handleMultiSelect('languages', lang)}
-                                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${formData.languages.includes(lang)
-                                        ? 'bg-primary text-primary-foreground border-primary'
-                                        : 'bg-background text-muted-foreground border-border hover:border-primary/50'
-                                        }`}
-                                >
-                                    {lang}
-                                </button>
-                            ))}
+                {/* Card 4: Visuals & Promotions */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaCloudUploadAlt className="text-blue-400 text-lg" />
                         </div>
-                        <div className="flex gap-2 items-center max-w-xs">
-                            <input
-                                value={customLanguage}
-                                onChange={(e) => setCustomLanguage(e.target.value)}
-                                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomLanguage(); } }}
-                                placeholder="Other Language"
-                                className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            />
-                            <button
-                                type="button"
-                                onClick={handleAddCustomLanguage}
-                                className="px-3 py-2 bg-secondary hover:bg-secondary/80 rounded-lg text-sm font-medium"
+                        <h2 className="text-xl font-bold text-white tracking-wide">Visuals & Promotions</h2>
+                    </div>
+
+                    <div className="p-8 space-y-8">
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-white/90">Product Images</label>
+                            <div
+                                {...getRootProps()}
+                                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 group ${isDragActive
+                                    ? 'border-blue-400 bg-blue-400/10'
+                                    : 'border-white/10 bg-white/5 hover:border-blue-400/50 hover:bg-white/10'
+                                    }`}
                             >
-                                Add
-                            </button>
-                        </div>
-                        {formData.languages.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-3">
-                                {formData.languages.map((lang, idx) => (
-                                    <span key={idx} className="flex items-center gap-1 px-3 py-1 rounded-full bg-muted text-xs text-foreground">
-                                        <FaGlobe className="text-[10px]" />
-                                        {lang}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Itinerary Overview</label>
-                        <textarea
-                            value={formData.itinerary}
-                            onChange={(e) => handleChange('itinerary', e.target.value)}
-                            rows={4}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Brief itemized summary of the schedule..."
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Inclusions</label>
-                            <textarea
-                                value={formData.inclusions}
-                                onChange={(e) => handleChange('inclusions', e.target.value)}
-                                rows={3}
-                                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                                placeholder="What is included?"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Exclusions</label>
-                            <textarea
-                                value={formData.exclusions}
-                                onChange={(e) => handleChange('exclusions', e.target.value)}
-                                rows={3}
-                                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                                placeholder="What is NOT included?"
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Starting Price (per person)</label>
-                        <div className="grid grid-cols-[7rem_1fr] w-full max-w-sm rounded-lg border border-border bg-background overflow-hidden relative">
-                            <div className="relative h-full border-r border-border bg-muted/50">
-                                <select
-                                    value={formData.currency}
-                                    onChange={(e) => handleChange('currency', e.target.value)}
-                                    className="w-full h-full bg-transparent px-3 py-2 text-sm outline-none font-medium cursor-pointer appearance-none"
-                                    style={{
-                                        appearance: 'none',
-                                        WebkitAppearance: 'none',
-                                        MozAppearance: 'none'
-                                    }}
-                                >
-                                    <option>USD</option>
-                                    <option>MYR</option>
-                                    <option>SGD</option>
-                                    <option>EUR</option>
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground z-10 bg-muted/50">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                                <input {...getInputProps()} />
+                                <div className="w-20 h-20 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                                    <FaCloudUploadAlt className="text-4xl text-blue-300" />
                                 </div>
+                                <h3 className="text-xl font-bold text-white mb-2">Drag & drop images here</h3>
+                                <p className="text-white/50">or click to select files (Max 5)</p>
                             </div>
-                            <input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                placeholder="0.00"
-                                value={formData.base_price}
-                                onChange={(e) => handleChange('base_price', e.target.value === '' ? '' : parseFloat(e.target.value))}
-                                className="w-full bg-transparent px-3 py-2 text-sm outline-none"
+
+                            {previews.length > 0 && (
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+                                    {previews.map((src, idx) => (
+                                        <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group shadow-lg border border-white/10">
+                                            <img src={src} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                                                    className="p-2 bg-red-500/80 rounded-full text-white hover:bg-red-500 transition-colors"
+                                                >
+                                                    <FaTimes />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Special Offer / Promotion</label>
+                            <textarea
+                                value={formData.special_offer}
+                                onChange={(e) => handleChange('special_offer', e.target.value)}
+                                rows={3}
+                                className="glass-input w-full"
+                                placeholder="e.g. Early bird discount..."
                             />
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </form>
 
-            {/* 4. Visuals & Promotions */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaCloudUploadAlt className="text-primary" />
-                    <h2 className="font-bold text-lg">Visuals & Promotions</h2>
-                </div>
-                <div className="p-6 space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium mb-2">Product Images * (Max 5)</label>
-                        <div
-                            {...getRootProps()}
-                            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-                                }`}
-                        >
-                            <input {...getInputProps()} />
-                            <FaCloudUploadAlt className="mx-auto text-4xl text-muted-foreground mb-3" />
-                            <p className="text-sm text-foreground font-medium">Drag & drop images here, or click to select</p>
-                            <p className="text-xs text-muted-foreground mt-1">Supports JPG, PNG (Max 5MB)</p>
-                        </div>
+            <style jsx global>{`
+                .glass-input {
+                    background-color: rgba(255, 255, 255, 0.05) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    color: white !important;
+                    padding: 0.75rem 1rem;
+                    border-radius: 0.75rem;
+                    transition: all 0.3s ease;
+                }
+                .glass-input:focus {
+                    outline: none;
+                    border-color: #60a5fa !important;
+                    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                }
+                select.glass-input {
+                    appearance: none !important;
+                    -webkit-appearance: none !important;
+                    -moz-appearance: none !important;
+                    background-image: none !important;
+                }
+                .glass-input::placeholder {
+                    color: rgba(255, 255, 255, 0.3);
+                }
+                 .glass-input::-webkit-calendar-picker-indicator {
+                    filter: invert(1);
+                    cursor: pointer;
+                    opacity: 0.7;
+                }
+                .glass-input::-webkit-calendar-picker-indicator:hover {
+                    opacity: 1;
+                }
+                .land-form-container label {
+                    color: rgba(255, 255, 255, 0.9) !important;
+                }
+            `}</style>
 
-                        {previews.length > 0 && (
-                            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-                                {previews.map((src, idx) => (
-                                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group">
-                                        <img src={src} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFile(idx)}
-                                            className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <FaTimes size={12} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Special Offer / Promotion</label>
-                        <textarea
-                            value={formData.special_offer}
-                            onChange={(e) => handleChange('special_offer', e.target.value)}
-                            rows={3}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Detail any current deals..."
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Actions */}
-            <div className="flex justify-end gap-4 sticky bottom-6 z-10">
-                <div className="bg-background/80 backdrop-blur-md p-2 rounded-xl shadow-2xl border border-border flex gap-3">
+            {/* Sticky Footer Action Panel */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-black/40 backdrop-blur-xl border-t border-white/10 supports-[backdrop-filter]:bg-black/20">
+                <div className="max-w-5xl mx-auto flex justify-end gap-6 items-center">
                     <button
                         type="button"
                         onClick={(e) => handleSubmit(e, 'draft')}
                         disabled={loading}
-                        className="px-6 py-2.5 rounded-lg border border-border font-semibold text-foreground hover:bg-muted transition-colors"
+                        className="px-8 py-3 rounded-xl border border-white/20 font-semibold text-white/80 hover:bg-white/10 hover:text-white hover:border-white/40 transition-all"
                     >
                         Save Draft
                     </button>
@@ -682,17 +721,20 @@ export default function LandOperatorProductForm({ supplier, productId, onSuccess
                         type="button"
                         onClick={(e) => handleSubmit(e, 'active')}
                         disabled={loading}
-                        className="px-8 py-2.5 rounded-lg bg-primary text-primary-foreground font-bold shadow-lg hover:shadow-primary/25 hover:bg-primary/90 transition-all flex items-center gap-2"
+                        className="px-10 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-white font-bold shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:shadow-[0_0_30px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 border border-amber-300/50"
                     >
-                        {loading ? 'Submitting...' : (
+                        {loading ? (
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
                             <>
-                                <FaCheckCircle />
-                                Activate Product
+                                <FaCheckCircle className="text-lg" />
+                                <span>Activate Product</span>
                             </>
                         )}
                     </button>
                 </div>
             </div>
-        </form>
+
+        </div>
     )
 }

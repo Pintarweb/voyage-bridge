@@ -177,7 +177,7 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
 
                             <div className="grid grid-cols-2 gap-4 mb-4 py-4 border-y border-white/5">
                                 <div className="text-center border-r border-white/5">
-                                    <div className="text-lg font-bold text-white">{product.views || 0}</div>
+                                    <div className="text-lg font-bold text-white">{product.view_count || 0}</div>
                                     <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold">Views</div>
                                 </div>
                                 <div className="text-center">
