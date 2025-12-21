@@ -321,8 +321,8 @@ export default function SupplierAuthPage() {
                             </form>
 
                             {!isLogin && (
-                                <p className="text-center text-xs text-white/70 mt-4 drop-shadow-sm">
-                                    Founding Year discount applies to the first 500 suppliers only. <span className="text-amber-400 font-bold">142 slots remaining.</span>
+                                <p className="text-center text-xs text-white/70 mt-4 drop-shadow-sm leading-relaxed">
+                                    The 70% discount applies to the base subscription (reduced from <span className="text-red-300 line-through">$100</span> to <span className="text-green-300 font-bold">$30</span>) and is locked price-unchanged for 1 year. This offer is valid for the first 500 suppliers only. <span className="text-amber-400 font-bold">142 slots remaining.</span>
                                 </p>
                             )}
 

@@ -55,20 +55,50 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
             // Let's fetch the subscription to be sure we get the period end.
             try {
                 const sub = await stripe.subscriptions.retrieve(session.subscription)
-                updateData.current_period_end = new Date(sub.current_period_end * 1000).toISOString()
-            } catch (e) {
-                console.error('[Stripe Logic] Failed to fetch subscription details', e)
+                console.log('[Stripe Logic] Retrieved Full Subscription Object:', JSON.stringify(sub, null, 2))
+
+                // 1. Current Period End
+                if (sub.current_period_end) {
+                    // @ts-ignore
+                    updateData.current_period_end = new Date(sub.current_period_end * 1000).toISOString()
+                } else {
+                    console.warn('[Stripe Logic] sub.current_period_end is missing! Using 30 days from now as fallback.')
+                    updateData.current_period_end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+                }
+
+                // 2. Trial End
+                // @ts-ignore
+                if (sub.trial_end) {
+                    // @ts-ignore
+                    updateData.trial_end = new Date(sub.trial_end * 1000).toISOString()
+                    console.log(`[Stripe Logic] Extracted trial_end: ${updateData.trial_end}`)
+                } else {
+                    console.log('[Stripe Logic] No trial_end found in subscription object')
+                }
+            } catch (e: any) {
+                console.error('[Stripe Logic] Failed to fetch subscription details:', e.message)
             }
         } else {
-            // If expanded (rare for standard checkout webhook unless configured)
+            // Expanded object logic (rarely hit in default webhook config)
             updateData.subscription_id = session.subscription.id
-            updateData.current_period_end = new Date(session.subscription.current_period_end * 1000).toISOString()
+            // @ts-ignore
+            if (session.subscription.current_period_end) {
+                // @ts-ignore
+                updateData.current_period_end = new Date(session.subscription.current_period_end * 1000).toISOString()
+            }
+            // @ts-ignore
+            if (session.subscription.trial_end) {
+                // @ts-ignore
+                updateData.trial_end = new Date(session.subscription.trial_end * 1000).toISOString()
+            }
         }
     }
 
     if (totalSlots) {
         updateData.total_slots = totalSlots
     }
+
+    console.log('[Stripe Logic] Final Update Data for Checkout Completion:', JSON.stringify(updateData, null, 2))
 
     const { error, data } = await supabase
         .from('suppliers')
@@ -188,6 +218,17 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
         is_paused: isPaused,
         current_period_end: currentPeriodEnd
     }
+
+    // Capture trial_end if present (crucial for trial subscriptions)
+    // @ts-ignore
+    if (freshSub.trial_end) {
+        // @ts-ignore
+        updateData.trial_end = new Date(freshSub.trial_end * 1000).toISOString()
+        // @ts-ignore
+        console.log(`[Stripe Logic] Captured trial_end for update: ${updateData.trial_end}`)
+    }
+
+    console.log(`[Stripe Logic] Prepared Update Data for User ${userId}:`, JSON.stringify(updateData, null, 2))
 
     const { data: currentSupplier } = await supabase
         .from('suppliers')

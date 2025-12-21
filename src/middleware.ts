@@ -140,7 +140,7 @@ export async function updateSession(request: NextRequest) {
     return response
 }
 
-export async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
     return await updateSession(request)
 }
 
