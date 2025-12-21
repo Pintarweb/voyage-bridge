@@ -2,32 +2,37 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { FaCloudUploadAlt, FaTimes, FaSave, FaCheckCircle, FaBuilding, FaMapMarkerAlt, FaPhone, FaEnvelope, FaUser, FaInfoCircle, FaBed, FaClock, FaSwimmingPool, FaWifi, FaParking, FaUtensils, FaDumbbell, FaPaw, FaStar } from 'react-icons/fa'
+import {
+    FaCloudUploadAlt, FaTimes, FaCheckCircle, FaBuilding, FaMapMarkerAlt,
+    FaPhone, FaEnvelope, FaUser, FaInfoCircle, FaBed, FaClock,
+    FaSwimmingPool, FaWifi, FaParking, FaUtensils, FaDumbbell,
+    FaPaw, FaStar, FaRocket, FaArrowLeft, FaPlus, FaCamera, FaTag, FaChevronDown
+} from 'react-icons/fa'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
 // Amenities Options
 const AMENITIES_LIST = [
-    { id: 'wifi', label: 'Free Wi-Fi', icon: FaWifi },
-    { id: 'pool', label: 'Swimming Pool', icon: FaSwimmingPool },
-    { id: 'gym', label: 'Gym / Fitness Center', icon: FaDumbbell },
-    { id: 'restaurant', label: 'Restaurant', icon: FaUtensils },
-    { id: 'parking', label: 'Parking', icon: FaParking },
-    { id: 'airport_shuttle', label: 'Airport Shuttle', icon: FaBuilding }, // Generic icon
-    { id: 'pet_friendly', label: 'Pet Friendly', icon: FaPaw },
-    { id: 'spa', label: 'Spa & Wellness', icon: FaInfoCircle }, // Generic
-    { id: 'room_service', label: 'Room Service', icon: FaClock }, // Generic
-    { id: 'bar', label: 'Bar / Lounge', icon: FaUtensils },
+    { id: 'wifi', label: 'Free Wi-Fi', icon: FaWifi, color: 'text-sky-400' },
+    { id: 'pool', label: 'Swimming Pool', icon: FaSwimmingPool, color: 'text-blue-400' },
+    { id: 'gym', label: 'Gym / Fitness Center', icon: FaDumbbell, color: 'text-orange-400' },
+    { id: 'restaurant', label: 'Restaurant', icon: FaUtensils, color: 'text-amber-400' },
+    { id: 'parking', label: 'Parking', icon: FaParking, color: 'text-zinc-400' },
+    { id: 'airport_shuttle', label: 'Airport Shuttle', icon: FaBuilding, color: 'text-indigo-400' },
+    { id: 'pet_friendly', label: 'Pet Friendly', icon: FaPaw, color: 'text-pink-400' },
+    { id: 'spa', label: 'Spa & Wellness', icon: FaInfoCircle, color: 'text-purple-400' },
+    { id: 'room_service', label: 'Room Service', icon: FaClock, color: 'text-emerald-400' },
+    { id: 'bar', label: 'Bar / Lounge', icon: FaUtensils, color: 'text-rose-400' },
 ]
 
 // Accommodation Types
 const ACCOMMODATION_TYPES = [
-    'Hotel', 'Resort', 'Hostel', 'B&B', 'Apartment', 'Villa', 'guesthouse', 'Homestay'
+    'Hotel', 'Resort', 'Hostel', 'B&B', 'Apartment', 'Villa', 'Guesthouse', 'Homestay'
 ]
 
 // Room Types
 const ROOM_TYPES = [
-    'Standard', 'Deluxe', 'Suite', 'Family Room', 'Executive', 'Studio', 'Villa'
+    'Standard', 'Deluxe', 'Suite', 'Family Room', 'Executive', 'Studio', 'Villa', 'Others'
 ]
 
 interface HotelProductFormProps {
@@ -65,9 +70,9 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
         min_occupancy: '' as string | number,
         max_occupancy: '' as string | number,
         base_price: '' as string | number,
-        currency: 'USD', // Default, ideally from supplier preference
-        check_in_time: '',
-        check_out_time: '',
+        currency: 'USD',
+        check_in_time: '15:00',
+        check_out_time: '12:00',
         amenities: [] as string[],
         custom_amenity: '',
 
@@ -92,7 +97,6 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                 .single()
 
             if (data && !error) {
-                // Populate Form
                 setFormData({
                     product_name: data.product_name || '',
                     product_url: data.product_url || '',
@@ -119,15 +123,8 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                     special_offer: data.special_offer || ''
                 })
 
-                // Handle Images (If stored as URLs in photo_urls array)
                 if (data.photo_urls && Array.isArray(data.photo_urls)) {
                     setPreviews(data.photo_urls)
-                    // Note: 'files' state remains empty as we don't have File objects for existing images
-                    // You might need a way to track "existing images" vs "new files" to avoid re-uploading or losing them.
-                    // For now, we assume `previews` holds the URLs and we resubmit them?
-                    // Actually, lines 155 in handleSubmit handles this: 
-                    // const finalImages = [...imageUrls] (from new files)
-                    // We need to MERGE existing images.
                 }
             }
             setLoading(false)
@@ -157,7 +154,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
         }
     }
 
-    // Image Upload Logic (Copied/Adapted from original)
+    // Image Upload Logic
     const onDrop = useCallback((acceptedFiles: File[]) => {
         if (files.length + acceptedFiles.length > 5) {
             alert('Max 5 images allowed')
@@ -186,19 +183,13 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
         setPreviews(newPreviews)
     }
 
-    const handleSubmit = async (e: React.FormEvent, status: 'draft' | 'active') => {
+    const handleSubmit = async (e: React.SyntheticEvent, status: 'draft' | 'active') => {
         e.preventDefault()
         setLoading(true)
 
         // Validation
-        if (!formData.product_name || !formData.product_url || !formData.city || !formData.contact_name || !formData.contact_phone || !formData.contact_email || !formData.description) {
+        if (status === 'active' && (!formData.product_name || !formData.product_url || !formData.city || !formData.contact_name || !formData.contact_phone || !formData.contact_email || !formData.description)) {
             alert('Please fill in all required fields marked with *');
-            setLoading(false);
-            return;
-        }
-
-        if (previews.length === 0) {
-            alert('Please upload at least one image.');
             setLoading(false);
             return;
         }
@@ -207,7 +198,6 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Not authenticated')
 
-            // Upload Images
             const imageUrls: string[] = []
 
             for (const file of files) {
@@ -222,7 +212,6 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                 imageUrls.push(publicUrl)
             }
 
-            // Combine with existing non-blob previews if any (edit mode scenario, but this is create)
             const finalImages = [...imageUrls]
 
             const dataToSubmit = {
@@ -284,190 +273,113 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
 
         } catch (error: any) {
             console.error('Form Submission Error:', error);
-            alert('Failed to save product. If you recently updated the code, please ensure database migrations are applied. Error: ' + (error.message || JSON.stringify(error)));
+            alert('Failed to save product: ' + (error.message || JSON.stringify(error)));
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <form className="space-y-8 max-w-5xl mx-auto pb-20">
-            {/* 1. Identification & Location */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaBuilding className="text-primary" />
-                    <h2 className="font-bold text-lg">Product Identification & Location</h2>
-                </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Product Name *</label>
-                        <input
-                            required
-                            value={formData.product_name}
-                            onChange={(e) => handleChange('product_name', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Luxury Hotel in Tokyo"
-                        />
-                    </div>
+        <div className="space-y-8 pb-32 hotel-form-container">
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Product URL *</label>
-                        <input
-                            required
-                            type="url"
-                            value={formData.product_url}
-                            onChange={(e) => handleChange('product_url', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="https://..."
-                        />
-                    </div>
+            {/* 1. Header & Navigation */}
+            <div className="space-y-4">
+                <button
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group mb-2"
+                >
+                    <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                    <span className="text-sm font-medium tracking-wide">Back to Dashboard</span>
+                </button>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-2">Star Rating</label>
-                        <div className="flex items-center gap-2 h-14">
-                            {[1, 2, 3, 4, 5].map((star) => {
-                                const isActive = parseInt(formData.star_rating) >= star
-                                return (
-                                    <button
-                                        key={star}
-                                        type="button"
-                                        onClick={() => handleChange('star_rating', star.toString())}
-                                        style={{ fontSize: isActive ? '36px' : '24px' }}
-                                        className={`transition-all duration-300 focus:outline-none ${isActive ? 'text-yellow-400' : 'text-gray-300'
-                                            }`}
-                                    >
-                                        <FaStar />
-                                    </button>
-                                )
-                            })}
-                            <span className="ml-4 text-sm text-muted-foreground font-medium">
-                                {formData.star_rating} Star{formData.star_rating !== '1' && 's'}
-                            </span>
+                <div className="relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl p-8">
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-transparent to-amber-500/10 pointer-events-none" />
+
+                    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                        <div className="space-y-1">
+                            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-md">
+                                Create Your Next Product!
+                            </h1>
+                            <p className="text-amber-400 font-medium text-lg tracking-wide">
+                                Add a new hotel listing to showcase to travel agents worldwide.
+                            </p>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-full border border-white/10 shadow-lg shadow-amber-500/20 backdrop-blur-md">
+                            <FaRocket className="text-4xl text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)] transform -rotate-12" />
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-2">Accommodation Type *</label>
-                        <div className="flex flex-wrap gap-2">
-                            {ACCOMMODATION_TYPES.map(type => (
-                                <button
-                                    key={type}
-                                    type="button"
-                                    onClick={() => handleMultiSelect('accommodation_type', type)}
-                                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${formData.accommodation_type.includes(type)
-                                        ? 'bg-primary text-primary-foreground border-primary'
-                                        : 'bg-background text-muted-foreground border-border hover:border-primary/50'
-                                        }`}
-                                >
-                                    {type}
-                                </button>
-                            ))}
+            <form className="space-y-8">
+
+                {/* Card 1: Product Identification & Location */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaBuilding className="text-blue-400 text-lg" />
                         </div>
+                        <h2 className="text-xl font-bold text-white tracking-wide">Product Identification & Location</h2>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Country</label>
-                        <input
-                            disabled
-                            value={formData.country}
-                            className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">City</label>
-                        <input
-                            value={formData.city}
-                            onChange={(e) => handleChange('city', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                        />
-                    </div>
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Full Address</label>
-                        <textarea
-                            value={formData.address}
-                            onChange={(e) => handleChange('address', e.target.value)}
-                            rows={2}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50 resize-none"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* 2. Key Contact Information */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaUser className="text-primary" />
-                    <h2 className="font-bold text-lg">Key Contact Information</h2>
-                </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Contact Name *</label>
-                        <input
-                            required
-                            value={formData.contact_name}
-                            onChange={(e) => handleChange('contact_name', e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Phone Number *</label>
-                        <div className="relative">
-                            <FaPhone className="absolute left-3 top-3 text-muted-foreground text-xs" />
+                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="md:col-span-2 space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Product Name</label>
                             <input
                                 required
-                                value={formData.contact_phone}
-                                onChange={(e) => handleChange('contact_phone', e.target.value)}
-                                className="w-full bg-background border border-border rounded-lg pl-8 pr-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
+                                value={formData.product_name}
+                                onChange={(e) => handleChange('product_name', e.target.value)}
+                                className="glass-input w-full"
+                                placeholder="e.g. Grand Plaza Hotel Tokyo"
                             />
                         </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Email Address *</label>
-                        <div className="relative">
-                            <FaEnvelope className="absolute left-3 top-3 text-muted-foreground text-xs" />
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Product URL</label>
                             <input
                                 required
-                                type="email"
-                                value={formData.contact_email}
-                                onChange={(e) => handleChange('contact_email', e.target.value)}
-                                className="w-full bg-background border border-border rounded-lg pl-8 pr-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
+                                type="url"
+                                value={formData.product_url}
+                                onChange={(e) => handleChange('product_url', e.target.value)}
+                                className="glass-input w-full"
+                                placeholder="https://..."
                             />
                         </div>
-                    </div>
-                </div>
-            </section>
 
-            {/* 3. Product Details & Pricing */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaInfoCircle className="text-primary" />
-                    <h2 className="font-bold text-lg">Product Details & Pricing</h2>
-                </div>
-                <div className="p-6 space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Overall Product Description *</label>
-                        <textarea
-                            required
-                            value={formData.description}
-                            onChange={(e) => handleChange('description', e.target.value)}
-                            rows={5}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Detailed write-up highlighting features..."
-                        />
-                    </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Star Rating</label>
+                            <div className="flex items-center gap-2 h-[50px] bg-white/5 border border-white/10 rounded-lg px-4 backdrop-blur-sm">
+                                {[1, 2, 3, 4, 5].map((star) => {
+                                    const isActive = parseInt(formData.star_rating) >= star
+                                    return (
+                                        <button
+                                            key={star}
+                                            type="button"
+                                            onClick={() => handleChange('star_rating', star.toString())}
+                                            className={`transition-all duration-300 focus:outline-none transform hover:scale-110 ${isActive
+                                                ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]'
+                                                : 'text-white/20'}`}
+                                            style={{ fontSize: isActive ? '24px' : '20px' }}
+                                        >
+                                            <FaStar />
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium mb-2">Available Room Type</label>
-                            <div className="flex flex-wrap gap-2">
-                                {ROOM_TYPES.map(type => (
+                        <div className="md:col-span-2 space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Accommodation Type</label>
+                            <div className="flex flex-wrap gap-3">
+                                {ACCOMMODATION_TYPES.map(type => (
                                     <button
                                         key={type}
                                         type="button"
-                                        onClick={() => handleMultiSelect('room_type', type)}
-                                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${formData.room_type.includes(type)
-                                            ? 'bg-primary text-primary-foreground border-primary'
-                                            : 'bg-background text-muted-foreground border-border hover:border-primary/50'
+                                        onClick={() => handleMultiSelect('accommodation_type', type)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-300 backdrop-blur-sm ${formData.accommodation_type.includes(type)
+                                            ? 'bg-blue-600/30 border-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                                            : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/30'
                                             }`}
                                     >
                                         {type}
@@ -476,203 +388,332 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Available Occupancy Limit</label>
-                            <div className="flex items-center gap-2">
-                                <div className="flex-1 flex items-center rounded-lg border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/50 transition-shadow">
-                                    <div className="bg-muted/50 px-3 py-2 border-r border-border text-xs text-muted-foreground font-medium select-none text-center min-w-[3rem]">
-                                        Min
-                                    </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Country</label>
+                            <div className="glass-input w-full opacity-60 flex items-center text-white/70">
+                                {formData.country || 'Loading...'}
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">City</label>
+                            <input
+                                value={formData.city}
+                                onChange={(e) => handleChange('city', e.target.value)}
+                                className="glass-input w-full"
+                            />
+                        </div>
+                        <div className="md:col-span-2 space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Full Address</label>
+                            <textarea
+                                value={formData.address}
+                                onChange={(e) => handleChange('address', e.target.value)}
+                                rows={2}
+                                className="glass-input w-full resize-none"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Card 2: Key Contact Information */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaUser className="text-blue-400 text-lg" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white tracking-wide">Key Contact Information</h2>
+                    </div>
+
+                    <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Contact Name</label>
+                            <input
+                                required
+                                value={formData.contact_name}
+                                onChange={(e) => handleChange('contact_name', e.target.value)}
+                                className="glass-input w-full"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Phone Number</label>
+                            <input
+                                required
+                                value={formData.contact_phone}
+                                onChange={(e) => handleChange('contact_phone', e.target.value)}
+                                className="glass-input w-full"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Email Address</label>
+                            <input
+                                required
+                                type="email"
+                                value={formData.contact_email}
+                                onChange={(e) => handleChange('contact_email', e.target.value)}
+                                className="glass-input w-full"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Card 3: Product Details & Pricing */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaInfoCircle className="text-blue-400 text-lg" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white tracking-wide">Product Details & Pricing</h2>
+                    </div>
+
+                    <div className="p-8 space-y-8">
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Overall Product Description</label>
+                            <textarea
+                                required
+                                value={formData.description}
+                                onChange={(e) => handleChange('description', e.target.value)}
+                                rows={5}
+                                className="glass-input w-full"
+                                placeholder="Highlight your best features..."
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Available Room Type</label>
+                                <div className="flex flex-wrap gap-3">
+                                    {ROOM_TYPES.map(type => (
+                                        <button
+                                            key={type}
+                                            type="button"
+                                            onClick={() => handleMultiSelect('room_type', type)}
+                                            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border transition-all duration-300 ${formData.room_type.includes(type)
+                                                ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                                                : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:border-white/30'
+                                                }`}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Available Occupancy Limit</label>
+                                <div className="flex items-center gap-3">
                                     <input
                                         type="number"
                                         min="1"
                                         value={formData.min_occupancy}
-                                        onChange={(e) => handleChange('min_occupancy', e.target.value === '' ? '' : parseInt(e.target.value))}
-                                        className="flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/50 w-full"
+                                        onChange={(e) => handleChange('min_occupancy', e.target.value)}
+                                        className="glass-input w-full text-center"
+                                        placeholder="Min"
                                     />
-                                </div>
-                                <span className="text-muted-foreground">-</span>
-                                <div className="flex-1 flex items-center rounded-lg border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/50 transition-shadow">
-                                    <div className="bg-muted/50 px-3 py-2 border-r border-border text-xs text-muted-foreground font-medium select-none text-center min-w-[3rem]">
-                                        Max
-                                    </div>
+                                    <span className="text-white/40">-</span>
                                     <input
                                         type="number"
                                         min="1"
                                         value={formData.max_occupancy}
-                                        onChange={(e) => handleChange('max_occupancy', e.target.value === '' ? '' : parseInt(e.target.value))}
-                                        className="flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/50 w-full"
+                                        onChange={(e) => handleChange('max_occupancy', e.target.value)}
+                                        className="glass-input w-full text-center"
+                                        placeholder="Max"
                                     />
                                 </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Starting Price (per night)</label>
-                            <div className="grid grid-cols-[7rem_1fr] w-full rounded-lg border border-border bg-background transition-shadow focus-within:ring-2 focus-within:ring-primary/50 overflow-hidden">
-                                <div className="relative h-full border-r border-border bg-muted/50">
-                                    <select
-                                        value={formData.currency}
-                                        onChange={(e) => handleChange('currency', e.target.value)}
-                                        className="w-full h-full bg-transparent px-3 py-2 text-sm outline-none font-medium cursor-pointer appearance-none relative z-10"
-                                    >
-                                        <option>USD</option>
-                                        <option>EUR</option>
-                                        <option>MYR</option>
-                                        <option>SGD</option>
-                                    </select>
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-[0.6rem] pointer-events-none z-0">
-                                        ▼
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Starting Price (per night)</label>
+                                <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                        <select
+                                            value={formData.currency}
+                                            onChange={(e) => handleChange('currency', e.target.value)}
+                                            className="glass-input px-1 bg-white/5 text-center text-sm flex-none appearance-none cursor-pointer"
+                                            style={{ width: '90px', paddingRight: '1.5rem' }}
+                                        >
+                                            <option className="bg-gray-800">USD</option>
+                                            <option className="bg-gray-800">EUR</option>
+                                            <option className="bg-gray-800">MYR</option>
+                                            <option className="bg-gray-800">SGD</option>
+                                        </select>
+                                        <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 text-xs pointer-events-none" />
                                     </div>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={formData.base_price}
+                                        onChange={(e) => handleChange('base_price', e.target.value)}
+                                        className="glass-input flex-1"
+                                        placeholder="0.00"
+                                    />
                                 </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Check-in Time</label>
                                 <input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    placeholder="0.00"
-                                    value={formData.base_price}
-                                    onChange={(e) => handleChange('base_price', e.target.value === '' ? '' : parseFloat(e.target.value))}
-                                    className="w-full bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/50"
+                                    type="time"
+                                    value={formData.check_in_time}
+                                    onChange={(e) => handleChange('check_in_time', e.target.value)}
+                                    className="glass-input w-full"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-white/90">Check-out Time</label>
+                                <input
+                                    type="time"
+                                    value={formData.check_out_time}
+                                    onChange={(e) => handleChange('check_out_time', e.target.value)}
+                                    className="glass-input w-full"
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Check-in Time</label>
-                            <input
-                                type="time"
-                                value={formData.check_in_time}
-                                onChange={(e) => handleChange('check_in_time', e.target.value)}
-                                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm"
-                            />
-                        </div>
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-white/90">Key Amenities</label>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                {AMENITIES_LIST.map(item => (
+                                    <button
+                                        key={item.id}
+                                        type="button"
+                                        onClick={() => handleMultiSelect('amenities', item.id)}
+                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 text-left hover:scale-[1.02] group ${formData.amenities.includes(item.id)
+                                            ? 'bg-blue-600/20 border-blue-400/50 text-white shadow-[0_0_15px_rgba(59,130,246,0.15)]'
+                                            : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:border-white/20'
+                                            }`}
+                                    >
+                                        <item.icon className={`text-lg transition-colors ${formData.amenities.includes(item.id) ? item.color : 'text-white/30 group-hover:text-white'}`} />
+                                        {item.label}
+                                    </button>
+                                ))}
+                            </div>
 
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Check-out Time</label>
-                            <input
-                                type="time"
-                                value={formData.check_out_time}
-                                onChange={(e) => handleChange('check_out_time', e.target.value)}
-                                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm"
-                            />
+                            <div className="flex gap-2">
+                                <input
+                                    value={formData.custom_amenity}
+                                    onChange={(e) => handleChange('custom_amenity', e.target.value)}
+                                    placeholder="Add custom amenity..."
+                                    className="glass-input flex-1"
+                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomAmenity() } }}
+                                />
+                                <button type="button" onClick={handleAddCustomAmenity} className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 text-white border border-white/10">Add</button>
+                            </div>
+
+                            {formData.amenities.filter(a => !AMENITIES_LIST.find(def => def.id === a)).length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {formData.amenities.filter(a => !AMENITIES_LIST.find(def => def.id === a)).map((amenity, idx) => (
+                                        <span key={idx} className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-200 text-xs">
+                                            {amenity}
+                                            <button onClick={() => handleMultiSelect('amenities', amenity)} className="hover:text-white"><FaTimes /></button>
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
+                </section>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-3">Key Amenities</label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                            {AMENITIES_LIST.map(item => (
-                                <button
-                                    key={item.id}
-                                    type="button"
-                                    onClick={() => handleMultiSelect('amenities', item.id)}
-                                    className={`flex items-center gap-2 px-4 py-3 rounded-lg border text-sm transition-all text-left ${formData.amenities.includes(item.id)
-                                        ? 'bg-primary/10 border-primary text-primary font-semibold'
-                                        : 'bg-background border-border text-muted-foreground hover:border-primary/50'
-                                        }`}
-                                >
-                                    <item.icon />
-                                    {item.label}
-                                </button>
-                            ))}
+                {/* Card 4: Visuals & Promotions */}
+                <section className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-amber-400/20 shadow-xl transition-all hover:border-amber-400/30">
+                    <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <FaCamera className="text-blue-400 text-lg" />
                         </div>
+                        <h2 className="text-xl font-bold text-white tracking-wide">Visuals & Promotions</h2>
+                    </div>
 
-                        {/* Other Amenities */}
-                        <div className="flex gap-2 items-center max-w-md">
-                            <input
-                                value={formData.custom_amenity}
-                                onChange={(e) => handleChange('custom_amenity', e.target.value)}
-                                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomAmenity(); } }}
-                                placeholder="Add other amenity (e.g. Concierge)"
-                                className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            />
-                            <button
-                                type="button"
-                                onClick={handleAddCustomAmenity}
-                                className="px-3 py-2 bg-secondary hover:bg-secondary/80 rounded-lg text-sm font-medium"
+                    <div className="p-8 space-y-8">
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-white/90">Product Images</label>
+                            <div
+                                {...getRootProps()}
+                                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 group ${isDragActive
+                                    ? 'border-blue-400 bg-blue-400/10'
+                                    : 'border-white/10 bg-white/5 hover:border-blue-400/50 hover:bg-white/10'
+                                    }`}
                             >
-                                Add
-                            </button>
-                        </div>
-                        {formData.amenities.filter(a => !AMENITIES_LIST.find(def => def.id === a)).length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-3">
-                                {formData.amenities.filter(a => !AMENITIES_LIST.find(def => def.id === a)).map((amenity, idx) => (
-                                    <span key={idx} className="flex items-center gap-1 px-3 py-1 rounded-full bg-muted text-xs text-foreground">
-                                        {amenity}
-                                        <button
-                                            type="button"
-                                            onClick={() => handleMultiSelect('amenities', amenity)}
-                                            className="hover:text-red-500 ml-1"
-                                        >
-                                            <FaTimes />
-                                        </button>
-                                    </span>
-                                ))}
+                                <input {...getInputProps()} />
+                                <div className="w-20 h-20 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                                    <FaCloudUploadAlt className="text-4xl text-blue-300" />
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2">Drag & drop images here</h3>
+                                <p className="text-white/50">or click to select files (Max 5)</p>
                             </div>
-                        )}
-                    </div>
-                </div>
-            </section>
 
-            {/* 4. Visuals & Promotions */}
-            <section className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                <div className="bg-muted/30 px-6 py-4 border-b border-border flex items-center gap-2">
-                    <FaCloudUploadAlt className="text-primary" />
-                    <h2 className="font-bold text-lg">Visuals & Promotions</h2>
-                </div>
-                <div className="p-6 space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium mb-2">Product Images * (Max 5)</label>
-                        <div
-                            {...getRootProps()}
-                            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-                                }`}
-                        >
-                            <input {...getInputProps()} />
-                            <FaCloudUploadAlt className="mx-auto text-4xl text-muted-foreground mb-3" />
-                            <p className="text-sm text-foreground font-medium">Drag & drop images here, or click to select</p>
-                            <p className="text-xs text-muted-foreground mt-1">Supports JPG, PNG (Max 5MB)</p>
+                            {previews.length > 0 && (
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+                                    {previews.map((src, idx) => (
+                                        <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group shadow-lg border border-white/10">
+                                            <img src={src} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                                                    className="p-2 bg-red-500/80 rounded-full text-white hover:bg-red-500 transition-colors"
+                                                >
+                                                    <FaTimes />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
-                        {previews.length > 0 && (
-                            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-                                {previews.map((src, idx) => (
-                                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group">
-                                        <img src={src} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFile(idx)}
-                                            className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <FaTimes size={12} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-white/90">Special Offer / Promotion</label>
+                            <textarea
+                                value={formData.special_offer}
+                                onChange={(e) => handleChange('special_offer', e.target.value)}
+                                rows={3}
+                                className="glass-input w-full"
+                                placeholder="e.g. Early bird discount: 20% off for bookings 60 days in advance"
+                            />
+                        </div>
                     </div>
+                </section>
+            </form>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Special Offer / Promotion</label>
-                        <textarea
-                            value={formData.special_offer}
-                            onChange={(e) => handleChange('special_offer', e.target.value)}
-                            rows={3}
-                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50"
-                            placeholder="Detail any current deals (e.g., 'Book 3 nights get 10% off')..."
-                        />
-                    </div>
-                </div>
-            </section>
+            <style jsx global>{`
+                .glass-input {
+                    background-color: rgba(255, 255, 255, 0.05) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    color: white !important;
+                    padding: 0.75rem 1rem;
+                    border-radius: 0.75rem;
+                    transition: all 0.3s ease;
+                }
+                .glass-input:focus {
+                    outline: none;
+                    border-color: #60a5fa;
+                    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                .glass-input::placeholder {
+                    color: rgba(255, 255, 255, 0.3);
+                }
+                .glass-input::-webkit-calendar-picker-indicator {
+                    filter: invert(1);
+                    cursor: pointer;
+                    opacity: 0.7;
+                }
+                .glass-input::-webkit-calendar-picker-indicator:hover {
+                    opacity: 1;
+                }
+                .hotel-form-container label {
+                    color: rgba(255, 255, 255, 0.9) !important;
+                }
+            `}</style>
 
-            {/* Actions */}
-            <div className="flex justify-end gap-4 sticky bottom-6 z-10">
-                <div className="bg-background/80 backdrop-blur-md p-2 rounded-xl shadow-2xl border border-border flex gap-3">
+            {/* Sticky Footer Action Panel */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-black/40 backdrop-blur-xl border-t border-white/10 supports-[backdrop-filter]:bg-black/20">
+                <div className="max-w-5xl mx-auto flex justify-end gap-6 items-center">
                     <button
                         type="button"
                         onClick={(e) => handleSubmit(e, 'draft')}
                         disabled={loading}
-                        className="px-6 py-2.5 rounded-lg border border-border font-semibold text-foreground hover:bg-muted transition-colors"
+                        className="px-8 py-3 rounded-xl border border-white/20 font-semibold text-white/80 hover:bg-white/10 hover:text-white hover:border-white/40 transition-all"
                     >
                         Save Draft
                     </button>
@@ -680,17 +721,20 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                         type="button"
                         onClick={(e) => handleSubmit(e, 'active')}
                         disabled={loading}
-                        className="px-8 py-2.5 rounded-lg bg-primary text-primary-foreground font-bold shadow-lg hover:shadow-primary/25 hover:bg-primary/90 transition-all flex items-center gap-2"
+                        className="px-10 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-white font-bold shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:shadow-[0_0_30px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 border border-amber-300/50"
                     >
-                        {loading ? 'Submitting...' : (
+                        {loading ? (
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
                             <>
-                                <FaCheckCircle />
-                                Activate Your Product
+                                <FaCheckCircle className="text-lg" />
+                                <span>Activate Your Product</span>
                             </>
                         )}
                     </button>
                 </div>
             </div>
-        </form>
+
+        </div>
     )
 }

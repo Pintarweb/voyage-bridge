@@ -193,8 +193,8 @@ export default function CreateProductPage() {
 
             <div className="relative z-20 w-full">
                 <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-                    {/* Welcome Banner - Hidden for Transport as it has custom design */}
-                    {!isTransport && (
+                    {/* Welcome Banner - Hidden for Transport and Hotel as they have custom designs */}
+                    {!isTransport && !isHotel && (
                         <>
                             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 p-8 shadow-lg mb-8">
                                 <div className="relative z-10">
