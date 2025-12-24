@@ -7,7 +7,7 @@ import { useLanguage } from '@/context/LanguageContext'
 import { registerSupplier } from '@/app/actions/register-supplier'
 
 export default function Step4Review() {
-    const { formData, setStep } = useWizard()
+    const { formData, setStep, onSubmissionStart } = useWizard()
     const { language } = useLanguage()
     const router = useRouter()
     const supabase = createClient()
@@ -448,7 +448,12 @@ export default function Step4Review() {
                     {content.previous}
                 </button>
                 <button
-                    onClick={handleSubmit}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (onSubmissionStart) onSubmissionStart()
+                        handleSubmit()
+                    }}
                     disabled={loading}
                     className="px-12 py-4 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.5)] transition-all transform hover:-translate-y-1 animate-pulse hover:animate-none"
                 >

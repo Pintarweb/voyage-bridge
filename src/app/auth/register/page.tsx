@@ -1,12 +1,14 @@
 'use client'
 
 import RegistrationWizard from '@/components/auth/registration-wizard/RegistrationWizard'
+import ExitIntentModal from '@/components/feedback/ExitIntentModal'
 
 import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 function RegisterPageContent() {
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const { language } = useLanguage()
     const searchParams = useSearchParams()
     const email = searchParams.get('email') || ''
@@ -122,9 +124,14 @@ function RegisterPageContent() {
                 </div>
 
                 <div className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-amber-400/30 shadow-[0_0_60px_rgba(245,158,11,0.15)] ring-1 ring-white/10">
-                    <RegistrationWizard initialEmail={email} />
+                    <RegistrationWizard initialEmail={email} onSubmissionStart={() => {
+                        console.log('Disabling Exit Intent due to submission')
+                        setIsSubmitting(true)
+                    }} />
                 </div>
             </div>
+            {/* Hard remove the modal when submitting */}
+            {!isSubmitting && <ExitIntentModal />}
         </div>
     )
 }

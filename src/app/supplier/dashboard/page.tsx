@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-    FaHome, FaUserCircle, FaCreditCard, FaBox, FaChartLine, FaSignOutAlt
+    FaHome, FaUserCircle, FaCreditCard, FaBox, FaChartLine, FaSignOutAlt, FaComments
 } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -16,6 +16,7 @@ import BillingTab from '@/components/supplier/dashboard/tabs/BillingTab'
 import ProductTab from '@/components/supplier/dashboard/tabs/ProductTab'
 import SupplierReports from './reports/page' // Import the report page as a component
 import { ChangeSlotsModal, CancelSubscriptionModal } from '@/components/supplier/dashboard/SubscriptionModals'
+import FeatureWishlist from '@/components/feedback/FeatureWishlist'
 
 export default function Dashboard() {
     const [user, setUser] = useState<any>(null)
@@ -107,6 +108,7 @@ export default function Dashboard() {
         { id: 'billing', label: content.tabs.billing, icon: FaCreditCard },
         { id: 'products', label: content.tabs.products, icon: FaBox },
         { id: 'reports', label: content.tabs.reports, icon: FaChartLine },
+        { id: 'community', label: 'Community', icon: FaComments },
     ]
 
     return (
@@ -216,6 +218,9 @@ export default function Dashboard() {
                         <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
                             <SupplierReports />
                         </div>
+                    )}
+                    {activeTab === 'community' && (
+                        <FeatureWishlist />
                     )}
                 </div>
 

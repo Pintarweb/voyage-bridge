@@ -1,3 +1,5 @@
+import PulseWidget from '@/components/feedback/PulseWidget'
+
 export default function SupplierLayout({
     children,
 }: {
@@ -6,6 +8,7 @@ export default function SupplierLayout({
     return (
         <>
             {children}
+            <PulseWidget />
         </>
     )
 }

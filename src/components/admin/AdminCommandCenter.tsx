@@ -1,14 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FaCheck, FaTimes, FaEllipsisV, FaBuilding, FaUserTie, FaNetworkWired, FaLock, FaUnlock, FaPowerOff, FaSync, FaBolt, FaChevronDown } from 'react-icons/fa'
+
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import SupplierVerificationModal from './SupplierVerificationModal'
 import UserManagementModal from './UserManagementModal'
 import { handleUserApproval, rejectSupplier, manageUserStatus } from '@/app/actions/admin'
 
-type Tab = 'overview' | 'verifications' | 'users' | 'system'
+import UserFeedbackModule from './UserFeedbackModule'
+import { FaCheck, FaTimes, FaEllipsisV, FaBuilding, FaUserTie, FaNetworkWired, FaLock, FaUnlock, FaPowerOff, FaSync, FaBolt, FaChevronDown, FaBullhorn } from 'react-icons/fa'
+
+import AdminFeedbackTable from './AdminFeedbackTable'
+
+type Tab = 'overview' | 'verifications' | 'users' | 'user_voice' | 'feedback_data' | 'system'
 
 interface AdminCommandCenterProps {
     pendingAgents: any[]
@@ -317,6 +322,8 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                     { id: 'overview', label: 'Overview', icon: FaNetworkWired, count: null },
                     { id: 'verifications', label: 'Verifications', icon: FaCheck, count: pendingAgents.length + pendingSuppliers.length },
                     { id: 'users', label: 'User Management', icon: FaNetworkWired, count: null },
+                    { id: 'user_voice', label: 'User Voice', icon: FaBullhorn, count: 4 }, // Mock count for inbox
+                    { id: 'feedback_data', label: 'Data View', icon: FaEllipsisV, count: null },
                     { id: 'system', label: 'System Control', icon: FaPowerOff, count: null },
                 ].map((tab) => (
                     <button
@@ -632,7 +639,17 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                     </div>
                 )}
 
-                {/* Module C: System Control */}
+                {/* Module C: User Voice (Visual High Level) */}
+                {activeTab === 'user_voice' && (
+                    <UserFeedbackModule />
+                )}
+
+                {/* Module E: Feedback Data Table (Raw Data) */}
+                {activeTab === 'feedback_data' && (
+                    <AdminFeedbackTable />
+                )}
+
+                {/* Module D: System Control */}
                 {activeTab === 'system' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-lg">

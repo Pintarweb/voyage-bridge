@@ -88,12 +88,15 @@ function ROICalculator() {
     )
 }
 
+import ExitIntentModal from '@/components/feedback/ExitIntentModal'
+
 export default function SupplierAuthPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [isLogin, setIsLogin] = useState(false) // Default to Register/Trial to max conversion
+    const [isNavigating, setIsNavigating] = useState(false)
     const router = useRouter()
     const supabase = createClient()
     const { language } = useLanguage()
@@ -101,6 +104,7 @@ export default function SupplierAuthPage() {
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
+        setIsNavigating(true)
         setError('')
 
         try {
@@ -358,13 +362,13 @@ export default function SupplierAuthPage() {
                     </div>
                 </div>
 
-                {/* Footer Social Proof */}
                 <div className="absolute bottom-0 w-full p-4 text-center">
                     <p className="text-xs text-blue-200/50 uppercase tracking-widest font-semibold">
                         Join the network already trusted by global hotel chains and leading regional transport providers
                     </p>
                 </div>
             </div>
+            {!isNavigating && !isLogin && <ExitIntentModal />}
         </div>
     )
 }

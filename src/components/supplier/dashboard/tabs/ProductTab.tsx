@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { createClient } from '@/utils/supabase/client'
+import MicroSurveyToast from '@/components/feedback/MicroSurveyToast'
 
 export default function ProductTab({ products, supplier, content, onProductUpdate, onOpenSlotModal }: { products: any[], supplier: any, content: any, onProductUpdate: () => void, onOpenSlotModal: () => void }) {
     const router = useRouter()
     const supabase = createClient()
     const [searchQuery, setSearchQuery] = useState('')
     const [filterStatus, setFilterStatus] = useState('all') // 'all', 'active', 'archived', 'draft'
+    const [showSurvey, setShowSurvey] = useState(false)
 
     // Mock Folders State
     const [folders, setFolders] = useState([
@@ -61,16 +63,23 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
             }
         }
 
-        const { error } = await supabase
-            .from('products')
-            .update({ status: newStatus })
-            .eq('id', id)
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ status: newStatus })
+                .eq('id', id)
 
-        if (error) {
-            console.error('Error updating status:', error)
-            alert('Failed to update product status')
-        } else {
+            if (error) {
+                console.error('Error updating status:', error)
+                throw new Error('Failed to update product status')
+            }
+
             onProductUpdate() // Refresh data in parent
+            if (newStatus === 'active') {
+                setShowSurvey(true)
+            }
+        } catch (e) {
+            alert('Failed to update product status')
         }
     }
 
@@ -232,6 +241,7 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
                     </div>
                 )}
             </div>
+            <MicroSurveyToast visible={showSurvey} onClose={() => setShowSurvey(false)} />
         </div>
     )
 }

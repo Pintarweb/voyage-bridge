@@ -80,11 +80,12 @@ type WizardContextType = {
     currentStep: number
     setStep: (step: number) => void
     totalSteps: number
+    onSubmissionStart?: () => void
 }
 
 const WizardContext = createContext<WizardContextType | undefined>(undefined)
 
-export function WizardProvider({ children, initialEmail = '' }: { children: ReactNode; initialEmail?: string }) {
+export function WizardProvider({ children, initialEmail = '', onSubmissionStart }: { children: ReactNode; initialEmail?: string; onSubmissionStart?: () => void }) {
     const [formData, setFormData] = useState<SupplierFormData>({ ...INITIAL_DATA, email: initialEmail })
     const [currentStep, setCurrentStep] = useState(1)
     const totalSteps = 4
@@ -100,7 +101,7 @@ export function WizardProvider({ children, initialEmail = '' }: { children: Reac
     }
 
     return (
-        <WizardContext.Provider value={{ formData, updateFormData, currentStep, setStep, totalSteps }}>
+        <WizardContext.Provider value={{ formData, updateFormData, currentStep, setStep, totalSteps, onSubmissionStart }}>
             {children}
         </WizardContext.Provider>
     )

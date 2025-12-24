@@ -186,9 +186,9 @@ function WizardContent() {
     )
 }
 
-export default function RegistrationWizard({ initialEmail }: { initialEmail?: string }) {
+export default function RegistrationWizard({ initialEmail, onSubmissionStart }: { initialEmail?: string, onSubmissionStart?: () => void }) {
     return (
-        <WizardProvider initialEmail={initialEmail}>
+        <WizardProvider initialEmail={initialEmail} onSubmissionStart={onSubmissionStart}>
             <WizardContent />
         </WizardProvider>
     )
