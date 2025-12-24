@@ -271,10 +271,10 @@ export async function manageUserStatus(
 
             if (fetchError || !userData) throw new Error('User not found')
 
-            const email = userType === 'Agent' ? userData.email : userData.contact_email
+            const email = userType === 'Agent' ? (userData as any).email : (userData as any).contact_email
             if (!email) throw new Error('User email not found')
 
-            const { error: resetError } = await supabaseAdmin.auth.admin.resetPasswordForEmail(email, {
+            const { error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
                 redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/update-password`
             })
 
