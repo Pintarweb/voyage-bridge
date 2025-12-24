@@ -21,9 +21,10 @@ interface AdminCommandCenterProps {
     allAgents: any[]
     allSuppliers: any[]
     initialActiveProductsCount: number
+    unreadCount: number
 }
 
-export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, allAgents, allSuppliers, initialActiveProductsCount }: AdminCommandCenterProps) {
+export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, allAgents, allSuppliers, initialActiveProductsCount, unreadCount }: AdminCommandCenterProps) {
     const [activeTab, setActiveTab] = useState<Tab>('overview')
     const [isLoading, setIsLoading] = useState(false)
     const [growthTimeFrame, setGrowthTimeFrame] = useState<'day' | 'week' | 'month'>('week')
@@ -322,7 +323,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                     { id: 'overview', label: 'Overview', icon: FaNetworkWired, count: null },
                     { id: 'verifications', label: 'Verifications', icon: FaCheck, count: pendingAgents.length + pendingSuppliers.length },
                     { id: 'users', label: 'User Management', icon: FaNetworkWired, count: null },
-                    { id: 'user_voice', label: 'User Voice', icon: FaBullhorn, count: 4 }, // Mock count for inbox
+                    { id: 'user_voice', label: 'User Voice', icon: FaBullhorn, count: unreadCount },
                     { id: 'feedback_data', label: 'Data View', icon: FaEllipsisV, count: null },
                     { id: 'system', label: 'System Control', icon: FaPowerOff, count: null },
                 ].map((tab) => (
