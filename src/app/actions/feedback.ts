@@ -18,6 +18,12 @@ export type RoadmapItem = {
     requestCount: number
 }
 
+export type ResponseTemplate = {
+    id: string
+    label: string
+    content: string
+}
+
 export async function getFeedbackStats(): Promise<FeedbackStats> {
     const supabase = await createClient()
 
@@ -30,6 +36,11 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
         .from('feedback_entries')
         .select('*')
         .order('created_at', { ascending: false })
+
+    // 1b. Fetch responses
+    const { data: responses } = await supabase
+        .from('feedback_responses')
+        .select('*')
 
     if (error) {
         console.error('Error fetching feedback:', error)
@@ -60,6 +71,12 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
         if (suppliersRes.data) {
             suppliersRes.data.forEach((s: any) => supplierMap.set(s.id, s))
         }
+    }
+
+    // 3b. Map responses
+    const responseMap = new Map<string, string>()
+    if (responses) {
+        responses.forEach((r: any) => responseMap.set(r.feedback_id, r.response_text))
     }
 
     // 4. Calculate Happiness Score & Trend separately
@@ -124,7 +141,8 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
             content: entry.comment || 'No comment provided',
             date: entry.created_at ? new Date(entry.created_at).toLocaleDateString() : 'Unknown date',
             tags: [entry.source || 'General'],
-            votes: 0 // Default votes
+            votes: 0, // Default votes
+            response: responseMap.get(entry.entry_id || entry.id) || null // Attach response if exists
         }
     })
 
@@ -134,6 +152,7 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
         trend,
         reviews: formattedReviews
     }
+
 }
 
 export async function submitFeedbackResponse(feedbackId: string, response: string) {
@@ -197,4 +216,43 @@ export async function getRoadmapItems(): Promise<RoadmapItem[]> {
             requestCount: Math.round((item.upvote_count || 0) * 0.3) // Mock calculation
         }
     })
+}
+
+export async function getResponseTemplates(): Promise<ResponseTemplate[]> {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('response_templates')
+        .select('*')
+        .order('created_at', { ascending: true })
+
+    if (error) {
+        console.error('Error fetching templates:', error)
+        return []
+    }
+
+    return data || []
+}
+
+export async function addResponseTemplate(label: string, content: string) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('response_templates')
+        .insert({ label, content })
+
+    if (error) return { success: false, error: error.message }
+    return { success: true }
+}
+
+export async function deleteResponseTemplate(id: string) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('response_templates')
+        .delete()
+        .eq('id', id)
+
+    if (error) return { success: false, error: error.message }
+    return { success: true }
 }
