@@ -202,7 +202,7 @@ export default function AdminFeedbackTable() {
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         {entry.metric_score ? (
-                                            <span className={`font-bold text-sm ${entry.metric_score <= 3 ? 'text-red-400' : (entry.metric_score >= 8 ? 'text-green-400' : 'text-amber-400')}`}>
+                                            <span className={`font-bold text-sm ${entry.metric_score <= 2 ? 'text-red-400' : (entry.metric_score >= 4 ? 'text-green-400' : 'text-amber-400')}`}>
                                                 {entry.metric_score}
                                             </span>
                                         ) : (

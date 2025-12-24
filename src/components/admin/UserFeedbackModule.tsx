@@ -1,11 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { FaBug, FaLightbulb, FaHeart, FaExclamationTriangle, FaPaperPlane, FaUserTie, FaBuilding, FaSearch, FaCheck, FaTimes, FaCommentDots, FaCloud, FaChartPie, FaList, FaFire } from 'react-icons/fa'
+import { useState, useEffect } from 'react'
+import { FaBug, FaLightbulb, FaHeart, FaExclamationTriangle, FaPaperPlane, FaUserTie, FaBuilding, FaSearch, FaCheck, FaTimes, FaCommentDots, FaCloud, FaChartPie, FaList, FaFire, FaReply } from 'react-icons/fa'
+import { getFeedbackStats, submitFeedbackResponse, getRoadmapItems, type RoadmapItem } from '@/app/actions/feedback'
+
+
+
 
 type FeedbackType = 'bug' | 'idea' | 'praise' | 'complaint'
 type UserRole = 'agent' | 'supplier'
-type RoadmapStatus = 'planned' | 'in_progress' | 'completed'
 
 interface FeedbackItem {
     id: string
@@ -21,64 +24,88 @@ interface FeedbackItem {
     votes?: number
 }
 
-interface RoadmapItem {
-    id: string
-    title: string
-    description: string
-    status: RoadmapStatus
-    votes: number
-    requestCount: number
-}
-
-const mockFeedback: FeedbackItem[] = [
-    {
-        id: '1',
-        type: 'bug',
-        user: { name: 'Odyssey Travel', role: 'agent' },
-        content: 'The image upload field in the create product form freezes when I select HEIC files.',
-        date: '2h ago',
-        tags: ['Upload', 'Bug', 'Critical']
-    },
-    {
-        id: '2',
-        type: 'idea',
-        user: { name: 'Grand Hotel', role: 'supplier' },
-        content: 'It would be great to have bulk pricing updates via CSV import.',
-        date: '5h ago',
-        tags: ['Pricing', 'Feature Request', 'Efficiency'],
-        votes: 12
-    },
-    {
-        id: '3',
-        type: 'praise',
-        user: { name: 'Alice Smith', role: 'agent' },
-        content: 'Loving the new dark mode! Much easier on the eyes during night shifts.',
-        date: '1d ago',
-        tags: ['UI/UX', 'Praise'],
-    },
-    {
-        id: '4',
-        type: 'complaint',
-        user: { name: 'FastTours', role: 'supplier' },
-        content: 'Verification is taking too long. I submitted my docs 3 days ago.',
-        date: '1d ago',
-        tags: ['Verification', 'Speed'],
-    }
-]
-
-const mockRoadmap: RoadmapItem[] = [
-    { id: '1', title: 'Bulk Inventory Import', description: 'Allow suppliers to upload products via CSV/Excel.', status: 'in_progress', votes: 145, requestCount: 32 },
-    { id: '2', title: 'Multi-currency Support', description: 'Display prices in user local currency.', status: 'planned', votes: 89, requestCount: 15 },
-    { id: '3', title: 'Direct Messaging', description: ' chat between agents and suppliers.', status: 'completed', votes: 210, requestCount: 50 },
-]
-
 export default function UserFeedbackModule() {
     const [activeTab, setActiveTab] = useState<'inbox' | 'roadmap'>('inbox')
     const [selectedFeedback, setSelectedFeedback] = useState<string | null>(null)
     const [replyText, setReplyText] = useState('')
+    const [openReplyId, setOpenReplyId] = useState<string | null>(null)
+
+    // Roadmap State
+    const [roadmapItems, setRoadmapItems] = useState<RoadmapItem[]>([])
+    const [loadingRoadmap, setLoadingRoadmap] = useState(false)
+
+    // Stats State
+    const [stats, setStats] = useState({
+        happinessScore: 0,
+        reviews: [] as FeedbackItem[],
+        loading: true,
+        trend: 0
+    })
+
+    const submitResponse = async () => {
+        if (!replyText.trim() || !openReplyId) return
+
+        try {
+            const res = await submitFeedbackResponse(openReplyId, replyText)
+            if (res.success) {
+                // Success feedback (could use toast here)
+                console.log('Response submitted!')
+                setOpenReplyId(null)
+                setReplyText('')
+                // Ideally refresh responses list if we were showing them
+            } else {
+                console.error('Failed to submit response:', res.error)
+            }
+        } catch (error) {
+            console.error('Error submitting response:', error)
+        }
+    }
+
+    // Load Roadmap on tab change
+    useEffect(() => {
+        if (activeTab === 'roadmap' && roadmapItems.length === 0) {
+            const fetchRoadmap = async () => {
+                setLoadingRoadmap(true)
+                try {
+                    const items = await getRoadmapItems()
+                    setRoadmapItems(items)
+                } catch (error) {
+                    console.error("Failed to load roadmap", error)
+                } finally {
+                    setLoadingRoadmap(false)
+                }
+            }
+            fetchRoadmap()
+        }
+    }, [activeTab])
+
+    useEffect(() => {
+        const loadData = async () => {
+            // ... (existing loadData)
+            try {
+                const data = await getFeedbackStats()
+                setStats({
+                    happinessScore: data.happinessScore,
+                    reviews: data.reviews,
+                    loading: false,
+                    trend: data.trend || 0
+                })
+            } catch (err) {
+                console.error("Failed to load feedback stats", err)
+                setStats(prev => ({ ...prev, loading: false }))
+            }
+        }
+        loadData()
+    }, [])
+
+    // ... (rest of component) ...
+
+    // Replace mockRoadmap in render with roadmapItems
+
 
     // 2. Sentiment Analytics Data
-    const sentimentScore = 85 // Platform Happiness Score
+    const sentimentScore = stats.happinessScore // Platform Happiness Score
+    // Mock keywords for now until we implement real keyword extraction
     const topKeywords = [
         { text: 'Pricing', value: 40 },
         { text: 'Upload', value: 30 },
@@ -132,8 +159,9 @@ export default function UserFeedbackModule() {
                         </div>
                         <div>
                             <div className="text-xs text-white/50 mb-1">Weekly Trend</div>
-                            <div className="text-green-400 text-sm font-bold flex items-center gap-1">
-                                <FaFire /> +5% vs last week
+                            <div className={`${stats.trend >= 0 ? 'text-green-400' : 'text-red-400'} text-sm font-bold flex items-center gap-1`}>
+                                <FaFire className={stats.trend >= 0 ? 'text-green-500' : 'text-red-500'} />
+                                {stats.trend > 0 ? '+' : ''}{stats.trend}% vs last week
                             </div>
                         </div>
                     </div>
@@ -178,66 +206,87 @@ export default function UserFeedbackModule() {
                 {/* 1. Feedback Inbox (The Stream) */}
                 {activeTab === 'inbox' && (
                     <div className="h-full overflow-y-auto pr-2 space-y-4 pb-20">
-                        {mockFeedback.map((item) => (
-                            <div key={item.id} className={`bg-white/5 border border-white/5 rounded-xl p-4 transition-all hover:bg-white/10 ${getTypeColor(item.type)} border-l-4`}>
-                                <div className="flex justify-between items-start mb-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.user.role === 'agent' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                                            {item.user.role === 'agent' ? <FaUserTie /> : <FaBuilding />}
+                        {stats.loading ? (
+                            <div className="text-white/40 text-center py-10">Loading feedback...</div>
+                        ) : stats.reviews.length === 0 ? (
+                            <div className="text-white/40 text-center py-10">No feedback yet.</div>
+                        ) : (
+                            stats.reviews.map((item) => (
+                                <div key={item.id} className={`bg-white/5 border border-white/5 rounded-xl p-4 transition-all hover:bg-white/10 ${getTypeColor(item.type)} border-l-4`}>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.user.role === 'agent' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                                {item.user.role === 'agent' ? <FaUserTie /> : <FaBuilding />}
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-white text-sm">{item.user.name}</div>
+                                                <div className="text-[10px] text-white/40 uppercase tracking-widest">{item.user.role}</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div className="font-bold text-white text-sm">{item.user.name}</div>
-                                            <div className="text-[10px] text-white/40 uppercase tracking-widest">{item.user.role}</div>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <div className="text-xs text-white/30">{item.date}</div>
+                                            <button
+                                                onClick={() => setOpenReplyId(openReplyId === item.id ? null : item.id)}
+                                                className="flex items-center gap-1 text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider bg-white/5 px-2 py-1 rounded border border-white/10"
+                                            >
+                                                <FaReply /> Reply
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className="text-xs text-white/30">{item.date}</div>
+
+                                    <div className="pl-11">
+                                        <p className="text-white/90 text-sm mb-3">
+                                            <span className="mr-2 inline-block transform translate-y-0.5">{getTypeIcon(item.type)}</span>
+                                            {item.content}
+                                        </p>
+
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            {item.tags.map((tag, i) => (
+                                                <span key={i} className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] text-white/60 border border-white/10">
+                                                    #{tag}
+                                                </span>
+                                            ))}
+                                        </div>
+
+
+
+                                        {/* 4. Quick Response Console (Collapsible) */}
+                                        {openReplyId === item.id && (
+                                            <div className="bg-black/30 rounded-lg p-3 border border-white/5 backdrop-blur-sm mt-3 animate-fade-in">
+                                                <div className="text-[10px] text-white/40 uppercase font-bold mb-2 flex items-center gap-2">
+                                                    <FaPaperPlane className="text-cyan-400" /> Quick Response
+                                                </div>
+                                                <div className="flex flex-wrap gap-2 mb-3">
+                                                    <button onClick={() => handleQuickResponse("Thank you, Pioneer! We've added this to our build list.")} className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors">
+                                                        Template: Added to List
+                                                    </button>
+                                                    <button onClick={() => handleQuickResponse("Sorry for the friction—here is the fix.")} className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors">
+                                                        Template: Friction Fix
+                                                    </button>
+                                                    <button onClick={() => handleQuickResponse("Thanks for the love! We appreciate it.")} className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors">
+                                                        Template: Praise
+                                                    </button>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Type your response..."
+                                                        className="flex-1 bg-transparent border-b border-white/10 text-sm text-white focus:outline-none focus:border-cyan-500 px-2 py-1"
+                                                        defaultValue={replyText}
+                                                        onChange={(e) => setReplyText(e.target.value)}
+                                                    />
+                                                    <button
+                                                        onClick={submitResponse}
+                                                        className="bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1 rounded text-xs font-bold transition-all"
+                                                    >
+                                                        Send
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-
-                                <div className="pl-11">
-                                    <p className="text-white/90 text-sm mb-3">
-                                        <span className="mr-2 inline-block transform translate-y-0.5">{getTypeIcon(item.type)}</span>
-                                        {item.content}
-                                    </p>
-
-                                    <div className="flex flex-wrap gap-2 mb-4">
-                                        {item.tags.map((tag, i) => (
-                                            <span key={i} className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] text-white/60 border border-white/10">
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    {/* 4. Quick Response Console */}
-                                    <div className="bg-black/30 rounded-lg p-3 border border-white/5 backdrop-blur-sm">
-                                        <div className="text-[10px] text-white/40 uppercase font-bold mb-2 flex items-center gap-2">
-                                            <FaPaperPlane className="text-cyan-400" /> Quick Response
-                                        </div>
-                                        <div className="flex flex-wrap gap-2 mb-3">
-                                            <button onClick={() => handleQuickResponse("Thank you, Pioneer! We've added this to our build list.")} className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors">
-                                                Template: Added to List
-                                            </button>
-                                            <button onClick={() => handleQuickResponse("Sorry for the friction—here is the fix.")} className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors">
-                                                Template: Friction Fix
-                                            </button>
-                                            <button onClick={() => handleQuickResponse("Thanks for the love! We appreciate it.")} className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors">
-                                                Template: Praise
-                                            </button>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <input
-                                                type="text"
-                                                placeholder="Type your response..."
-                                                className="flex-1 bg-transparent border-b border-white/10 text-sm text-white focus:outline-none focus:border-cyan-500 px-2 py-1"
-                                                defaultValue={replyText}
-                                            />
-                                            <button className="bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1 rounded text-xs font-bold transition-all">
-                                                Send
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                            )))}
                     </div>
                 )}
 
@@ -255,7 +304,7 @@ export default function UserFeedbackModule() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {mockRoadmap.sort((a, b) => b.votes - a.votes).map((feature) => (
+                                    {roadmapItems.sort((a, b) => b.votes - a.votes).map((feature) => (
                                         <tr key={feature.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                             <td className="py-4 px-4">
                                                 <div className="font-bold text-white text-sm">{feature.title}</div>
