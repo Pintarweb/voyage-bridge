@@ -4,7 +4,7 @@ import { sendPaymentConfirmationEmail } from '@/lib/emailSender'
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
     appInfo: {
-        name: 'Voyage Bridge',
+        name: 'ArkAlliance',
         version: '0.1.0'
     }
 })

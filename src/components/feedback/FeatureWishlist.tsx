@@ -104,9 +104,9 @@ export default function FeatureWishlist() {
                                     )}
                                 </div>
                                 <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded border ${item.status === 'completed' ? 'bg-green-500/10 border-green-500/30 text-green-400' :
-                                        item.status === 'in_progress' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' :
-                                            item.status === 'planned' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' :
-                                                'bg-white/5 border-white/10 text-white/30'
+                                    item.status === 'in_progress' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' :
+                                        item.status === 'planned' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' :
+                                            'bg-white/5 border-white/10 text-white/30'
                                     }`}>
                                     {item.status.replace('_', ' ')}
                                 </span>

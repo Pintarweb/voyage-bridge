@@ -12,7 +12,7 @@ export default function CommunityPage() {
                     <FaArrowLeft className="mr-2" /> Back to Search
                 </Link>
                 <h1 className="text-3xl font-bold text-white mb-2">Community & Roadmap</h1>
-                <p className="text-white/60">Vote on features and help shape the future of Voyage Bridge.</p>
+                <p className="text-white/60">Vote on features and help shape the future of ArkAlliance.</p>
             </div>
 
             <FeatureWishlist />

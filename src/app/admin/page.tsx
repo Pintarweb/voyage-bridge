@@ -43,11 +43,12 @@ export default async function AdminDashboardPage() {
     // Actually, simple way: fetch all feedback IDs, fetch all response feedback_ids, diff them.
     // Or better: Use remote rpc/view if complex. 
     // For now, let's just fetch all feedback and filter in JS (assuming reasonable scale < 1000 items for now).
-    const { data: allFeedback } = await supabase.from('feedback_entries').select('entry_id')
+    const { data: allFeedback } = await supabase.from('feedback_entries').select('entry_id, metric_score')
     const { data: allResponses } = await supabase.from('feedback_responses').select('feedback_id')
 
     const respondedIds = new Set(allResponses?.map(r => r.feedback_id));
     const unreadCount = allFeedback?.filter(f => !respondedIds.has(f.entry_id)).length || 0;
+    const priorityCount = allFeedback?.filter(f => f.metric_score !== null && f.metric_score <= 2).length || 0;
 
     return (
         <AdminCommandCenter
@@ -57,6 +58,7 @@ export default async function AdminDashboardPage() {
             allSuppliers={allSuppliers || []}
             initialActiveProductsCount={activeProductsCount || 0}
             unreadCount={unreadCount || 0}
+            priorityCount={priorityCount || 0}
         />
     )
 }

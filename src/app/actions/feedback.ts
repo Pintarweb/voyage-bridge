@@ -62,8 +62,8 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
 
     if (userIds.length > 0) {
         const [agentsRes, suppliersRes] = await Promise.all([
-            supabase.from('agent_profiles').select('id, agency_name').in('id', userIds),
-            supabase.from('suppliers').select('id, company_name').in('id', userIds)
+            supabase.from('agent_profiles').select('id, agency_name, email').in('id', userIds),
+            supabase.from('suppliers').select('id, company_name, contact_email').in('id', userIds)
         ])
 
         if (agentsRes.data) {
@@ -112,14 +112,19 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
     const formattedReviews = entries.map(entry => {
         let name = 'Anonymous'
         let role = 'guest'
+        let email = ''
 
         if (entry.user_id) {
             if (agentMap.has(entry.user_id)) {
-                name = agentMap.get(entry.user_id).agency_name || 'Agent'
+                const agent = agentMap.get(entry.user_id)
+                name = agent.agency_name || 'Agent'
                 role = 'agent'
+                email = agent.email || ''
             } else if (supplierMap.has(entry.user_id)) {
-                name = supplierMap.get(entry.user_id).company_name || 'Supplier'
+                const supplier = supplierMap.get(entry.user_id)
+                name = supplier.company_name || 'Supplier'
                 role = 'supplier'
+                email = supplier.contact_email || ''
             }
         }
 
@@ -138,12 +143,15 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
         return {
             id: entry.entry_id || entry.id, // Prefer entry_id (PK)
             type,
-            user: { name, role },
+            user: { name, role, email },
             content: entry.comment || 'No comment provided',
             date: entry.created_at ? new Date(entry.created_at).toLocaleDateString() : 'Unknown date',
             tags: [entry.source || 'General'],
             votes: 0, // Default votes
-            response: responseMap.get(entry.entry_id || entry.id) || null // Attach response if exists
+            response: responseMap.get(entry.entry_id || entry.id) || null, // Attach response if exists
+            score: entry.metric_score, // Raw score
+            source: entry.source, // Raw source
+            created_at: entry.created_at // Raw timestamp
         }
     })
 
@@ -154,6 +162,23 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
         reviews: formattedReviews
     }
 
+}
+
+import { sendFeedbackFollowupEmail } from '@/lib/emailSender'
+
+export async function sendAdminFeedbackEmail(
+    email: string,
+    name: string,
+    content: string,
+    score: number | null
+) {
+    try {
+        const result = await sendFeedbackFollowupEmail(email, name, content, score)
+        return result
+    } catch (error: any) {
+        console.error('Failed to send admin feedback email:', error)
+        return { success: false, error: 'Internal Server Error' }
+    }
 }
 
 export async function submitFeedbackResponse(feedbackId: string, response: string) {

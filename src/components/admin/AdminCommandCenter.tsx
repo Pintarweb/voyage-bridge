@@ -22,9 +22,10 @@ interface AdminCommandCenterProps {
     allSuppliers: any[]
     initialActiveProductsCount: number
     unreadCount: number
+    priorityCount: number
 }
 
-export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, allAgents, allSuppliers, initialActiveProductsCount, unreadCount }: AdminCommandCenterProps) {
+export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, allAgents, allSuppliers, initialActiveProductsCount, unreadCount, priorityCount }: AdminCommandCenterProps) {
     const [activeTab, setActiveTab] = useState<Tab>('overview')
     const [isLoading, setIsLoading] = useState(false)
     const [growthTimeFrame, setGrowthTimeFrame] = useState<'day' | 'week' | 'month'>('week')
@@ -324,7 +325,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                     { id: 'verifications', label: 'Verifications', icon: FaCheck, count: pendingAgents.length + pendingSuppliers.length },
                     { id: 'users', label: 'User Management', icon: FaNetworkWired, count: null },
                     { id: 'user_voice', label: 'User Voice', icon: FaBullhorn, count: unreadCount },
-                    { id: 'feedback_data', label: 'Data View', icon: FaEllipsisV, count: null },
+                    { id: 'feedback_data', label: 'Data View', icon: FaEllipsisV, count: priorityCount, countColor: 'bg-red-500 text-white' },
                     { id: 'system', label: 'System Control', icon: FaPowerOff, count: null },
                 ].map((tab) => (
                     <button
@@ -341,7 +342,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                         <tab.icon className={activeTab === tab.id ? 'text-cyan-400' : ''} />
                         {tab.label}
                         {tab.count !== null && tab.count > 0 && (
-                            <span className="ml-2 bg-amber-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded-full">
+                            <span className={`ml-2 text-[10px] font-black px-1.5 py-0.5 rounded-full ${(tab as any).countColor || 'bg-amber-500 text-black'}`}>
                                 {tab.count}
                             </span>
                         )}
