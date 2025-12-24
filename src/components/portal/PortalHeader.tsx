@@ -27,6 +27,15 @@ export default function PortalHeader({ userEmail }: PortalHeaderProps) {
                     </span>
                 </div>
 
+                <button
+                    onClick={() => router.push('/portal/community')}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-amber-500 font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1 leading-none"
+                    title="Community Roadmap"
+                >
+                    <span className="text-[10px]">Vote</span>
+                    <span>Ideas</span>
+                </button>
+
                 <div className="h-8 w-px bg-gray-200 mx-1"></div>
 
                 <button

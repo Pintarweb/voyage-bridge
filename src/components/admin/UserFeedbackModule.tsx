@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 import { FaBug, FaLightbulb, FaHeart, FaExclamationTriangle, FaPaperPlane, FaUserTie, FaBuilding, FaSearch, FaCheck, FaTimes, FaCommentDots, FaCloud, FaChartPie, FaList, FaFire, FaReply, FaCog, FaTrash, FaPlus, FaChevronDown } from 'react-icons/fa'
-import { getFeedbackStats, submitFeedbackResponse, getRoadmapItems, getResponseTemplates, addResponseTemplate, deleteResponseTemplate, type RoadmapItem, type ResponseTemplate } from '@/app/actions/feedback'
+import { getFeedbackStats, submitFeedbackResponse, getRoadmapItems, getResponseTemplates, addResponseTemplate, deleteResponseTemplate, updateRoadmapItem, type RoadmapItem, type ResponseTemplate } from '@/app/actions/feedback'
 
 
 
@@ -33,7 +33,10 @@ export default function UserFeedbackModule() {
     const [replyText, setReplyText] = useState('')
     const [openReplyId, setOpenReplyId] = useState<string | null>(null)
     const [inboxFilter, setInboxFilter] = useState<'pending' | 'replied'>('pending')
+    const [currentPage, setCurrentPage] = useState(1)
+    const ITEMS_PER_PAGE = 10
     const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
+    const [editingItem, setEditingItem] = useState<RoadmapItem | null>(null)
 
     // Roadmap State
     const [roadmapItems, setRoadmapItems] = useState<RoadmapItem[]>([])
@@ -141,6 +144,24 @@ export default function UserFeedbackModule() {
         }
     }
 
+    const handleSaveEdit = async () => {
+        if (!editingItem) return
+
+        // Optimistic update
+        setRoadmapItems(items => items.map(i => i.id === editingItem.id ? editingItem : i))
+        const res = await updateRoadmapItem(editingItem.id, {
+            title: editingItem.title,
+            description: editingItem.description,
+            status: editingItem.status // Include status just in case
+        })
+
+        if (!res.success) {
+            console.error('Failed to update item:', res.error)
+            // Revert? For now assume success.
+        }
+        setEditingItem(null)
+    }
+
     // ... (rest of component) ...
 
     // Replace mockRoadmap in render with roadmapItems
@@ -148,14 +169,28 @@ export default function UserFeedbackModule() {
 
     // 2. Sentiment Analytics Data
     const sentimentScore = stats.happinessScore // Platform Happiness Score
-    // Mock keywords for now until we implement real keyword extraction
-    const topKeywords = [
-        { text: 'Pricing', value: 40 },
-        { text: 'Upload', value: 30 },
-        { text: 'Global Agents', value: 25 },
-        { text: 'Verification', value: 20 },
-        { text: 'Dark Mode', value: 15 },
-    ]
+
+    // Dynamic Keyword Extraction
+    const topKeywords = useMemo(() => {
+        if (!stats.reviews.length) return []
+
+        const stopWords = new Set(['the', 'and', 'a', 'to', 'of', 'in', 'is', 'it', 'for', 'on', 'with', 'this', 'that', 'but', 'are', 'be', 'as', 'at', 'or', 'not', 'an', 'have', 'from', 'by', 'my', 'i', 'we', 'our', 'you', 'your', 'so', 'can', 'was'])
+        const wordCounts: Record<string, number> = {}
+
+        stats.reviews.forEach(review => {
+            const words = review.content.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/)
+            words.forEach(word => {
+                if (word.length > 3 && !stopWords.has(word)) { // Filter short words and stop words
+                    wordCounts[word] = (wordCounts[word] || 0) + 1
+                }
+            })
+        })
+
+        return Object.entries(wordCounts)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 8)
+            .map(([text, value]) => ({ text, value: Math.min(value * 10, 50) })) // Scale value for font size calc
+    }, [stats.reviews])
 
     const getTypeColor = (type: FeedbackType) => {
         switch (type) {
@@ -330,7 +365,7 @@ export default function UserFeedbackModule() {
                             </button>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {stats.loading ? (
                                 <div className="text-white/40 text-center py-10">Loading feedback...</div>
                             ) : stats.reviews.filter(r => inboxFilter === 'pending' ? !r.response : r.response).length === 0 ? (
@@ -339,104 +374,130 @@ export default function UserFeedbackModule() {
                                     <div>No {inboxFilter} feedback.</div>
                                 </div>
                             ) : (
-                                stats.reviews.filter(r => inboxFilter === 'pending' ? !r.response : r.response).map((item) => (
-                                    <div key={item.id} className={`bg-white/5 border border-white/5 rounded-xl p-4 transition-all hover:bg-white/10 ${getTypeColor(item.type)} border-l-4`}>
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.user.role === 'agent' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                                                    {item.user.role === 'agent' ? <FaUserTie /> : <FaBuilding />}
-                                                </div>
-                                                <div>
-                                                    <div className="font-bold text-white text-sm">{item.user.name}</div>
-                                                    <div className="text-[10px] text-white/40 uppercase tracking-widest">{item.user.role}</div>
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-col items-end gap-2">
-                                                <div className="text-xs text-white/30">{item.date}</div>
-                                                {!item.response && (
-                                                    <button
-                                                        onClick={() => setOpenReplyId(openReplyId === item.id ? null : item.id)}
-                                                        className="flex items-center gap-1 text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider bg-white/5 px-2 py-1 rounded border border-white/10"
-                                                    >
-                                                        <FaReply /> Reply
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="pl-11">
-                                            <p className="text-white/90 text-sm mb-3">
-                                                <span className="mr-2 inline-block transform translate-y-0.5">{getTypeIcon(item.type)}</span>
-                                                {item.content}
-                                            </p>
-
-                                            <div className="flex flex-wrap gap-2 mb-4">
-                                                {item.tags.map((tag, i) => (
-                                                    <span key={i} className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] text-white/60 border border-white/10">
-                                                        #{tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-
-
-
-                                            {/* Display Existing Response */}
-                                            {item.response && (
-                                                <div className="mt-4 ml-6 p-3 bg-white/5 border-l-2 border-green-500 rounded-r-lg">
-                                                    <div className="text-[10px] text-green-400 font-bold uppercase mb-1 flex items-center gap-1">
-                                                        <FaReply /> You Replied
-                                                    </div>
-                                                    <p className="text-white/80 text-xs italic">"{item.response}"</p>
-                                                </div>
-                                            )}
-
-                                            {/* Quick Response Console (Collapsible) - Only if not replied */}
-                                            {openReplyId === item.id && !item.response && (
-                                                <div className="bg-black/30 rounded-lg p-3 border border-white/5 backdrop-blur-sm mt-3 animate-fade-in">
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <div className="text-[10px] text-white/40 uppercase font-bold flex items-center gap-2">
-                                                            <FaPaperPlane className="text-cyan-400" /> Quick Response
+                                <>
+                                    {stats.reviews
+                                        .filter(r => inboxFilter === 'pending' ? !r.response : r.response)
+                                        .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+                                        .map((item) => (
+                                            <div key={item.id} className={`bg-white/5 border border-white/5 rounded-xl p-3 transition-all hover:bg-white/10 ${getTypeColor(item.type)} border-l-4`}>
+                                                <div className="flex justify-between items-start mb-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${item.user.role === 'agent' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                                            {item.user.role === 'agent' ? <FaUserTie className="text-xs" /> : <FaBuilding className="text-xs" />}
                                                         </div>
-                                                        <button
-                                                            onClick={() => setShowTemplateModal(true)}
-                                                            className="text-[10px] text-white/30 hover:text-white flex items-center gap-1 transition-colors"
-                                                        >
-                                                            <FaCog /> Manage
-                                                        </button>
+                                                        <div>
+                                                            <div className="font-bold text-white text-xs">{item.user.name}</div>
+                                                            <div className={`text-[9px] uppercase tracking-widest leading-none ${item.user.role === 'agent' ? 'text-blue-400' : 'text-amber-400'}`}>{item.user.role}</div>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex flex-wrap gap-2 mb-3">
-                                                        {templates.map(t => (
+                                                    <div className="flex flex-col items-end gap-1">
+                                                        <div className="text-[10px] text-white/30">{item.date}</div>
+                                                        {!item.response && (
                                                             <button
-                                                                key={t.id}
-                                                                onClick={() => handleQuickResponse(t.content)}
-                                                                className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors border border-transparent hover:border-cyan-500/30"
-                                                                title={t.content}
+                                                                onClick={() => setOpenReplyId(openReplyId === item.id ? null : item.id)}
+                                                                className="flex items-center gap-1 text-[9px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded border border-white/10"
                                                             >
-                                                                {t.label}
+                                                                <FaReply /> Reply
                                                             </button>
-                                                        ))}
-                                                        {templates.length === 0 && <span className="text-[10px] text-white/20 italic">No templates found</span>}
-                                                    </div>
-                                                    <div className="flex gap-2">
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Type your response..."
-                                                            className="flex-1 bg-transparent border-b border-white/10 text-sm text-white focus:outline-none focus:border-cyan-500 px-2 py-1"
-                                                            defaultValue={replyText}
-                                                            onChange={(e) => setReplyText(e.target.value)}
-                                                        />
-                                                        <button
-                                                            onClick={submitResponse}
-                                                            className="bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1 rounded text-xs font-bold transition-all"
-                                                        >
-                                                            Send
-                                                        </button>
+                                                        )}
                                                     </div>
                                                 </div>
-                                            )}
+
+                                                <div className="pl-9 -mt-1">
+                                                    <p className="text-white/90 text-sm mb-2 leading-snug">
+                                                        <span className="mr-2 inline-block transform translate-y-0.5">{getTypeIcon(item.type)}</span>
+                                                        {item.content}
+                                                    </p>
+
+                                                    <div className="flex flex-wrap gap-2 mb-2">
+                                                        {item.tags.map((tag, i) => (
+                                                            <span key={i} className="px-2 py-0.5 rounded-full bg-white/5 text-[9px] text-white/60 border border-white/10">
+                                                                #{tag}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Display Existing Response */}
+                                                    {item.response && (
+                                                        <div className="mt-2 p-2 bg-white/5 border-l-2 border-green-500 rounded-r-lg">
+                                                            <div className="text-[9px] text-green-400 font-bold uppercase mb-1 flex items-center gap-1">
+                                                                <FaReply /> You Replied
+                                                            </div>
+                                                            <p className="text-white/80 text-xs italic">"{item.response}"</p>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Quick Response Console (Collapsible) - Only if not replied */}
+                                                    {openReplyId === item.id && !item.response && (
+                                                        <div className="bg-black/30 rounded-lg p-3 border border-white/5 backdrop-blur-sm mt-2 animate-fade-in">
+                                                            <div className="flex justify-between items-center mb-2">
+                                                                <div className="text-[10px] text-white/40 uppercase font-bold flex items-center gap-2">
+                                                                    <FaPaperPlane className="text-cyan-400" /> Quick Response
+                                                                </div>
+                                                                <button
+                                                                    onClick={() => setShowTemplateModal(true)}
+                                                                    className="text-[10px] text-white/30 hover:text-white flex items-center gap-1 transition-colors"
+                                                                >
+                                                                    <FaCog /> Manage
+                                                                </button>
+                                                            </div>
+                                                            <div className="flex flex-wrap gap-2 mb-3">
+                                                                {templates.map(t => (
+                                                                    <button
+                                                                        key={t.id}
+                                                                        onClick={() => handleQuickResponse(t.content)}
+                                                                        className="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded text-cyan-300 transition-colors border border-transparent hover:border-cyan-500/30"
+                                                                        title={t.content}
+                                                                    >
+                                                                        {t.label}
+                                                                    </button>
+                                                                ))}
+                                                                {templates.length === 0 && <span className="text-[10px] text-white/20 italic">No templates found</span>}
+                                                            </div>
+                                                            <div className="flex gap-2">
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Type your response..."
+                                                                    className="flex-1 bg-transparent border-b border-white/10 text-sm text-white focus:outline-none focus:border-cyan-500 px-2 py-1"
+                                                                    defaultValue={replyText}
+                                                                    onChange={(e) => setReplyText(e.target.value)}
+                                                                />
+                                                                <button
+                                                                    onClick={submitResponse}
+                                                                    className="bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1 rounded text-xs font-bold transition-all"
+                                                                >
+                                                                    Send
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                    {/* Pagination Controls */}
+                                    {stats.reviews.filter(r => inboxFilter === 'pending' ? !r.response : r.response).length > ITEMS_PER_PAGE && (
+                                        <div className="flex justify-center gap-2 mt-4 pt-4 border-t border-white/5">
+                                            <button
+                                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                                disabled={currentPage === 1}
+                                                className="px-3 py-1 bg-white/5 rounded text-xs font-bold hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                                            >
+                                                Previous
+                                            </button>
+                                            <span className="text-xs flex items-center text-white/40">
+                                                Page {currentPage} of {Math.ceil(stats.reviews.filter(r => inboxFilter === 'pending' ? !r.response : r.response).length / ITEMS_PER_PAGE)}
+                                            </span>
+                                            <button
+                                                onClick={() => setCurrentPage(p => Math.min(Math.ceil(stats.reviews.filter(r => inboxFilter === 'pending' ? !r.response : r.response).length / ITEMS_PER_PAGE), p + 1))}
+                                                disabled={currentPage >= Math.ceil(stats.reviews.filter(r => inboxFilter === 'pending' ? !r.response : r.response).length / ITEMS_PER_PAGE)}
+                                                className="px-3 py-1 bg-white/5 rounded text-xs font-bold hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                                            >
+                                                Next
+                                            </button>
                                         </div>
-                                    </div>
-                                ))
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -499,8 +560,11 @@ export default function UserFeedbackModule() {
                                                                     onClick={(e) => {
                                                                         e.stopPropagation()
                                                                         // Optimistically update status
-                                                                        setRoadmapItems(items => items.map(i => i.id === feature.id ? { ...i, status: status as any } : i))
+                                                                        const newItem = { ...feature, status: status as any }
+                                                                        setRoadmapItems(items => items.map(i => i.id === feature.id ? newItem : i))
                                                                         setOpenDropdownId(null)
+                                                                        // Trigger server action
+                                                                        updateRoadmapItem(feature.id, { status: status as any })
                                                                     }}
                                                                     className={`px-3 py-2 text-left text-xs font-bold uppercase rounded transition-colors
                                                                         ${status === 'completed' ? 'text-green-400 hover:bg-green-500/20' :
@@ -520,7 +584,12 @@ export default function UserFeedbackModule() {
                                                 <div className="text-[9px] text-white/30 mt-1">Updates notify voters</div>
                                             </td>
                                             <td className="py-4 px-4 text-right">
-                                                <button className="text-cyan-400 hover:text-cyan-300 text-xs font-bold">Edit</button>
+                                                <button
+                                                    onClick={() => setEditingItem(feature)}
+                                                    className="text-cyan-400 hover:text-cyan-300 text-xs font-bold"
+                                                >
+                                                    Edit
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -530,6 +599,49 @@ export default function UserFeedbackModule() {
                     </div>
                 )}
             </div>
+
+            {/* Edit Item Modal */}
+            {editingItem && (
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+                    <div className="bg-[#151720] border border-white/10 rounded-xl p-6 w-full max-w-md shadow-2xl animate-fade-in relative">
+                        <h3 className="text-white font-bold text-lg mb-4">Edit Feature</h3>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs text-white/40 font-bold uppercase block mb-1">Title</label>
+                                <input
+                                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white focus:border-cyan-500 outline-none"
+                                    value={editingItem.title}
+                                    onChange={e => setEditingItem({ ...editingItem!, title: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs text-white/40 font-bold uppercase block mb-1">Description</label>
+                                <textarea
+                                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white focus:border-cyan-500 outline-none h-24 resize-none"
+                                    value={editingItem.description}
+                                    onChange={e => setEditingItem({ ...editingItem!, description: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                            <button
+                                onClick={() => setEditingItem(null)}
+                                className="px-4 py-2 text-white/60 hover:text-white text-sm font-bold transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveEdit}
+                                className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-black text-sm font-bold rounded transition-colors"
+                            >
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
