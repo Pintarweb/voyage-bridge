@@ -399,14 +399,14 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                             </div>
 
                             <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg flex flex-col">
-                                <div className="flex justify-between items-start mb-6">
+                                <div className="flex justify-between items-start mb-6 gap-4">
                                     <h3 className="text-lg font-bold text-white">Platform Growth</h3>
                                     <div className="flex gap-2">
-                                        <div className="relative">
+                                        <div className="relative group/select">
                                             <select
                                                 value={growthMetric}
                                                 onChange={(e) => setGrowthMetric(e.target.value as any)}
-                                                className="appearance-none bg-black/30 border border-white/10 rounded-lg text-xs text-white pl-3 pr-8 py-1 outline-none focus:border-cyan-500 cursor-pointer"
+                                                className="appearance-none bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-wider text-white/70 pl-3 pr-8 py-1.5 outline-none focus:border-cyan-500 focus:text-white hover:bg-white/10 hover:border-white/20 cursor-pointer min-w-[120px] transition-all [&>option]:bg-[#0a0a0a] [&>option]:text-white"
                                             >
                                                 <option value="views">Views</option>
                                                 <option value="wishlisted">Wishlisted</option>
@@ -415,14 +415,14 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                                                 <option value="agents">Agents</option>
                                                 <option value="sales">Sales</option>
                                             </select>
-                                            <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 text-[10px] pointer-events-none" />
+                                            <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-[10px] pointer-events-none group-hover/select:text-cyan-400 transition-colors" />
                                         </div>
                                         <div className="flex bg-black/30 border border-white/10 rounded-lg p-0.5">
                                             {(['day', 'week', 'month'] as const).map((tf) => (
                                                 <button
                                                     key={tf}
                                                     onClick={() => setGrowthTimeFrame(tf)}
-                                                    className={`px-3 py-1 text-xs rounded-md transition-all ${growthTimeFrame === tf ? 'bg-cyan-500 text-white font-bold' : 'text-white/40 hover:text-white'}`}
+                                                    className={`px-3 py-1 text-[10px] rounded-md transition-all ${growthTimeFrame === tf ? 'bg-cyan-500 text-white font-bold' : 'text-white/40 hover:text-white'}`}
                                                 >
                                                     {tf.charAt(0).toUpperCase() + tf.slice(1)}
                                                 </button>
@@ -432,15 +432,32 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                                 </div>
 
                                 <div className="h-48 flex items-end justify-between px-2 gap-2 mt-auto">
-                                    {currentGrowthData.map((h, i) => (
-                                        <div key={i} className="w-full bg-gradient-to-t from-cyan-500/10 to-cyan-500/30 rounded-t-lg relative group h-full">
-                                            <div style={{ height: `${h}%` }} className="w-full absolute bottom-0 bg-cyan-500/50 rounded-t-lg transition-all duration-500 group-hover:bg-cyan-400/60 shadow-[0_0_10px_rgba(6,182,212,0.3)]">
-                                                <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-2 py-1 rounded border border-white/10 transition-opacity whitespace-nowrap z-10">
-                                                    {h} {growthMetric}
+                                    {currentGrowthData.map((h, i) => {
+                                        const gradients = [
+                                            'from-pink-500 via-purple-500 to-indigo-500',
+                                            'from-purple-500 via-indigo-500 to-blue-500',
+                                            'from-indigo-500 via-blue-500 to-cyan-400',
+                                            'from-blue-500 via-cyan-500 to-teal-400',
+                                            'from-cyan-500 via-teal-500 to-emerald-400',
+                                            'from-teal-500 via-emerald-500 to-green-400',
+                                            'from-emerald-500 via-green-500 to-lime-400'
+                                        ]
+                                        const barGradient = gradients[i % gradients.length]
+
+                                        return (
+                                            <div key={i} className="w-full bg-white/5 rounded-t-xl relative group h-full">
+                                                <div
+                                                    style={{ height: `${h}%` }}
+                                                    className={`w-full absolute bottom-0 bg-gradient-to-t ${barGradient} rounded-t-xl transition-all duration-500 opacity-80 group-hover:opacity-100 shadow-[0_0_20px_rgba(255,255,255,0.1)]`}
+                                                >
+                                                    <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-lg border border-white/20 transition-all transform translate-y-2 group-hover:translate-y-0 whitespace-nowrap z-20 shadow-xl">
+                                                        {h} {growthMetric}
+                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black/90"></div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                                 <div className="flex justify-between mt-2 text-xs text-white/40 font-mono">
                                     {currentGrowthLabels.map((l, i) => (
