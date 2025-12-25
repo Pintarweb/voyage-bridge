@@ -37,6 +37,47 @@ export async function updateSession(request: NextRequest) {
 
     const path = request.nextUrl.pathname
 
+    // ---------------------------------------------------------
+    // SYSTEM MAINTENANCE CHECK
+    // ---------------------------------------------------------
+    if (path !== '/maintenance' && !path.startsWith('/_next') && !path.startsWith('/static')) {
+        try {
+            const { data: setting } = await supabase
+                .from('system_settings')
+                .select('value')
+                .eq('key', 'maintenance_mode')
+                .single()
+
+            // value is jsonb, so it comes as a primitive boolean if stored as such
+            if (setting?.value === true) {
+                // Allow auth pages so admins can log in
+                // Also allow API routes for auth
+                const isAuth = path.startsWith('/auth') || path.startsWith('/api/auth') || path === '/login'
+
+                if (!isAuth) {
+                    let isAdmin = false
+                    if (user) {
+                        // Check if user is admin
+                        const { data: profile } = await supabase
+                            .from('agent_profiles')
+                            .select('role')
+                            .eq('id', user.id)
+                            .single()
+                        if (profile?.role === 'admin') isAdmin = true
+                    }
+
+                    if (!isAdmin) {
+                        return NextResponse.redirect(new URL('/maintenance', request.url))
+                    }
+                }
+            }
+        } catch (error) {
+            // If table missing or RLS error, proceed as normal
+            console.error('Middleware Maintenance Check Error:', error)
+        }
+    }
+    // ---------------------------------------------------------
+
     // Allow access to these pages regardless of status
     const publicPaths = [
         '/',

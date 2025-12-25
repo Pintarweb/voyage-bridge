@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import SupplierVerificationModal from './SupplierVerificationModal'
 import UserManagementModal from './UserManagementModal'
 import { handleUserApproval, rejectSupplier, manageUserStatus } from '@/app/actions/admin'
@@ -12,6 +12,7 @@ import UserFeedbackModule from './UserFeedbackModule'
 import { FaCheck, FaTimes, FaEllipsisV, FaBuilding, FaUserTie, FaNetworkWired, FaLock, FaUnlock, FaPowerOff, FaSync, FaBolt, FaChevronDown, FaBullhorn } from 'react-icons/fa'
 
 import AdminFeedbackTable from './AdminFeedbackTable'
+import AdminSystemControl from './AdminSystemControl'
 
 type Tab = 'overview' | 'verifications' | 'users' | 'user_voice' | 'feedback_data' | 'system'
 
@@ -205,6 +206,30 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
 
     // Filter Logic
     const allUsers = [...allSuppliers.map(s => ({ ...s, type: 'Supplier' as const })), ...allAgents.map(a => ({ ...a, type: 'Agent' as const }))]
+
+    const searchParams = useSearchParams()
+    const searchQuery = searchParams.get('q')?.toLowerCase() || ''
+    const tabParam = searchParams.get('tab')
+
+    // Effect to switch to search tab if query exists or tab param matches
+    useEffect(() => {
+        if (searchQuery) {
+            setActiveTab('search_results' as any)
+        } else if (tabParam && ['overview', 'verifications', 'users', 'user_voice', 'feedback_data', 'system'].includes(tabParam)) {
+            setActiveTab(tabParam as any)
+        } else if (activeTab === 'search_results' as any) {
+            setActiveTab('overview')
+        }
+    }, [searchQuery, tabParam])
+
+    // Search Logic
+    const searchResults = searchQuery
+        ? allUsers.filter(u =>
+            (u.company_name || u.agency_name || '').toLowerCase().includes(searchQuery) ||
+            (u.email || u.contact_email || '').toLowerCase().includes(searchQuery) ||
+            u.id.toLowerCase().includes(searchQuery)
+        )
+        : []
 
     // Country Helper
     const getCountryInfo = (code: string) => {
@@ -668,56 +693,46 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                     <AdminFeedbackTable />
                 )}
 
+
+
+                // ... existing render logic ...
+
+                {/* Search Results Module */}
+                {(activeTab as any) === 'search_results' && (
+                    <div className="space-y-6 animate-fade-in">
+                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                            <span className="w-1 h-6 bg-cyan-500 rounded-full"></span>
+                            Search Results for "{searchQuery}"
+                        </h2>
+                        {searchResults.length === 0 ? (
+                            <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/5">
+                                <p className="text-white/40">No matching records found.</p>
+                            </div>
+                        ) : (
+                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-black/20 border-b border-white/10 text-xs uppercase tracking-wider text-white/50 font-semibold">
+                                            <th className="py-4 px-4">Entity</th>
+                                            <th className="py-4 px-4">Contact</th>
+                                            <th className="py-4 px-4">Role</th>
+                                            <th className="py-4 px-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {searchResults.map(user => (
+                                            <UserRow key={user.id} user={user} type={user.type} />
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {/* Module D: System Control */}
                 {activeTab === 'system' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-lg">
-                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                                <FaBolt className="text-amber-400" /> Early Bird Configuration
-                            </h3>
-                            <div className="space-y-6">
-                                <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                                    <div>
-                                        <div className="font-bold text-white mb-1">Founding Member Pricing</div>
-                                        <div className="text-xs text-white/50">Active: 70% Discount + 30 Day Trial</div>
-                                    </div>
-                                    <div className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" defaultChecked className="sr-only peer" />
-                                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]"></div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                                    <div>
-                                        <div className="font-bold text-white mb-1">Global Gate Enabled</div>
-                                        <div className="text-xs text-white/50">Only verified emails can register</div>
-                                    </div>
-                                    <div className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" className="sr-only peer" />
-                                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-lg">
-                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                                <FaSync className="text-cyan-400" /> System Params
-                            </h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Global Comission Rate (%)</label>
-                                    <input type="number" defaultValue={10} className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-cyan-500 focus:outline-none transition-all" />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-white/60 uppercase tracking-widest mb-2">System Maintenance Mode</label>
-                                    <select className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-red-500 focus:outline-none transition-all [&>option]:bg-gray-900">
-                                        <option value="off">Disabled (System Live)</option>
-                                        <option value="on">Enabled (Maintenance)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <AdminSystemControl />
                 )}
             </div>
 

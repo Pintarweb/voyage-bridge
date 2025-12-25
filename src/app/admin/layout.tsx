@@ -1,10 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import LogoutButton from '@/components/admin/LogoutButton'
-import NotificationBell from '@/components/admin/NotificationBell'
-import { FaGlobe, FaSearch, FaBell, FaExclamationTriangle, FaServer, FaBolt } from 'react-icons/fa'
+import AdminHeader from '@/components/admin/AdminHeader'
+import { FaExclamationTriangle, FaServer } from 'react-icons/fa'
 
 export default async function AdminLayout({
     children,
@@ -34,6 +31,26 @@ export default async function AdminLayout({
         redirect('/')
     }
 
+    // Fetch Real-time Stats for Header
+    // 1. Live Users (Approved Agents + Suppliers)
+    const { count: agentCount } = await supabase
+        .from('agent_profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_approved', true)
+
+    const { count: supplierCount } = await supabase
+        .from('suppliers')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_approved', true)
+
+    const liveUserCount = (agentCount || 0) + (supplierCount || 0)
+
+    // 2. Unread Notifications (Unresponded Feedback)
+    const { data: allFeedback } = await supabase.from('feedback_entries').select('entry_id')
+    const { data: allResponses } = await supabase.from('feedback_responses').select('feedback_id')
+    const respondedIds = new Set(allResponses?.map((r: any) => r.feedback_id))
+    const unreadCount = allFeedback?.filter((f: any) => !respondedIds.has(f.entry_id)).length || 0
+
     // Task 2: Command Center Layout
     return (
         <div className="min-h-screen bg-[#0F172A] text-white font-sans selection:bg-cyan-500/30 overflow-hidden flex flex-col">
@@ -44,61 +61,11 @@ export default async function AdminLayout({
             </div>
 
             {/* 2. Global Command Header */}
-            <header className="relative z-50 w-full h-16 bg-white/5 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6 shadow-lg">
-                <div className="flex items-center gap-8">
-                    {/* Logo Area */}
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-                            <span className="font-bold text-white text-lg">A</span>
-                        </div>
-                        <h1 className="text-lg font-bold tracking-wider text-white">
-                            ARK<span className="text-cyan-400">COMMAND</span>
-                        </h1>
-                    </div>
-
-                    {/* System Pulse */}
-                    <div className="flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></div>
-                        <span className="text-[10px] uppercase font-bold text-green-400 tracking-wider">System Operational</span>
-                    </div>
-
-                    {/* Real-time Traffic */}
-                    <div className="flex items-center gap-2 text-xs font-mono text-blue-200">
-                        <FaGlobe className="text-blue-400" />
-                        <span>Live Users: <span className="text-white font-bold">142</span></span>
-                    </div>
-                </div>
-
-                {/* Omni-search */}
-                <div className="flex-1 max-w-xl px-8">
-                    <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <FaSearch className="text-white/30 group-focus-within:text-cyan-400 transition-colors" />
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Omni-search: Supplier ID, Agent Name, Transaction Hash..."
-                            className="w-full bg-black/20 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cyan-500/50 focus:bg-black/40 focus:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all"
-                        />
-                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <span className="text-[10px] text-white/20 border border-white/10 px-1.5 py-0.5 rounded">CMD+K</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Actions */}
-                <div className="flex items-center gap-4">
-                    <NotificationBell />
-                    <div className="h-8 w-[1px] bg-white/10 mx-2"></div>
-                    <div className="flex items-center gap-3">
-                        <div className="text-right hidden sm:block">
-                            <div className="text-xs font-bold text-white leading-tight">Admin User</div>
-                            <div className="text-[10px] text-cyan-400 font-mono tracking-wide">SUPER_ADMIN_01</div>
-                        </div>
-                        <LogoutButton />
-                    </div>
-                </div>
-            </header>
+            <AdminHeader
+                liveUserCount={liveUserCount}
+                unreadCount={unreadCount}
+                adminId="SUPER_ADMIN_01"
+            />
 
             <div className="flex flex-1 overflow-hidden relative z-10">
                 {/* Main Tabbed Central Workspace (Children) */}

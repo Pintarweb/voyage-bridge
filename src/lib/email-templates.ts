@@ -134,3 +134,59 @@ export const getSubscriptionUpdateEmailHtml = (
         </p>
     </div>
 `
+
+export const getSystemReportEmail = (data: { period: string, avgLoad: number, peakUsers: number, totalRequests: number }) => {
+    const periodLabel = data.period.charAt(0).toUpperCase() + data.period.slice(1)
+
+    return `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px; border-radius: 12px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); padding: 15px; border-radius: 12px; display: inline-block;">
+                <h2 style="color: white; margin: 0; font-size: 20px;">ArkCommand Report</h2>
+            </div>
+            <p style="color: #64748b; margin-top: 10px;">System Performance Overview - <strong>${periodLabel}</strong></p>
+        </div>
+
+        <div style="background-color: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Executive Summary</h3>
+            
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+                <tr>
+                    <td style="color: #64748b;">Average System Load</td>
+                    <td style="text-align: right; font-weight: bold; color: ${data.avgLoad > 70 ? '#ef4444' : '#22d3ee'};">
+                        ${data.avgLoad}%
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b;">Peak Concurrent Users</td>
+                    <td style="text-align: right; font-weight: bold; color: #1e293b;">
+                        ${data.peakUsers}
+                    </td>
+                </tr>
+                 <tr>
+                    <td style="color: #64748b;">Total Request Volume</td>
+                    <td style="text-align: right; font-weight: bold; color: #1e293b;">
+                        ${data.totalRequests.toLocaleString()}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b;">System Health Status</td>
+                    <td style="text-align: right; font-weight: bold; color: #22c55e;">
+                        OPTIMAL
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="text-align: center;">
+             <a href="${process.env.NEXT_PUBLIC_SITE_URL}/admin/dashboard?tab=system&view=history" 
+               style="display: inline-block; background-color: #0f172a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;">
+                View Full Analytics
+            </a>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 20px;">
+                Generated automatically by ArkCommand System.
+            </p>
+        </div>
+    </div>
+    `
+}

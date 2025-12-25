@@ -187,3 +187,22 @@ export async function sendSubscriptionUpdateEmail(
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Generic email sender function.
+ */
+export async function sendEmail(options: nodemailer.SendMailOptions) {
+    const finalOptions = {
+        from: options.from || 'no-reply@arkalliance.com',
+        ...options
+    }
+
+    try {
+        const info = await transporter.sendMail(finalOptions)
+        console.log(`Email sent. ID: ${info.messageId}`)
+        return { success: true, messageId: info.messageId }
+    } catch (error: any) {
+        console.error('Error sending email:', error)
+        throw error
+    }
+}

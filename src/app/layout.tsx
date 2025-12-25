@@ -22,6 +22,10 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import Footer from "@/components/layout/Footer";
 
+import UserPresenceTracker from "@/components/layout/UserPresenceTracker";
+
+import { Toaster } from 'react-hot-toast'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,6 +39,8 @@ export default function RootLayout({
       >
         <LanguageProvider>
           <CurrencyProvider>
+            <UserPresenceTracker />
+            <Toaster position="top-right" />
             <GlobalHeader />
             <main className="flex-grow">
               {children}
