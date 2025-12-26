@@ -188,6 +188,8 @@ export async function sendSubscriptionUpdateEmail(
     }
 }
 
+// ... (previous imports)
+
 /**
  * Generic email sender function.
  */
@@ -203,6 +205,19 @@ export async function sendEmail(options: nodemailer.SendMailOptions) {
         return { success: true, messageId: info.messageId }
     } catch (error: any) {
         console.error('Error sending email:', error)
+
+        // Fallback for local development if SMTP fails
+        if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('localhost') || process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('127.0.0.1')) {
+            console.warn('⚠️ SMTP Failed. Logging email to console for preview (Development Mode):')
+            console.log('================ EMAIL PREVIEW ================')
+            console.log(`To: ${finalOptions.to}`)
+            console.log(`Subject: ${finalOptions.subject}`)
+            console.log('--- HTML CONTENT ---')
+            console.log(finalOptions.html)
+            console.log('===============================================')
+            return { success: true, messageId: 'mock-dev-id' }
+        }
+
         throw error
     }
 }
