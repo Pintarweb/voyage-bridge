@@ -23,7 +23,7 @@ export default function Footer() {
             resources: 'Resources',
             docs: 'Documentation',
             help: 'Help Center',
-            rights: '2025. All Rights Reserved. Ark Alliance is made with ♥ in Malaysia.',
+            rights: '2026. All Rights Reserved. Ark Alliance is made with ♥ in Malaysia.',
             cookies: 'Cookies policy',
             privacy: 'Privacy policy',
             legal: 'Legal Notice'
@@ -41,7 +41,7 @@ export default function Footer() {
             resources: '资源',
             docs: '文档',
             help: '帮助中心',
-            rights: '2025. 保留所有权利。Ark Alliance 用 ♥ 在马来西亚制作。',
+            rights: '2026. 保留所有权利。Ark Alliance 用 ♥ 在马来西亚制作。',
             cookies: 'Cookie 政策',
             privacy: '隐私政策',
             legal: '法律声明'
@@ -59,7 +59,7 @@ export default function Footer() {
             resources: 'Sumber',
             docs: 'Dokumentasi',
             help: 'Pusat Bantuan',
-            rights: '2025. Hak Cipta Terpelihara. Ark Alliance dibuat dengan ♥ di Malaysia.',
+            rights: '2026. Hak Cipta Terpelihara. Ark Alliance dibuat dengan ♥ di Malaysia.',
             cookies: 'Dasar Kuki',
             privacy: 'Dasar Privasi',
             legal: 'Notis Undang-undang'
@@ -77,7 +77,7 @@ export default function Footer() {
             resources: 'Recursos',
             docs: 'Documentación',
             help: 'Centro de Ayuda',
-            rights: '2025. Todos los derechos reservados. Ark Alliance hecho con ♥ en Malasia.',
+            rights: '2026. Todos los derechos reservados. Ark Alliance hecho con ♥ en Malasia.',
             cookies: 'Política de cookies',
             privacy: 'Política de privacidad',
             legal: 'Aviso legal'
@@ -95,7 +95,7 @@ export default function Footer() {
             resources: 'Ressources',
             docs: 'Documentation',
             help: 'Centre d\'aide',
-            rights: '2025. Tous droits réservés. Ark Alliance fait avec ♥ en Malaisie.',
+            rights: '2026. Tous droits réservés. Ark Alliance fait avec ♥ en Malaisie.',
             cookies: 'Politique de cookies',
             privacy: 'Politique de confidentialité',
             legal: 'Mentions légales'
@@ -113,7 +113,7 @@ export default function Footer() {
             resources: 'Ressourcen',
             docs: 'Dokumentation',
             help: 'Hilfezentrum',
-            rights: '2025. Alle Rechte vorbehalten. Ark Alliance mit ♥ in Malaysia gemacht.',
+            rights: '2026. Alle Rechte vorbehalten. Ark Alliance mit ♥ in Malaysia gemacht.',
             cookies: 'Cookie-Richtlinie',
             privacy: 'Datenschutzrichtlinie',
             legal: 'Rechtlicher Hinweis'
@@ -131,7 +131,7 @@ export default function Footer() {
             resources: 'リソース',
             docs: 'ドキュメント',
             help: 'ヘルプセンター',
-            rights: '2025. 全著作権所有。Ark Allianceはマレーシアで♥を込めて作られました。',
+            rights: '2026. 全著作権所有。Ark Allianceはマレーシアで♥を込めて作られました。',
             cookies: 'クッキーポリシー',
             privacy: 'プライバシーポリシー',
             legal: '法的通知'
@@ -149,7 +149,7 @@ export default function Footer() {
             resources: '자원',
             docs: '문서',
             help: '도움말 센터',
-            rights: '2025. 모든 권리 보유. Ark Alliance는 말레이시아에서 ♥로 만들어졌습니다.',
+            rights: '2026. 모든 권리 보유. Ark Alliance는 말레이시아에서 ♥로 만들어졌습니다.',
             cookies: '쿠키 정책',
             privacy: '개인정보 처리방침',
             legal: '법적 고지'
@@ -167,7 +167,7 @@ export default function Footer() {
             resources: 'الموارد',
             docs: 'وثائق',
             help: 'مركز المساعدة',
-            rights: '2025. جميع الحقوق محفوظة. صنع Ark Alliance بـ ♥ في ماليزيا.',
+            rights: '2026. جميع الحقوق محفوظة. صنع Ark Alliance بـ ♥ في ماليزيا.',
             cookies: 'سياسة ملفات تعريف الارتباط',
             privacy: 'سياسة الخصوصية',
             legal: 'إشعار قانوني'
@@ -185,7 +185,7 @@ export default function Footer() {
             resources: 'ทรัพยากร',
             docs: 'เอกสารประกอบ',
             help: 'ศูนย์ช่วยเหลือ',
-            rights: '2025. สงวนลิขสิทธิ์. Ark Alliance สร้างด้วย ♥ ในมาเลเซีย',
+            rights: '2026. สงวนลิขสิทธิ์. Ark Alliance สร้างด้วย ♥ ในมาเลเซีย',
             cookies: 'นโยบายคุกกี้',
             privacy: 'นโยบายความเป็นส่วนตัว',
             legal: 'ประกาศทางกฎหมาย'
@@ -203,7 +203,7 @@ export default function Footer() {
             resources: 'Tài nguyên',
             docs: 'Tài liệu',
             help: 'Trung tâm trợ giúp',
-            rights: '2025. Đã đăng ký bản quyền. Ark Alliance được làm bằng ♥ tại Malaysia.',
+            rights: '2026. Đã đăng ký bản quyền. Ark Alliance được làm bằng ♥ tại Malaysia.',
             cookies: 'Chính sách cookie',
             privacy: 'Chính sách bảo mật',
             legal: 'Thông báo pháp lý'
@@ -221,7 +221,7 @@ export default function Footer() {
             resources: 'Sumber Daya',
             docs: 'Dokumentasi',
             help: 'Pusat Bantuan',
-            rights: '2025. Hak Cipta Dilindungi. Ark Alliance dibuat dengan ♥ di Malaysia.',
+            rights: '2026. Hak Cipta Dilindungi. Ark Alliance dibuat dengan ♥ di Malaysia.',
             cookies: 'Kebijakan Cookie',
             privacy: 'Kebijakan Privasi',
             legal: 'Pemberitahuan Hukum'
@@ -254,7 +254,7 @@ export default function Footer() {
                         </p>
 
                         <div className="text-xs text-slate-300">
-                            © 2025 Ark Alliance
+                            © 2026 Ark Alliance
                         </div>
                     </div>
 

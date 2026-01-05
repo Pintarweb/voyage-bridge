@@ -1,159 +1,185 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
-import { FaGlobe, FaChartLine, FaUsers, FaCheckCircle, FaArrowRight, FaBuilding, FaPlane } from 'react-icons/fa'
+import { FaGlobe, FaChartLine, FaUsers, FaArrowRight, FaBuilding, FaShieldAlt, FaHandshake, FaCoins, FaStar } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 export default function Home() {
-  const [stats, setStats] = useState<any>(null)
-  const supabase = createClient()
-  const { language } = useLanguage()
+    const [stats, setStats] = useState<any>(null)
+    const supabase = createClient()
+    const { language } = useLanguage()
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      const { data } = await supabase.rpc('get_landing_stats')
-      setStats(data)
+    useEffect(() => {
+        const fetchStats = async () => {
+            const { data } = await supabase.rpc('get_landing_stats')
+            setStats(data)
+        }
+        fetchStats()
+    }, [])
+
+    const supplierCount = stats?.suppliers || 120
+    const productCount = stats?.products || 450
+    const agentCount = stats?.agents || 85
+
+    // Enhanced Translations could go here, keeping it simple for now to focus on layout
+    const t = {
+        'en-US': {
+            subtitle: 'The premium ecosystem where verified global suppliers and elite travel agents build profitable, exclusive partnerships. Join the Phase 1 Early Bird intake today.',
+            ctaAgent: 'Start Trading',
+            ctaSupplier: 'For Suppliers'
+        }
     }
-    fetchStats()
-  }, [])
+    const content = t['en-US']
 
-  const supplierCount = stats?.suppliers || 120
-  const productCount = stats?.products || 450
-  const agentCount = stats?.agents || 85
+    return (
+        <div className="min-h-screen bg-slate-950 text-white font-sans relative overflow-x-hidden selection:bg-amber-500/30">
 
-  const t = {
-    'en-US': {
-      title: 'Connect. Trade. Dominate the Global Market.',
-      subtitle: 'The premium ecosystem where verified global suppliers and elite travel agents build profitable, exclusive partnerships. Join the Phase 1 Early Bird intake today.',
-      ctaAgent: 'Start Trading (Agent Access)',
-      ctaSupplier: 'For Suppliers',
-      stat1: 'Verified Suppliers',
-      stat2: 'Active Products',
-      stat3: 'Partner Agents',
-      statNew: 'NEW',
-      statLimited: 'Limited Slots'
-    }
-    // ... (other languages would be added here, falling back to EN for this layout redesign)
-  }
+            {/* BACKGROUND: Deep Slate + Animated Globe Overlay */}
+            {/* BACKGROUND: Deep Slate + Animated Globe Overlay */}
+            <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden bg-slate-950">
+                {/* Background Gradient - Darker edges to frame the globe */}
+                <div className="absolute inset-0 bg-radial-at-c from-transparent via-slate-950/20 to-slate-950/80 z-20" />
 
-  const content = t['en-US'] // Forcing EN for this specific redesign task as per prompt copy requirements, or map if needed. 
-  // Ideally: const content = t[language as keyof typeof t] || t['en-US'] but with new keys, old langs will break. 
-  // So I'll just use the content directly or mapped for now.
+                {/* Animated Background Image - Sharp and Center */}
+                <div className="absolute inset-0 z-10 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
+                        alt="Global Network"
+                        className="w-full h-full md:w-[120%] md:h-[120%] object-cover object-center animate-pan-slow opacity-90"
+                    />
+                </div>
 
-  return (
-    <div className="min-h-screen flex flex-col font-sans relative bg-blue-950 text-white overflow-hidden">
+                {/* Ambient Glows - Very subtle, behind the globe center */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-[80px] z-0" />
+            </div>
 
-      {/* Background World/Globe */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-blue-950/20 z-10" /> {/* Very Light Overlay */}
-        <style jsx>{`
-          @keyframes pan-zoom {
-            0% { transform: scale(1.1) translate(0, 0); }
-            25% { transform: scale(1.15) translate(-1%, -1%); }
-            50% { transform: scale(1.1) translate(-2%, 0); }
-            75% { transform: scale(1.15) translate(-1%, 1%); }
-            100% { transform: scale(1.1) translate(0, 0); }
-          }
-          .animate-pan-zoom {
-            animation: pan-zoom 30s ease-in-out infinite alternate;
-          }
-        `}</style>
-        <img
-          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
-          alt="Global Network"
-          className="absolute inset-0 w-full h-full object-cover animate-pan-zoom"
-        />
-      </div>
+            {/* HERO SECTION */}
+            <section className="relative z-10 pt-20 pb-16 lg:pt-32 lg:pb-24 px-4 overflow-hidden">
+                <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-8">
 
-      {/* Hero Section */}
-      <section className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 py-20 lg:py-32">
-        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in zoom-in duration-1000">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="space-y-6 max-w-4xl"
+                    >
+                        {/* Pre-header Pill */}
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-900/10 backdrop-blur-md">
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                            <span className="text-amber-200 text-xs font-bold tracking-widest uppercase">Phase 1 Early Bird Live</span>
+                        </div>
 
-          {/* Main Heading */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight drop-shadow-2xl">
-            Connect. Trade. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-amber-500">
-              Dominate the Global Market.
-            </span>
-          </h1>
+                        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
+                            Connect. Trade. <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 drop-shadow-[0_0_25px_rgba(245,158,11,0.4)]">
+                                Dominate the Global Market.
+                            </span>
+                        </h1>
 
-          {/* Sub-heading */}
-          <p className="text-lg md:text-xl text-blue-100/80 max-w-3xl mx-auto font-light leading-relaxed">
-            {content.subtitle}
-          </p>
+                        <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                            {content.subtitle}
+                        </p>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
-            <Link
-              href="/auth/agent"
-              className="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg rounded-full shadow-lg shadow-amber-900/40 hover:shadow-amber-500/40 transition-all transform hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-3"
-            >
-              {content.ctaAgent} <FaArrowRight />
-            </Link>
-            <Link
-              href="/auth/supplier"
-              className="group relative px-8 py-4 bg-blue-900/50 backdrop-blur-md border border-white/30 text-white font-semibold text-lg rounded-full hover:bg-white/10 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3"
-            >
-              {content.ctaSupplier} <FaBuilding />
-            </Link>
-          </div>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+                            <Link
+                                href="/auth/agent"
+                                className="px-8 py-4 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-bold text-lg rounded-full shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                            >
+                                {content.ctaAgent} <FaArrowRight />
+                            </Link>
+                            <Link
+                                href="/auth/supplier"
+                                className="px-8 py-4 bg-white/5 border border-white/10 backdrop-blur-md text-white font-semibold text-lg rounded-full hover:bg-white/10 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                            >
+                                <FaBuilding /> {content.ctaSupplier}
+                            </Link>
+                        </div>
+                    </motion.div>
+
+                </div>
+            </section>
+
+            {/* HOW IT WORKS (Glass Cards) */}
+            <section className="py-24 px-4 relative">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">Streamlined Success</h2>
+                        <p className="text-slate-400">The modern way to transact in the travel industry.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            { icon: FaShieldAlt, title: "1. Verified Access", desc: "Strict vetting ensures only legitimate suppliers and active agents enter the ecosystem.", color: "blue" },
+                            { icon: FaHandshake, title: "2. Direct Connection", desc: "No middlemen. Chat, negotiate, and agree on rates directly using our secure comms suite.", color: "amber" },
+                            { icon: FaCoins, title: "3. Instant Transact", desc: "One-click payments and contract generation. Get paid faster and book confidently.", color: "emerald" }
+                        ].map((item, i) => (
+                            <div key={i} className="group p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 hover:-translate-y-2">
+                                <div className={`w-14 h-14 rounded-xl bg-${item.color}-500/20 flex items-center justify-center text-${item.color}-400 text-2xl mb-6 group-hover:scale-110 transition-transform`}>
+                                    <item.icon />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                                <p className="text-slate-400 leading-relaxed">{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* STATS STRIP */}
+            <section className="py-20 border-y border-white/10 bg-slate-900/40 backdrop-blur-md">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div className="group hover:-translate-y-1 transition-transform duration-300">
+                        <div className="text-5xl md:text-6xl font-black text-white mb-2 drop-shadow-lg group-hover:text-blue-200 transition-colors">{supplierCount}+</div>
+                        <div className="text-blue-400 text-sm font-bold uppercase tracking-widest">Verified Suppliers</div>
+                    </div>
+                    <div className="group hover:-translate-y-1 transition-transform duration-300">
+                        <div className="text-5xl md:text-6xl font-black text-white mb-2 drop-shadow-lg group-hover:text-emerald-200 transition-colors">{productCount}+</div>
+                        <div className="text-emerald-400 text-sm font-bold uppercase tracking-widest">Active Products</div>
+                    </div>
+                    <div className="group hover:-translate-y-1 transition-transform duration-300">
+                        <div className="text-5xl md:text-6xl font-black text-white mb-2 drop-shadow-lg group-hover:text-amber-200 transition-colors">{agentCount}+</div>
+                        <div className="text-amber-400 text-sm font-bold uppercase tracking-widest">Partner Agents</div>
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA SECTION - FOUNDING MEMBER */}
+            <section className="py-24 px-4">
+                <div className="max-w-5xl mx-auto">
+                    <div className="relative rounded-3xl overflow-hidden p-8 md:p-16 text-center border border-amber-500/30">
+                        {/* Background Gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-amber-900/40 to-slate-950 z-0" />
+                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 z-0" />
+
+                        <div className="relative z-10 space-y-6">
+                            <span className="inline-block px-4 py-1 rounded-full bg-amber-500/20 border border-amber-500/50 text-amber-300 font-bold text-sm mb-2">
+                                LIMITED TIME OFFER
+                            </span>
+                            <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+                                Become a Founding Member
+                            </h2>
+                            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+                                Lock in the exclusive rate of <span className="text-amber-400 font-bold">$30/month</span> for a full year. No payment required for trial.
+                            </p>
+                            <div className="pt-6">
+                                <Link href="/why-us">
+                                    <button className="px-10 py-5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-xl rounded-xl shadow-lg hover:shadow-amber-500/30 transition-all transform hover:scale-105">
+                                        Claim Early Bird Status
+                                    </button>
+                                </Link>
+                            </div>
+                            <p className="text-sm text-slate-500 mt-4">
+                                Only 15 spots left in this batch.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
-      </section>
-
-      {/* Stats Cards */}
-      <section className="relative z-10 pb-20 px-4">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-
-          {/* Card 1: Verified Suppliers */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex items-center gap-4 hover:bg-white/10 transition-colors group animate-in slide-in-from-bottom-4 duration-700 delay-100">
-            <div className="w-14 h-14 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-2xl group-hover:scale-110 transition-transform">
-              <FaCheckCircle />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-3xl font-bold text-white">{supplierCount}</span>
-                <span className="bg-blue-500 text-[10px] font-bold px-2 py-0.5 rounded text-white tracking-wider">{content.statNew}</span>
-              </div>
-              <p className="text-blue-200 text-sm uppercase tracking-wider font-medium">{content.stat1}</p>
-            </div>
-          </div>
-
-          {/* Card 2: Active Products */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex items-center gap-4 hover:bg-white/10 transition-colors group animate-in slide-in-from-bottom-4 duration-700 delay-200">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-2xl group-hover:scale-110 transition-transform">
-              <FaChartLine />
-            </div>
-            <div className="flex-grow">
-              <div className="flex items-center justify-between">
-                <span className="text-3xl font-bold text-white">{productCount}</span>
-                {/* Tiny Sparkline */}
-                <svg className="w-12 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 10">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 9l6-6 4 4 6-6 6 2" />
-                </svg>
-              </div>
-              <p className="text-blue-200 text-sm uppercase tracking-wider font-medium">{content.stat2}</p>
-            </div>
-          </div>
-
-          {/* Card 3: Partner Agents */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex items-center gap-4 hover:bg-white/10 transition-colors group animate-in slide-in-from-bottom-4 duration-700 delay-300">
-            <div className="w-14 h-14 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition-transform">
-              <FaUsers />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-3xl font-bold text-white">{agentCount}</span>
-                <span className="text-amber-400 text-[10px] font-bold animate-pulse">{content.statLimited}</span>
-              </div>
-              <p className="text-blue-200 text-sm uppercase tracking-wider font-medium">{content.stat3}</p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-    </div>
-  )
+    )
 }
