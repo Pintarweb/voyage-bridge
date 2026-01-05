@@ -1,0 +1,18 @@
+-- Add missing columns to suppliers table
+ALTER TABLE suppliers
+ADD COLUMN IF NOT EXISTS trading_name TEXT,
+ADD COLUMN IF NOT EXISTS address_line_1 TEXT,
+ADD COLUMN IF NOT EXISTS postcode TEXT,
+ADD COLUMN IF NOT EXISTS license_no TEXT,
+ADD COLUMN IF NOT EXISTS tax_id TEXT,
+ADD COLUMN IF NOT EXISTS timezone TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS social_instagram TEXT,
+ADD COLUMN IF NOT EXISTS social_facebook TEXT,
+ADD COLUMN IF NOT EXISTS social_tiktok TEXT,
+ADD COLUMN IF NOT EXISTS social_linkedin TEXT,
+ADD COLUMN IF NOT EXISTS social_tripadvisor TEXT,
+ADD COLUMN IF NOT EXISTS whatsapp_business_url TEXT,
+ADD COLUMN IF NOT EXISTS languages_spoken TEXT[] DEFAULT '{}',
+ADD COLUMN IF NOT EXISTS logo_url TEXT,
+ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
