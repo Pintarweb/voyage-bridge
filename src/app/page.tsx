@@ -41,15 +41,16 @@ export default function Home() {
             {/* BACKGROUND: Deep Slate + Animated Globe Overlay */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden bg-slate-950">
                 {/* Background Gradient - Darker edges to frame the globe */}
-                <div className="absolute inset-0 bg-radial-at-c from-transparent via-slate-950/20 to-slate-950/80 z-20" />
+                <div className="absolute inset-0 bg-slate-950/30 z-20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/80 z-20" />
 
                 {/* Animated Background Image - Sharp and Center */}
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
-                        alt="Global Network"
-                        className="w-full h-full md:w-[120%] md:h-[120%] object-cover object-center animate-pan-slow opacity-90"
+                        src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop"
+                        alt="Global Connectivity"
+                        className="w-full h-full object-cover animate-pan-slow opacity-60"
                     />
                 </div>
 
@@ -80,7 +81,7 @@ export default function Home() {
                             </span>
                         </h1>
 
-                        <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                        <p className="text-lg md:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed drop-shadow-md font-medium">
                             {content.subtitle}
                         </p>
 
@@ -108,7 +109,7 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4">Streamlined Success</h2>
-                        <p className="text-slate-400">The modern way to transact in the travel industry.</p>
+                        <p className="text-slate-200 font-medium drop-shadow-sm">The modern way to transact in the travel industry.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -122,7 +123,7 @@ export default function Home() {
                                     <item.icon />
                                 </div>
                                 <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                                <p className="text-slate-400 leading-relaxed">{item.desc}</p>
+                                <p className="text-slate-300 font-medium leading-relaxed drop-shadow-sm group-hover:text-slate-100 transition-colors">{item.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -162,7 +163,7 @@ export default function Home() {
                             <h2 className="text-3xl md:text-5xl font-extrabold text-white">
                                 Become a Founding Member
                             </h2>
-                            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+                            <p className="text-xl text-slate-100 max-w-2xl mx-auto font-medium drop-shadow-md">
                                 Lock in the exclusive rate of <span className="text-amber-400 font-bold">$30/month</span> for a full year. No payment required for trial.
                             </p>
                             <div className="pt-6">
@@ -172,7 +173,7 @@ export default function Home() {
                                     </button>
                                 </Link>
                             </div>
-                            <p className="text-sm text-slate-500 mt-4">
+                            <p className="text-sm text-slate-300 font-semibold mt-4 drop-shadow-md">
                                 Only 15 spots left in this batch.
                             </p>
                         </div>

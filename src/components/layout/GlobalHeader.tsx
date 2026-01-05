@@ -138,7 +138,7 @@ export default function GlobalHeader() {
                                 height={56}
                                 className="h-14 w-auto object-contain rounded-md"
                             />
-                            <span>Ark<span className="text-blue-500">Alliance</span></span>
+                            <span className="notranslate">Ark<span className="text-blue-500">Alliance</span></span>
                         </Link>
                     </div>
 

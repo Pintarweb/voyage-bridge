@@ -244,7 +244,7 @@ export default function Footer() {
                                 height={40}
                                 className="h-10 w-auto object-contain rounded-md"
                             />
-                            <span className="text-2xl font-bold tracking-tight">
+                            <span className="text-2xl font-bold tracking-tight notranslate">
                                 Ark<span className="text-blue-300">Alliance</span>
                             </span>
                         </div>
