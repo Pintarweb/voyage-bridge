@@ -26,6 +26,8 @@ import UserPresenceTracker from "@/components/layout/UserPresenceTracker";
 
 import { Toaster } from 'react-hot-toast'
 
+import GoogleTranslateWidget from "@/components/common/GoogleTranslateWidget";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,6 +43,7 @@ export default function RootLayout({
           <CurrencyProvider>
             <UserPresenceTracker />
             <Toaster position="top-right" />
+            <GoogleTranslateWidget />
             <GlobalHeader />
             <main className="flex-grow">
               {children}
