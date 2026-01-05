@@ -124,13 +124,13 @@ export default function GlobalHeader() {
     const currentLang = LANGUAGES.find(l => l.code === language)
 
     return (
-        <header className="bg-background/80 border-b border-border sticky top-0 z-50 backdrop-blur-md">
+        <header className="bg-slate-950/80 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/60">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
 
                     {/* Logo */}
                     <div className="flex-shrink-0 flex items-center">
-                        <Link href={type === 'public' ? '/' : (type === 'portal' ? '/portal' : '/supplier/dashboard')} className="flex items-center gap-2 text-2xl font-bold text-foreground tracking-tight">
+                        <Link href={type === 'public' ? '/' : (type === 'portal' ? '/portal' : '/supplier/dashboard')} className="flex items-center gap-2 text-2xl font-bold text-white tracking-tight">
                             <Image
                                 src="/ark-logo-icon.jpg"
                                 alt="ArkAlliance Logo"
@@ -138,7 +138,7 @@ export default function GlobalHeader() {
                                 height={56}
                                 className="h-14 w-auto object-contain rounded-md"
                             />
-                            <span>Ark<span className="text-primary">Alliance</span></span>
+                            <span>Ark<span className="text-blue-500">Alliance</span></span>
                         </Link>
                     </div>
 
@@ -149,8 +149,8 @@ export default function GlobalHeader() {
                                 key={link.href}
                                 href={link.href}
                                 className={`text-sm font-medium transition-colors ${pathname === link.href
-                                    ? 'text-primary'
-                                    : 'text-muted-foreground hover:text-foreground'
+                                    ? 'text-blue-400'
+                                    : 'text-slate-300 hover:text-white'
                                     }`}
                             >
                                 {link.label}
@@ -165,7 +165,7 @@ export default function GlobalHeader() {
 
                         {/* Language Selector */}
                         <div className="relative group">
-                            <button className="flex items-center space-x-2 text-muted-foreground hover:text-foreground text-sm font-medium focus:outline-none">
+                            <button className="flex items-center space-x-2 text-slate-300 hover:text-white text-sm font-medium focus:outline-none">
                                 {currentLang && (
                                     <img
                                         src={getFlagUrl(currentLang.flagCode)}
@@ -194,7 +194,7 @@ export default function GlobalHeader() {
                             </div>
                         </div>
                         <div className="relative group">
-                            <button className="flex items-center space-x-2 text-muted-foreground hover:text-foreground text-sm font-medium focus:outline-none">
+                            <button className="flex items-center space-x-2 text-slate-300 hover:text-white text-sm font-medium focus:outline-none">
                                 {currentCurrency && (
                                     <img
                                         src={getFlagUrl(currentCurrency.flagCode)}

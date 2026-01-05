@@ -231,7 +231,7 @@ export default function Footer() {
     const content = t[language as keyof typeof t] || t['en-US']
 
     return (
-        <footer className="bg-slate-600 text-white py-8">
+        <footer className="bg-slate-950 text-slate-200 py-12 border-t border-slate-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     {/* Brand Column */}
