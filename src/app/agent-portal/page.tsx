@@ -63,6 +63,7 @@ export default async function PortalPage() {
     const { data: latestSuppliers } = await supabase
         .from('suppliers')
         .select(`
+            id,
             company_name,
             supplier_type,
             products:products(count)
@@ -72,27 +73,12 @@ export default async function PortalPage() {
         .limit(5)
 
     return (
-        <div className="relative min-h-screen flex flex-col bg-slate-950 text-white font-sans selection:bg-amber-500/30">
-            {/* Cinematic Background */}
-            <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
-                <div className="absolute inset-0 bg-slate-950/20 z-10 mix-blend-multiply" /> {/* Tint */}
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/50 to-slate-950 z-10" /> {/* Vignette */}
-                <img
-                    src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop"
-                    alt="City Command"
-                    className="w-full h-full object-cover opacity-40"
-                />
-            </div>
-
-            <div className="relative z-10 flex-grow">
-                <AgentDashboard
-                    userName={user.email?.split('@')[0] || 'Agent'}
-                    countries={countryOptions}
-                    trendingProducts={trendingProducts || []}
-                    latestSuppliers={latestSuppliers || []}
-                />
-            </div>
-        </div>
+        <AgentDashboard
+            userName={user.email?.split('@')[0] || 'Agent'}
+            countries={countryOptions}
+            trendingProducts={trendingProducts || []}
+            latestSuppliers={latestSuppliers || []}
+        />
     )
 }
 

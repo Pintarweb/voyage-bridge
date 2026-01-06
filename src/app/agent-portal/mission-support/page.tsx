@@ -15,7 +15,7 @@ export default async function MissionSupportPage() {
         .order('upvote_count', { ascending: false })
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-slate-950">
+        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-transparent">
             <PortalSidebar />
 
             <main className="flex-1 lg:ml-20 xl:ml-64 relative overflow-y-auto h-[calc(100vh-64px)]">

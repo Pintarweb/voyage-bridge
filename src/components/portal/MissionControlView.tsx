@@ -104,7 +104,7 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                     <FaSatelliteDish className="text-amber-500" />
                     Mission Support Center
                 </h1>
-                <p className="text-slate-400 text-lg max-w-2xl">
+                <p className="text-slate-200 text-lg max-w-2xl shadow-black/50 drop-shadow-sm">
                     Your direct line to ArkAlliance command. Request specific supply, vote on the roadmap, or get urgent operational support.
                 </p>
             </div>
@@ -125,14 +125,14 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                             </span>
                         </div>
 
-                        <p className="text-slate-400 mb-8 text-sm leading-relaxed">
+                        <p className="text-slate-200 mb-8 text-sm leading-relaxed">
                             Can't find what you need? Tell us the destination and category. Our contracting team will hunt it down for you.
                         </p>
 
                         <form onSubmit={handleRequestSubmit} className="space-y-6 relative z-10">
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Target Destination</label>
+                                    <label className="text-xs font-bold text-slate-300 uppercase">Target Destination</label>
                                     <input
                                         type="text"
                                         required
@@ -143,7 +143,7 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Category</label>
+                                    <label className="text-xs font-bold text-slate-300 uppercase">Category</label>
                                     <select
                                         className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors appearance-none"
                                         value={requestForm.request_type}
@@ -158,7 +158,7 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Client Budget / Specs</label>
+                                <label className="text-xs font-bold text-slate-300 uppercase">Client Budget / Specs</label>
                                 <input
                                     type="text"
                                     placeholder="e.g. $500/night, 5 Star, Private Pool"
@@ -169,7 +169,7 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Mission Details</label>
+                                <label className="text-xs font-bold text-slate-300 uppercase">Mission Details</label>
                                 <textarea
                                     rows={3}
                                     placeholder="Any specific requirements..."
@@ -192,8 +192,8 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
 
                     {/* Mission Log (User Requests) */}
                     <section className="bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-xl">
-                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                            <FaSatelliteDish className="text-slate-600" /> Your Mission Log
+                        <h3 className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-6 flex items-center gap-2">
+                            <FaSatelliteDish className="text-slate-400" /> Your Mission Log
                         </h3>
                         {loadingRequests ? (
                             <div className="text-white/30 text-xs animate-pulse">Scanning frequency...</div>
@@ -203,11 +203,11 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                                     <div key={req.id} className="flex items-center justify-between p-4 bg-slate-950 border border-white/5 rounded-xl hover:border-white/10 transition-colors group">
                                         <div>
                                             <div className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors">{req.destination}</div>
-                                            <div className="text-xs text-white/40">{req.category} • {req.budget || 'No budget spec'}</div>
+                                            <div className="text-xs text-slate-300">{req.category} • {req.budget || 'No budget spec'}</div>
                                         </div>
                                         <div className={`px-2 py-1 rounded text-[10px] font-bold uppercase border ${req.status === 'pending' ? 'border-amber-500/20 text-amber-400 bg-amber-500/10' :
-                                                req.status === 'completed' ? 'border-green-500/20 text-green-400 bg-green-500/10' :
-                                                    'border-white/10 text-slate-400 bg-white/5'
+                                            req.status === 'completed' ? 'border-green-500/20 text-green-400 bg-green-500/10' :
+                                                'border-white/10 text-slate-400 bg-white/5'
                                             }`}>
                                             {req.status}
                                         </div>
@@ -223,7 +223,7 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
 
                     {/* Direct Uplink */}
                     <section>
-                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-6">Urgent Uplink</h3>
+                        <h3 className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-6">Urgent Uplink</h3>
                         <div className="grid grid-cols-2 gap-4">
                             <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-xl hover:bg-green-500/20 transition-all group w-full">
                                 <FaWhatsapp className="text-green-500 text-2xl group-hover:scale-110 transition-transform" />
@@ -244,13 +244,13 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                 </div>
 
                 {/* RIGHT COLUMN: Roadmap Voting */}
-                <div className="bg-slate-950 border border-white/5 rounded-3xl p-8 relative">
+                <div className="bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-3xl p-8 relative">
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h2 className="text-2xl font-bold flex items-center gap-3">
                                 <FaVoteYea className="text-purple-500" /> Mission Roadmap
                             </h2>
-                            <p className="text-slate-500 text-xs mt-1">Vote on future ArkAlliance capabilities.</p>
+                            <p className="text-slate-300 text-xs mt-1">Vote on future ArkAlliance capabilities.</p>
                         </div>
                     </div>
 

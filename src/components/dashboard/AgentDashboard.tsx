@@ -29,7 +29,7 @@ export default function AgentDashboard({
     const [selectedFlag, setSelectedFlag] = useState<string | null>(null)
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-slate-950">
+        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-transparent">
 
             <PortalSidebar />
 
@@ -44,7 +44,7 @@ export default function AgentDashboard({
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl">
                                 Where to next, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-100">{userName || 'Agent'}</span>?
                             </h1>
-                            <p className="text-slate-300 text-lg font-light">
+                            <p className="text-white text-lg font-light shadow-black/50 drop-shadow-md">
                                 Access exclusive founding rates across {countries.length} global markets.
                             </p>
                         </div>
@@ -56,15 +56,13 @@ export default function AgentDashboard({
 
                         {/* Flag Navigation Grid */}
                         <div className="pt-8">
-                            <p className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-4">Quick Access Markets</p>
+                            <p className="text-xs text-white uppercase tracking-widest font-bold mb-4 drop-shadow-md">Quick Access Markets</p>
                             <div className="flex justify-center gap-6 overflow-x-auto pb-4 no-scrollbar px-4 mask-fade-sides">
                                 {countries.slice(0, 8).map((country) => (
-                                    <button
+                                    <Link
                                         key={country.code}
-                                        onClick={() => {
-                                            setSelectedFlag(country.code)
-                                            router.push(`/agent-portal/country/${country.code}`)
-                                        }}
+                                        href={`/agent-portal/country/${country.code}`}
+                                        onClick={() => setSelectedFlag(country.code)}
                                         className={`group flex flex-col items-center gap-3 min-w-[80px] transition-all duration-300 ${selectedFlag === country.code ? 'transform scale-110' : 'hover:-translate-y-2'}`}
                                     >
                                         <div className={`relative w-16 h-16 rounded-full overflow-hidden border-2 shadow-lg transition-all duration-300 ${selectedFlag === country.code ? 'border-amber-400 ring-4 ring-amber-500/20' : 'border-white/20 group-hover:border-amber-400'}`}>
@@ -76,10 +74,10 @@ export default function AgentDashboard({
                                             {/* Shine effect */}
                                             <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                         </div>
-                                        <span className={`text-xs font-bold tracking-wide transition-colors ${selectedFlag === country.code ? 'text-amber-400' : 'text-slate-400 group-hover:text-white'}`}>
+                                        <span className={`text-xs font-bold tracking-wide transition-colors drop-shadow-md ${selectedFlag === country.code ? 'text-amber-400' : 'text-white group-hover:text-amber-200'}`}>
                                             {country.name}
                                         </span>
-                                    </button>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -136,9 +134,9 @@ export default function AgentDashboard({
                                             <div className="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-white font-bold border border-white/20">
                                                 {product.supplier?.company_name?.[0]}
                                             </div>
-                                            <span className="text-xs text-slate-300 truncate">{product.supplier?.company_name}</span>
+                                            <span className="text-xs text-white truncate">{product.supplier?.company_name}</span>
 
-                                            <span className="ml-auto text-[10px] bg-white/10 px-2 py-0.5 rounded text-slate-300 border border-white/5">
+                                            <span className="ml-auto text-[10px] bg-white/10 px-2 py-0.5 rounded text-white border border-white/5">
                                                 Founding Member
                                             </span>
                                         </div>
@@ -159,20 +157,24 @@ export default function AgentDashboard({
 
                 <div className="space-y-6">
                     <div className="space-y-4">
-                        <p className="text-xs text-slate-500 font-semibold uppercase">New Founding Suppliers</p>
+                        <p className="text-xs text-white font-semibold uppercase">New Founding Suppliers</p>
                         {latestSuppliers.map((supplier, i) => (
-                            <div key={i} className="flex items-start gap-3 group cursor-pointer hover:bg-white/5 p-3 rounded-xl transition-colors border border-transparent hover:border-white/5">
+                            <Link
+                                href={`/agent-portal/supplier/${supplier.id}`}
+                                key={i}
+                                className="flex items-start gap-3 group cursor-pointer hover:bg-white/5 p-3 rounded-xl transition-colors border border-transparent hover:border-white/5"
+                            >
                                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center text-amber-500 text-lg shadow-inner">
                                     <FaBuilding className="drop-shadow-sm" />
                                 </div>
                                 <div>
                                     <h4 className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors">{supplier.company_name}</h4>
-                                    <p className="text-xs text-slate-400 line-clamp-1">{supplier.supplier_type} • {supplier.products?.[0]?.count || 0} Products</p>
+                                    <p className="text-xs text-slate-200 line-clamp-1">{supplier.supplier_type} • {supplier.products?.[0]?.count || 0} Products</p>
                                     <p className="text-[10px] text-green-400 mt-1 flex items-center gap-1">
                                         <span className="w-1 h-1 rounded-full bg-green-400"></span> Just Joined
                                     </p>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
 
@@ -181,12 +183,12 @@ export default function AgentDashboard({
                             <FaBolt />
                             <h4 className="text-xs font-bold uppercase">System Update</h4>
                         </div>
-                        <p className="text-xs text-slate-300 leading-relaxed">
+                        <p className="text-xs text-white leading-relaxed">
                             Multi-currency settlement engine upgraded to v2.0. Instant transfers now available for verified agents.
                         </p>
                     </div>
                 </div>
-            </aside>
-        </div>
+            </aside >
+        </div >
     )
 }

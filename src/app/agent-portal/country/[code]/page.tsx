@@ -18,11 +18,36 @@ export default async function CountryCityTablePage({ params }: { params: Promise
     // Fetch products with supplier_type (it's denormalized in the products table)
     let cityData: CityData[] = []
 
-    const { data: products, error: productsError } = await supabase
+    // Try exact match first
+    let query = supabase
         .from('products')
-        .select('city, supplier_id, supplier_type')
-        .eq('country_code', code)
+        .select(`
+            city, 
+            supplier_id,
+            supplier:suppliers (
+                supplier_type
+            )
+        `)
         .eq('status', 'active')
+        .eq('country_code', code) // First try exact match
+
+    let { data: products } = await query
+
+    // If no results, try uppercase (handle mixed case in DB vs URL)
+    if (!products || products.length === 0) {
+        const { data: upperProducts } = await supabase
+            .from('products')
+            .select(`
+                city, 
+                supplier_id,
+                supplier:suppliers (
+                    supplier_type
+                )
+            `)
+            .eq('status', 'active')
+            .eq('country_code', code.toUpperCase())
+        products = upperProducts
+    }
 
     if (products && products.length > 0) {
         const cityMap = new Map<string, {
@@ -34,14 +59,17 @@ export default async function CountryCityTablePage({ params }: { params: Promise
         }>()
 
         products.forEach((p: any) => {
-            if (!p.city || !p.supplier_id || !p.supplier_type) {
+            if (!p.supplier_id || !p.supplier) {
                 return
             }
 
+            // Handle missing city
+            const cityName = p.city || 'General'
+
             // Get or create city entry
-            if (!cityMap.has(p.city)) {
-                cityMap.set(p.city, {
-                    city: p.city,
+            if (!cityMap.has(cityName)) {
+                cityMap.set(cityName, {
+                    city: cityName,
                     land_operators: 0,
                     transport: 0,
                     hotels: 0,
@@ -49,10 +77,11 @@ export default async function CountryCityTablePage({ params }: { params: Promise
                 })
             }
 
-            const cityEntry = cityMap.get(p.city)!
+            const cityEntry = cityMap.get(cityName)!
 
             // Track total products per category (convert to uppercase for comparison)
-            const supplierTypeUpper = p.supplier_type?.toUpperCase()
+            // Access supplier_type from the joined supplier object
+            const supplierTypeUpper = p.supplier?.supplier_type?.toUpperCase()
 
             if (supplierTypeUpper === 'LAND OPERATOR') {
                 cityEntry.land_operators++

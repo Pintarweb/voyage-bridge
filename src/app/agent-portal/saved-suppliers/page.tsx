@@ -30,7 +30,7 @@ export default async function SavedSuppliersPage() {
         .order('created_at', { ascending: false })
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-slate-950">
+        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-transparent">
             <PortalSidebar />
 
             <main className="flex-1 lg:ml-20 xl:ml-64 p-8 overflow-y-auto">
@@ -41,8 +41,8 @@ export default async function SavedSuppliersPage() {
 
                     {(!savedItems || savedItems.length === 0) ? (
                         <div className="text-center py-20 bg-slate-900/50 rounded-3xl border border-white/5">
-                            <h3 className="text-xl text-slate-400 font-bold mb-2">No Saved Suppliers Yet</h3>
-                            <p className="text-slate-500">Explore products and click the heart icon or view profiles to save them here.</p>
+                            <h3 className="text-xl text-white font-bold mb-2">No Saved Suppliers Yet</h3>
+                            <p className="text-slate-200 shadow-black/50 drop-shadow-sm">Explore products and click the heart icon or view profiles to save them here.</p>
                             <Link href="/agent-portal" className="inline-block mt-6 px-6 py-3 bg-amber-500 text-slate-900 font-bold rounded-full hover:bg-amber-400 transition-colors">
                                 Browse Marketplace
                             </Link>
@@ -70,17 +70,17 @@ export default async function SavedSuppliersPage() {
                                             <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">{supplier.company_name}</h3>
 
                                             <div className="space-y-2 mb-6">
-                                                <p className="flex items-center gap-2 text-sm text-slate-400">
+                                                <p className="flex items-center gap-2 text-sm text-slate-200 font-medium">
                                                     <FaMapMarkerAlt className="text-amber-500" /> {supplier.city}, {supplier.country_code}
                                                 </p>
                                                 {supplier.contact_email && (
-                                                    <p className="flex items-center gap-2 text-sm text-slate-400">
-                                                        <FaEnvelope className="text-slate-600" /> {supplier.contact_email}
+                                                    <p className="flex items-center gap-2 text-sm text-slate-200">
+                                                        <FaEnvelope className="text-slate-400" /> {supplier.contact_email}
                                                     </p>
                                                 )}
                                                 {supplier.website_url && (
-                                                    <p className="flex items-center gap-2 text-sm text-slate-400">
-                                                        <FaGlobe className="text-slate-600" />
+                                                    <p className="flex items-center gap-2 text-sm text-slate-200">
+                                                        <FaGlobe className="text-slate-400" />
                                                         <a href={supplier.website_url} target="_blank" className="hover:text-amber-400 hover:underline cursor-pointer">Visit Website</a>
                                                     </p>
                                                 )}
