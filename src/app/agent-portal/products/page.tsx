@@ -17,7 +17,7 @@ export default async function ProductsPage({
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-8">
                 <div className="max-w-7xl mx-auto">
                     <p className="text-slate-600">Missing required parameters</p>
-                    <Link href="/portal" className="text-blue-600 hover:underline mt-4 inline-block">
+                    <Link href="/agent-portal" className="text-blue-600 hover:underline mt-4 inline-block">
                         Return to search
                     </Link>
                 </div>
@@ -85,7 +85,7 @@ export default async function ProductsPage({
                 {/* Header */}
                 <div className="mb-8">
                     <Link
-                        href={`/portal/country/${country}`}
+                        href={`/agent-portal/country/${country}`}
                         className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-4 transition-colors font-medium"
                     >
                         <FaArrowLeft /> Back to {country}
@@ -103,7 +103,7 @@ export default async function ProductsPage({
                     <div className="bg-white/80 backdrop-blur-md border border-white/50 rounded-2xl p-12 text-center shadow-lg">
                         <p className="text-slate-500 text-lg mb-4">No products found matching your criteria.</p>
                         <Link
-                            href={`/portal/country/${country}`}
+                            href={`/agent-portal/country/${country}`}
                             className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold rounded-lg transition-all shadow-md hover:shadow-lg"
                         >
                             Back to Overview

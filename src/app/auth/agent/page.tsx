@@ -77,7 +77,7 @@ function AgentAuthContent() {
             }
 
             router.refresh()
-            router.push('/portal')
+            router.push('/agent-portal')
         } catch (err: any) {
             setError(err.message)
         } finally {

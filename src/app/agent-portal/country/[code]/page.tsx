@@ -79,7 +79,7 @@ export default async function CountryCityTablePage({ params }: { params: Promise
                 {/* Header */}
                 <div className="mb-8">
                     <Link
-                        href="/portal"
+                        href="/agent-portal"
                         className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-4 transition-colors font-medium"
                     >
                         <FaArrowLeft /> Back to Country Search
@@ -140,7 +140,7 @@ export default async function CountryCityTablePage({ params }: { params: Promise
                                         <td className="px-6 py-4 text-center">
                                             {city.land_operators > 0 ? (
                                                 <Link
-                                                    href={`/portal/products?country=${code}&city=${city.city}&type=LAND OPERATOR`}
+                                                    href={`/agent-portal/products?country=${code}&city=${city.city}&type=LAND OPERATOR`}
                                                     className="inline-block px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                                                 >
                                                     {city.land_operators}
@@ -152,7 +152,7 @@ export default async function CountryCityTablePage({ params }: { params: Promise
                                         <td className="px-6 py-4 text-center">
                                             {city.transport > 0 ? (
                                                 <Link
-                                                    href={`/portal/products?country=${code}&city=${city.city}&type=TRANSPORT`}
+                                                    href={`/agent-portal/products?country=${code}&city=${city.city}&type=TRANSPORT`}
                                                     className="inline-block px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                                                 >
                                                     {city.transport}
@@ -164,7 +164,7 @@ export default async function CountryCityTablePage({ params }: { params: Promise
                                         <td className="px-6 py-4 text-center">
                                             {city.hotels > 0 ? (
                                                 <Link
-                                                    href={`/portal/products?country=${code}&city=${city.city}&type=HOTEL`}
+                                                    href={`/agent-portal/products?country=${code}&city=${city.city}&type=HOTEL`}
                                                     className="inline-block px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                                                 >
                                                     {city.hotels}
@@ -176,7 +176,7 @@ export default async function CountryCityTablePage({ params }: { params: Promise
                                         <td className="px-6 py-4 text-center">
                                             {city.airlines > 0 ? (
                                                 <Link
-                                                    href={`/portal/products?country=${code}&city=${city.city}&type=AIRLINE`}
+                                                    href={`/agent-portal/products?country=${code}&city=${city.city}&type=AIRLINE`}
                                                     className="inline-block px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                                                 >
                                                     {city.airlines}

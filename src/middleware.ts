@@ -162,8 +162,8 @@ export async function updateSession(request: NextRequest) {
         // If active/approved, allow access
     }
 
-    // Protected Route: /portal (Agents)
-    if (path.startsWith('/portal')) {
+    // Protected Route: /agent-portal (Agents)
+    if (path.startsWith('/agent-portal')) {
         if (!agentProfile) {
             // Not an agent
             return NextResponse.redirect(new URL('/', request.url))
@@ -174,7 +174,7 @@ export async function updateSession(request: NextRequest) {
     if (path.startsWith('/supplier/dashboard')) {
         if (!supplierProfile) {
             // Not a supplier, redirect to portal
-            return NextResponse.redirect(new URL('/portal', request.url))
+            return NextResponse.redirect(new URL('/agent-portal', request.url))
         }
     }
 

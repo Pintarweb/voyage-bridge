@@ -135,7 +135,7 @@ export default function PasswordResetPage() {
                 setSuccessMessage('Password successfully set! Redirecting to dashboard...')
                 // Wait briefly then redirect
                 setTimeout(() => {
-                    router.push('/portal') // Agent dashboard
+                    router.push('/agent-portal') // Agent dashboard
                 }, 2000)
             }
         } catch (err: any) {
@@ -163,7 +163,7 @@ export default function PasswordResetPage() {
                         You are already signed into an active session. If you need to reset your password, please use the settings page or logout and request a new link.
                     </p>
                     <button
-                        onClick={() => router.push('/portal')}
+                        onClick={() => router.push('/agent-portal')}
                         className="w-full bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition"
                     >
                         Go to Dashboard

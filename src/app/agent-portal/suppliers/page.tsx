@@ -25,7 +25,7 @@ export default async function SupplierListPage({
         return (
             <div className="p-8 text-white">
                 <p>Missing required parameters</p>
-                <Link href="/portal" className="text-teal-400 hover:underline">
+                <Link href="/agent-portal" className="text-teal-400 hover:underline">
                     Return to search
                 </Link>
             </div>
@@ -71,7 +71,7 @@ export default async function SupplierListPage({
             {/* Header */}
             <div className="mb-8">
                 <Link
-                    href={`/portal/country/${country}`}
+                    href={`/agent-portal/country/${country}`}
                     className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-4 transition-colors"
                 >
                     <FaArrowLeft /> Back to {country}
@@ -89,7 +89,7 @@ export default async function SupplierListPage({
                 <div className="bg-[#1A1A20] border border-white/10 rounded-xl p-12 text-center">
                     <p className="text-gray-400">No suppliers found matching your criteria.</p>
                     <Link
-                        href="/portal"
+                        href="/agent-portal"
                         className="inline-block mt-4 text-teal-400 hover:text-teal-300"
                     >
                         Start a new search

@@ -101,7 +101,7 @@ export default function AgentBookingsPage() {
             header: 'Product',
             cell: info => (
                 <Link
-                    href={`/portal/product/${info.row.original.product.id}`}
+                    href={`/agent-portal/product/${info.row.original.product.id}`}
                     className="flex items-center gap-2 text-teal-400 hover:text-teal-300 font-medium group"
                 >
                     {info.getValue()}
@@ -192,8 +192,8 @@ export default function AgentBookingsPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`pb-4 text-sm font-medium transition-all relative ${activeTab === tab.id
-                                    ? 'text-teal-400'
-                                    : 'text-gray-400 hover:text-white'
+                                ? 'text-teal-400'
+                                : 'text-gray-400 hover:text-white'
                                 }`}
                         >
                             {tab.label}

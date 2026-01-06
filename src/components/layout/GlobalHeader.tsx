@@ -20,7 +20,7 @@ export default function GlobalHeader() {
     const [user, setUser] = useState<any>(null)
 
     // Determine type based on pathname
-    const type = pathname?.startsWith('/portal') ? 'portal' :
+    const type = pathname?.startsWith('/agent-portal') ? 'portal' :
         pathname?.startsWith('/supplier') ? 'supplier' : 'public'
 
     useEffect(() => {
@@ -130,7 +130,7 @@ export default function GlobalHeader() {
 
                     {/* Logo */}
                     <div className="flex-shrink-0 flex items-center">
-                        <Link href={type === 'public' ? '/' : (type === 'portal' ? '/portal' : '/supplier/dashboard')} className="flex items-center gap-2 text-2xl font-bold text-white tracking-tight">
+                        <Link href={type === 'public' ? '/' : (type === 'portal' ? '/agent-portal' : '/supplier/dashboard')} className="flex items-center gap-2 text-2xl font-bold text-white tracking-tight">
                             <Image
                                 src="/ark-logo-icon.jpg"
                                 alt="ArkAlliance Logo"

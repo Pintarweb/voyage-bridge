@@ -54,12 +54,12 @@ export default function SupplierSubscriptionPage() {
                     .single()
 
                 if (profileError || !profile) {
-                    router.push('/portal')
+                    router.push('/agent-portal')
                     return
                 }
 
                 if (profile.role !== 'pending_supplier') {
-                    router.push('/portal')
+                    router.push('/agent-portal')
                     return
                 }
 

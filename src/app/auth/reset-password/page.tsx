@@ -73,7 +73,7 @@ export default function ResetPasswordPage() {
                 setSuccessMessage('Password updated successfully! Redirecting...')
                 // Wait briefly then redirect
                 setTimeout(() => {
-                    router.push('/portal')
+                    router.push('/agent-portal')
                 }, 2000)
             }
         } catch (err: any) {

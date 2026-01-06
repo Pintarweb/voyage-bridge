@@ -28,7 +28,7 @@ export default function PortalHeader({ userEmail }: PortalHeaderProps) {
                 </div>
 
                 <button
-                    onClick={() => router.push('/portal/community')}
+                    onClick={() => router.push('/agent-portal/community')}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-amber-500 font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1 leading-none"
                     title="Community Roadmap"
                 >

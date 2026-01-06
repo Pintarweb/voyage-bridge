@@ -191,7 +191,7 @@ export default function CountrySearchView({ countries }: { countries: CountryOpt
 
     const handleSearch = () => {
         if (selectedCountry) {
-            router.push(`/portal/country/${selectedCountry}`)
+            router.push(`/agent-portal/country/${selectedCountry}`)
         }
     }
 
@@ -297,7 +297,7 @@ export default function CountrySearchView({ countries }: { countries: CountryOpt
                                 .map((country) => (
                                     <button
                                         key={country.code}
-                                        onClick={() => router.push(`/portal/country/${country.code}`)}
+                                        onClick={() => router.push(`/agent-portal/country/${country.code}`)}
                                         className="group relative flex flex-col items-center transition-transform hover:scale-110"
                                         title={country.name}
                                     >
