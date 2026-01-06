@@ -11,8 +11,16 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         .select(`
             *,
             supplier:suppliers (
+                id,
                 company_name,
-                contact_email
+                contact_email,
+                website_url,
+                description,
+                phone_number,
+                address_line_1,
+                city,
+                country_code,
+                logo_url
             )
         `)
         .eq('id', id)
