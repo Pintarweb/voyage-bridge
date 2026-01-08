@@ -1,6 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import PortalHeader from '@/components/portal/PortalHeader'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: "Agent Discovery Hub | ArkAlliance",
+}
 
 export default async function PortalLayout({
     children,
