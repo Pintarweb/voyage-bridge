@@ -7,6 +7,38 @@ import { FaGlobe, FaChartLine, FaUsers, FaArrowRight, FaBuilding, FaShieldAlt, F
 import { useEffect, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
+// Simple CountUp Component
+const CountUp = ({ end, duration = 2 }: { end: number, duration?: number }) => {
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        let startTime: number
+        let animationFrame: number
+
+        const animate = (timestamp: number) => {
+            if (!startTime) startTime = timestamp
+            const progress = timestamp - startTime
+            // Ease out quart
+            const easeOutQuart = (x: number): number => 1 - Math.pow(1 - x, 4);
+
+            const percentage = Math.min(progress / (duration * 1000), 1)
+            const easedProgress = easeOutQuart(percentage)
+
+            setCount(Math.floor(end * easedProgress))
+
+            if (progress < duration * 1000) {
+                animationFrame = requestAnimationFrame(animate)
+            }
+        }
+
+        animationFrame = requestAnimationFrame(animate)
+
+        return () => cancelAnimationFrame(animationFrame)
+    }, [end, duration])
+
+    return <>{count.toLocaleString()}</>
+}
+
 export default function Home() {
     const [stats, setStats] = useState<any>(null)
     const supabase = createClient()
@@ -20,9 +52,13 @@ export default function Home() {
         fetchStats()
     }, [])
 
+
+
     const supplierCount = stats?.suppliers || 120
     const productCount = stats?.products || 450
     const agentCount = stats?.agents || 85
+
+    // Logic matches previous implementation explicitly.
 
     // Enhanced Translations could go here, keeping it simple for now to focus on layout
     const t = {
@@ -58,50 +94,110 @@ export default function Home() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-[80px] z-0" />
             </div>
 
-            {/* HERO SECTION */}
-            <section className="relative z-10 pt-20 pb-16 lg:pt-32 lg:pb-24 px-4 overflow-hidden">
-                <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-8">
+// HERO SECTION
+            <section className="relative z-10 pt-20 pb-16 lg:pt-32 lg:pb-24 px-4 overflow-hidden min-h-[90vh] flex flex-col justify-center">
+                <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative w-full">
+
+                    {/* Floating Social Proof Widget (Desktop Only) */}
+                    <div className="hidden lg:flex absolute bottom-0 left-0 mb-8 ml-4 z-20">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 1.2, duration: 0.8 }}
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/20 backdrop-blur-md shadow-2xl"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
+                                <span className="text-xl">✨</span>
+                            </div>
+                            <div className="text-left">
+                                <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">New Partner Added</p>
+                                <p className="text-sm text-slate-100 font-semibold">Luxury Stay Maldives <span className="text-slate-500 font-normal ml-1">4m ago</span></p>
+                            </div>
+                        </motion.div>
+                    </div>
 
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="space-y-6 max-w-4xl"
+                        className="space-y-8 max-w-5xl relative z-10"
                     >
-                        {/* Pre-header Pill */}
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-900/10 backdrop-blur-md">
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                            <span className="text-amber-200 text-xs font-bold tracking-widest uppercase">Phase 1 Early Bird Live</span>
+                        {/* Top-Center Accent Badge */}
+                        <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-amber-500/50 bg-amber-950/30 backdrop-blur-md shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-[pulse_4s_ease-in-out_infinite]">
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping absolute opacity-75" />
+                            <span className="w-2 h-2 rounded-full bg-amber-500 relative" />
+                            <span className="text-amber-100 text-xs md:text-sm font-bold tracking-widest uppercase">
+                                Phase 1: Early Bird Founding Spots Closing Soon
+                            </span>
                         </div>
 
-                        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
-                            Connect. Trade. <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 drop-shadow-[0_0_25px_rgba(245,158,11,0.4)]">
-                                Dominate the Global Market.
+                        {/* Main Headline */}
+                        <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.9]">
+                            <span className="block text-white drop-shadow-2xl">Connect. Trade.</span>
+                            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 drop-shadow-[0_0_35px_rgba(245,158,11,0.5)] py-2">
+                                Dominate Global.
                             </span>
                         </h1>
 
-                        <p className="text-lg md:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed drop-shadow-md font-medium">
-                            {content.subtitle}
-                        </p>
+                        {/* Subheadline + Integrated Stats */}
+                        <div className="space-y-6">
+                            <p className="text-lg md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-light tracking-wide">
+                                The premium ecosystem where verified global suppliers and elite travel agents build profitable, exclusive partnerships.
+                            </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+                            {/* Live Network Stats Bar */}
+                            <div className="inline-flex flex-wrap justify-center gap-8 md:gap-16 py-6 px-10 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl">
+                                <div className="flex flex-col items-center gap-2 group hover:-translate-y-1 transition-transform duration-300">
+                                    <div className="text-blue-400 text-3xl md:text-4xl mb-1 drop-shadow-md"><FaShieldAlt /></div>
+                                    <span className="text-4xl md:text-5xl font-black text-white tabular-nums drop-shadow-lg">
+                                        <CountUp end={supplierCount} />+
+                                    </span>
+                                    <span className="text-blue-300 text-xs md:text-sm font-bold uppercase tracking-widest">Verified Suppliers</span>
+                                </div>
+                                <div className="w-px h-20 bg-white/10 hidden md:block" />
+                                <div className="flex flex-col items-center gap-2 group hover:-translate-y-1 transition-transform duration-300">
+                                    <div className="text-emerald-400 text-3xl md:text-4xl mb-1 drop-shadow-md"><FaStar /></div>
+                                    <span className="text-4xl md:text-5xl font-black text-white tabular-nums drop-shadow-lg">
+                                        <CountUp end={productCount} />+
+                                    </span>
+                                    <span className="text-emerald-300 text-xs md:text-sm font-bold uppercase tracking-widest">Active Products</span>
+                                </div>
+                                <div className="w-px h-20 bg-white/10 hidden md:block" />
+                                <div className="flex flex-col items-center gap-2 group hover:-translate-y-1 transition-transform duration-300">
+                                    <div className="text-amber-400 text-3xl md:text-4xl mb-1 drop-shadow-md"><FaUsers /></div>
+                                    <span className="text-4xl md:text-5xl font-black text-white tabular-nums drop-shadow-lg">
+                                        <CountUp end={agentCount} />+
+                                    </span>
+                                    <span className="text-amber-300 text-xs md:text-sm font-bold uppercase tracking-widest">Partner Agents</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Enhanced CTA Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 items-center">
                             <Link
                                 href="/auth/agent"
-                                className="px-8 py-4 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-bold text-lg rounded-full shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                                className="group relative px-10 py-5 bg-gradient-to-r from-amber-500 to-amber-700 text-white font-bold text-xl rounded-full shadow-[0_0_40px_rgba(245,158,11,0.4)] hover:shadow-[0_0_60px_rgba(245,158,11,0.6)] transition-all transform hover:-translate-y-1 overflow-hidden"
                             >
-                                {content.ctaAgent} <FaArrowRight />
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                                <span className="relative flex items-center gap-3">
+                                    {content.ctaAgent} <FaArrowRight />
+                                </span>
                             </Link>
                             <Link
                                 href="/auth/supplier"
-                                className="px-8 py-4 bg-white/5 border border-white/10 backdrop-blur-md text-white font-semibold text-lg rounded-full hover:bg-white/10 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                                className="px-10 py-5 bg-slate-900/60 border border-white/20 backdrop-blur-xl text-white font-semibold text-xl rounded-full hover:bg-white/10 hover:border-white/40 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3"
                             >
-                                <FaBuilding /> {content.ctaSupplier}
+                                <FaBuilding className="text-slate-400" /> {content.ctaSupplier}
                             </Link>
                         </div>
                     </motion.div>
 
                 </div>
+
+                {/* Light Bokeh Effects */}
+                <div className="absolute top-1/4 left-10 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-pulse-slow pointer-events-none" />
+                <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] animate-pulse-slow delay-1000 pointer-events-none" />
             </section>
 
             {/* HOW IT WORKS (Glass Cards) */}
@@ -126,24 +222,6 @@ export default function Home() {
                                 <p className="text-slate-300 font-medium leading-relaxed drop-shadow-sm group-hover:text-slate-100 transition-colors">{item.desc}</p>
                             </div>
                         ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* STATS STRIP */}
-            <section className="py-20 border-y border-white/10 bg-slate-900/40 backdrop-blur-md">
-                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    <div className="group hover:-translate-y-1 transition-transform duration-300">
-                        <div className="text-5xl md:text-6xl font-black text-white mb-2 drop-shadow-lg group-hover:text-blue-200 transition-colors">{supplierCount}+</div>
-                        <div className="text-blue-400 text-sm font-bold uppercase tracking-widest">Verified Suppliers</div>
-                    </div>
-                    <div className="group hover:-translate-y-1 transition-transform duration-300">
-                        <div className="text-5xl md:text-6xl font-black text-white mb-2 drop-shadow-lg group-hover:text-emerald-200 transition-colors">{productCount}+</div>
-                        <div className="text-emerald-400 text-sm font-bold uppercase tracking-widest">Active Products</div>
-                    </div>
-                    <div className="group hover:-translate-y-1 transition-transform duration-300">
-                        <div className="text-5xl md:text-6xl font-black text-white mb-2 drop-shadow-lg group-hover:text-amber-200 transition-colors">{agentCount}+</div>
-                        <div className="text-amber-400 text-sm font-bold uppercase tracking-widest">Partner Agents</div>
                     </div>
                 </div>
             </section>
