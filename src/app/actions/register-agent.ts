@@ -3,6 +3,8 @@
 import { createAdminClient } from '@/utils/supabase/admin'
 
 type AgentRegistrationData = {
+    first_name: string
+    last_name: string
     email: string
     agency_name: string
     license_number: string
@@ -28,6 +30,8 @@ export async function registerAgent(data: AgentRegistrationData) {
             email_confirm: true, // Auto-verify email so they don't get the "Confirm your email" automatic mail
             user_metadata: {
                 role: 'pending_agent',
+                first_name: data.first_name,
+                last_name: data.last_name,
                 agency_name: data.agency_name,
                 license_number: data.license_number,
                 website_url: data.website_url,

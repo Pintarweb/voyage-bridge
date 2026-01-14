@@ -3,9 +3,27 @@
     color: white;
     border: none;
 }
+
 .phone-input-dark .PhoneInputInput:focus {
     outline: none;
 }
+
 .phone-input-dark .PhoneInputCountrySelect {
-    color: black;
+    color: white;
+    background-color: transparent;
+}
+
+.phone-input-dark .PhoneInputCountrySelectArrow {
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 1;
+}
+
+.phone-input-dark .PhoneInputInput::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1;
+}
+
+/* Fix country icon if needed */
+.phone-input-dark .PhoneInputCountryIcon {
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.5);
 }

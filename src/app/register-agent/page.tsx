@@ -1,4 +1,5 @@
 'use client'
+// Force Refreshed: 2026-01-14T10:15:00
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
@@ -45,6 +46,8 @@ const CITY_TO_COUNTRY: Record<string, string> = {
 
 export default function AgentRegistration() {
     const [formData, setFormData] = useState({
+        first_name: '',
+        last_name: '',
         email: '',
         agency_name: '',
         license_number: '',
@@ -95,6 +98,8 @@ export default function AgentRegistration() {
 
                 // 1. Sign Up - Silent Registration (Via Server Action)
                 const result = await registerAgent({
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
                     email: formData.email,
                     agency_name: formData.agency_name,
                     license_number: formData.license_number,
@@ -213,9 +218,31 @@ export default function AgentRegistration() {
                                     <div className="flex items-center gap-2 text-amber-400 text-sm font-bold uppercase tracking-wider pb-2 border-b border-white/10">
                                         <FaUser /> Section 1: Personal Details
                                     </div>
-                                    <div className="grid grid-cols-1 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-xs font-medium text-blue-200 mb-1">Professional Email</label>
+                                            <label className="block text-xs font-medium !text-white mb-1">First Name</label>
+                                            <input
+                                                type="text"
+                                                name="first_name"
+                                                required
+                                                className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-white/30 transition-all"
+                                                placeholder="Jane"
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium !text-white mb-1">Last Name</label>
+                                            <input
+                                                type="text"
+                                                name="last_name"
+                                                required
+                                                className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-white/30 transition-all"
+                                                placeholder="doe"
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <label className="block text-xs font-medium !text-white mb-1">Professional Email</label>
                                             <input
                                                 type="email"
                                                 name="email"
@@ -226,7 +253,7 @@ export default function AgentRegistration() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-medium text-blue-200 mb-1">Direct Phone</label>
+                                            <label className="block text-xs font-medium !text-white mb-1">Direct Phone</label>
                                             <div className="bg-black/20 border border-white/10 rounded-xl px-2 py-1 focus-within:ring-2 focus-within:ring-amber-500">
                                                 <PhoneInput
                                                     placeholder="Enter phone number"
@@ -248,7 +275,7 @@ export default function AgentRegistration() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="md:col-span-2">
-                                            <label className="block text-xs font-medium text-blue-200 mb-1">Agency Name</label>
+                                            <label className="block text-xs font-medium !text-white mb-1">Agency Name</label>
                                             <input
                                                 type="text"
                                                 name="agency_name"
@@ -260,7 +287,7 @@ export default function AgentRegistration() {
                                         </div>
 
                                         <div className="md:col-span-2">
-                                            <label className="block text-xs font-medium text-blue-200 mb-1">IATA/Registration Number <span className="text-white/40 font-normal">(Optional)</span></label>
+                                            <label className="block text-xs font-medium !text-white mb-1">IATA/Registration Number <span className="text-white/40 font-normal">(Optional)</span></label>
                                             <input
                                                 type="text"
                                                 name="license_number"
@@ -272,7 +299,7 @@ export default function AgentRegistration() {
 
                                         {/* City & Country */}
                                         <div>
-                                            <label className="block text-xs font-medium text-blue-200 mb-1">City</label>
+                                            <label className="block text-xs font-medium !text-white mb-1">City</label>
                                             <input
                                                 type="text"
                                                 name="city"
@@ -283,7 +310,7 @@ export default function AgentRegistration() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-medium text-blue-200 mb-1">Country</label>
+                                            <label className="block text-xs font-medium !text-white mb-1">Country</label>
                                             <div className="country-select-wrapper-dark">
                                                 <CountrySelect
                                                     value={formData.country_code}
@@ -301,8 +328,9 @@ export default function AgentRegistration() {
 
                                 {/* Scarcity Ticker */}
                                 <div className="text-center py-2">
-                                    <p className="text-xs text-amber-300 animate-pulse font-medium">
-                                        ⚠ Current Queue: {queueCount} agencies pending review. Spots allocated first-come, first-served.
+                                    <p className="text-xs text-amber-400 font-bold bg-amber-950/40 border border-amber-500/20 px-4 py-2 rounded-lg inline-flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                        Current Queue: {queueCount} agencies pending review. Spots allocated first-come, first-served.
                                     </p>
                                 </div>
 
