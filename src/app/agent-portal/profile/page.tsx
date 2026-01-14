@@ -1,5 +1,5 @@
 'use client'
-// Force recompile: Agent Profile Page Initialized
+// Force recompile: Agent Profile Page Updated with new fields 2026-01-14
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
@@ -152,7 +152,7 @@ export default function AgentProfilePage() {
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Email Address</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">Email Address</label>
                                     <div className="bg-slate-950/50 border border-white/5 rounded-xl px-4 py-3 text-slate-300 flex items-center justify-between">
                                         <span>{user?.email}</span>
                                         <FaLock className="text-slate-600" />
@@ -160,7 +160,7 @@ export default function AgentProfilePage() {
                                     <p className="text-[10px] text-slate-500 mt-2">Email cannot be changed directly for security reasons.</p>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Account ID</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">Account ID</label>
                                     <div className="bg-slate-950/50 border border-white/5 rounded-xl px-4 py-3 text-slate-500 font-mono text-xs truncate">
                                         {user?.id}
                                     </div>
@@ -175,7 +175,7 @@ export default function AgentProfilePage() {
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">First Name</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">First Name</label>
                                     <input
                                         type="text"
                                         name="first_name"
@@ -186,7 +186,7 @@ export default function AgentProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">Last Name</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">Last Name</label>
                                     <input
                                         type="text"
                                         name="last_name"
@@ -197,7 +197,7 @@ export default function AgentProfilePage() {
                                     />
                                 </div>
                                 <div className="md:col-span-2">
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">Agency Name</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">Agency Name</label>
                                     <input
                                         type="text"
                                         name="agency_name"
@@ -208,7 +208,7 @@ export default function AgentProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">License Number</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">IATA / License Number</label>
                                     <input
                                         type="text"
                                         name="license_number"
@@ -219,7 +219,7 @@ export default function AgentProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">Website</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">Website</label>
                                     <div className="relative">
                                         <FaGlobe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                                         <input
@@ -241,19 +241,9 @@ export default function AgentProfilePage() {
                                 <FaMapMarkerAlt className="text-emerald-500" /> Location & Contact
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="md:col-span-2">
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">Address</label>
-                                    <input
-                                        type="text"
-                                        name="address"
-                                        value={profile.address}
-                                        onChange={handleChange}
-                                        className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all placeholder-slate-600"
-                                        placeholder="Street Address, Suite, etc."
-                                    />
-                                </div>
+                                {/* Address field removed per user request */}
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">City</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">City</label>
                                     <input
                                         type="text"
                                         name="city"
@@ -264,7 +254,7 @@ export default function AgentProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">Country Code (ISO)</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">Country Code (ISO)</label>
                                     <input
                                         type="text"
                                         name="country_code"
@@ -276,7 +266,7 @@ export default function AgentProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">Phone Number</label>
+                                    <label className="block text-xs font-bold !text-white uppercase mb-2">Phone Number</label>
                                     <input
                                         type="text"
                                         name="phone_number"
