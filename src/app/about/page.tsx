@@ -183,13 +183,13 @@ export default function AboutPage() {
                         >
                             {/* Portrait Placeholder */}
                             <div className="md:col-span-2 bg-slate-900/50 min-h-[300px] relative group overflow-hidden">
-                                {/* Abstract Professional Silhouette / Placeholder */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-800/50" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-32 h-32 rounded-full border-2 border-white/10 flex items-center justify-center text-white/20">
-                                        <span className="text-xs tracking-widest">PORTRAIT</span>
-                                    </div>
-                                </div>
+                                {/* Logo Image */}
+                                <img
+                                    src="/ark-founder-logo.jpg"
+                                    alt="ArkAlliance Founder Logo"
+                                    className="w-full h-full object-contain p-8 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10" />
                             </div>
 
                             {/* Mission Narrative */}

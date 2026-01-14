@@ -245,7 +245,7 @@ export default function Home() {
                                 Lock in the exclusive rate of <span className="text-amber-400 font-bold">$30/month</span> for a full year. No payment required for trial.
                             </p>
                             <div className="pt-6">
-                                <Link href="/why-us">
+                                <Link href="/auth/register">
                                     <button className="px-10 py-5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-xl rounded-xl shadow-lg hover:shadow-amber-500/30 transition-all transform hover:scale-105">
                                         Claim Early Bird Status
                                     </button>

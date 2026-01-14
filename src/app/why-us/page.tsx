@@ -40,9 +40,20 @@ const features = [
 export default function WhyUsPage() {
     return (
         <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden selection:bg-amber-500/30">
-            {/* Ambient Background Glows */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[128px] pointer-events-none" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[128px] pointer-events-none" />
+            {/* BACKGROUND: Cinematic Cityscape */}
+            <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden bg-slate-950">
+                {/* Background Gradient to ensure text readability */}
+                <div className="absolute inset-0 bg-slate-950/50 z-20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/80 z-20" />
+
+                {/* Background Image: Night City with Golden Lights */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop"
+                    alt="City Command"
+                    className="w-full h-full object-cover opacity-50"
+                />
+            </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
 

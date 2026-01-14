@@ -47,24 +47,27 @@ export default function PortalHeader({ userEmail }: PortalHeaderProps) {
 
                 <div className="h-6 w-px bg-white/10 mx-2 hidden sm:block"></div>
 
-                <div className="flex items-center gap-3 pl-2">
-                    <div className="text-right hidden md:block">
-                        <p className="text-white text-xs font-bold leading-none mb-0.5">{userEmail?.split('@')[0]}</p>
-                        <p className="text-slate-500 text-[10px] uppercase tracking-wider leading-none">Verified Agent</p>
-                    </div>
-
-                    <div className="relative group">
-                        <button className="w-9 h-9 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-white overflow-hidden hover:border-amber-500/50 transition-colors">
-                            <span className="font-bold text-xs">{userEmail?.[0]?.toUpperCase()}</span>
-                        </button>
-
-                        {/* Dropdown Menu (on hover/click simplified for now) */}
-                        <div className="absolute top-full right-0 mt-2 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-2xl py-1 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200">
-                            <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/5 flex items-center gap-2">
-                                <FiLogOut /> Sign Out
-                            </button>
+                <div className="flex items-center gap-4 pl-2">
+                    {/* User Badge */}
+                    <div className="flex items-center gap-3 bg-white/5 pl-2 pr-4 py-1.5 rounded-full border border-white/10">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 flex items-center justify-center text-xs font-extrabold shadow-lg">
+                            {(userEmail || 'A')[0]?.toUpperCase()}
+                        </div>
+                        <div className="text-left hidden md:block">
+                            <p className="text-slate-200 text-xs font-bold leading-none">{userEmail?.split('@')[0] || 'Agent'}</p>
+                            <p className="text-slate-500 text-[9px] uppercase tracking-wider leading-none mt-0.5">Verified Agent</p>
                         </div>
                     </div>
+
+                    {/* Direct Logout Button */}
+                    <button
+                        onClick={handleLogout}
+                        className="group flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-lg transition-all"
+                        title="Sign Out"
+                    >
+                        <FiLogOut className="text-slate-400 group-hover:text-red-400 text-lg transition-colors" />
+                        <span className="text-xs font-bold text-slate-400 group-hover:text-red-400 uppercase tracking-wider hidden sm:inline transition-colors">Logout</span>
+                    </button>
                 </div>
             </div>
         </div>

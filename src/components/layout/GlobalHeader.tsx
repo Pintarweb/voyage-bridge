@@ -123,6 +123,11 @@ export default function GlobalHeader() {
     const currentCurrency = CURRENCIES.find(c => c.code === currency)
     const currentLang = LANGUAGES.find(l => l.code === language)
 
+    // Dedicated portals have their own headers
+    if (type === 'portal' || type === 'supplier') {
+        return null
+    }
+
     return (
         <header className="bg-slate-950/80 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/60">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

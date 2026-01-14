@@ -4,10 +4,16 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { FaFacebook, FaLinkedin, FaYoutube, FaInstagram, FaDiscord, FaTwitter } from 'react-icons/fa'
 
+import { usePathname } from 'next/navigation'
 import { useLanguage } from '@/context/LanguageContext'
 
 export default function Footer() {
     const { language } = useLanguage()
+    const pathname = usePathname()
+
+    const isPortal = pathname?.startsWith('/agent-portal') || pathname?.startsWith('/supplier')
+
+    if (isPortal) return null
 
     const t = {
         'en-US': {
