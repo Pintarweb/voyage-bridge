@@ -1,6 +1,6 @@
 'use client'
 
-import { FaColumns, FaHeart, FaHeadset, FaGem, FaSatelliteDish, FaUserCog } from 'react-icons/fa'
+import { FaColumns, FaHeart, FaHeadset, FaGem, FaSatelliteDish, FaUserCog, FaUsers } from 'react-icons/fa'
 import { usePathname, useRouter } from 'next/navigation'
 
 export default function PortalSidebar() {
@@ -26,6 +26,12 @@ export default function PortalSidebar() {
                     label="Mission Support"
                     active={pathname === '/agent-portal/mission-support'}
                     href="/agent-portal/mission-support"
+                />
+                <SidebarItem
+                    icon={<FaUsers />}
+                    label="Community"
+                    active={pathname === '/agent-portal/community'}
+                    href="/agent-portal/community"
                 />
                 <SidebarItem
                     icon={<FaUserCog />}

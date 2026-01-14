@@ -1,4 +1,5 @@
 'use client'
+// Force recompile: Mission Control View Updated 2026-01-14 15:22
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
@@ -7,11 +8,14 @@ import {
     FaEnvelope, FaPaperPlane, FaCheck, FaSpinner, FaChevronUp
 } from 'react-icons/fa'
 
+import { voteFeature } from '@/app/actions/feedback'
+
 type WishlistItem = {
     feature_id: string
     title: string
     upvote_count: number
     status: string
+    hasVoted?: boolean
 }
 
 export default function MissionControlView({ initialWishlist }: { initialWishlist: WishlistItem[] }) {
@@ -24,9 +28,9 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitSuccess, setSubmitSuccess] = useState(false)
-    const [voting, setVoting] = useState<Record<string, boolean>>({})
     const [userRequests, setUserRequests] = useState<any[]>([])
     const [loadingRequests, setLoadingRequests] = useState(true)
+
 
     const fetchRequests = async () => {
         const supabase = createClient()
@@ -42,6 +46,7 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
     useEffect(() => {
         fetchRequests()
     }, [submitSuccess])
+
 
     const handleRequestSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -62,38 +67,37 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
         }
     }
 
-    const handleVote = async (id: string, currentCount: number) => {
-        if (voting[id]) return
-        setVoting(prev => ({ ...prev, [id]: true }))
+    const handleVote = async (id: string, currentHasVoted?: boolean) => {
+        // Optimistic Update
+        setWishlist(prev => prev.map(item => {
+            if (item.feature_id === id) {
+                return {
+                    ...item,
+                    upvote_count: (item.upvote_count || 0) + (currentHasVoted ? -2 : 2),
+                    hasVoted: !currentHasVoted
+                }
+            }
+            return item
+        }))
 
         try {
-            const res = await fetch('/api/mission/vote', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ feature_id: id })
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                if (data.error === 'Already voted') {
-                    alert('You have already voted on this mission.')
-                } else {
-                    console.error('Vote failed', data.error)
-                }
-                return
+            const res = await voteFeature(id)
+            if (!res.success) {
+                // Revert if failed
+                setWishlist(prev => prev.map(item => {
+                    if (item.feature_id === id) {
+                        return {
+                            ...item,
+                            upvote_count: (item.upvote_count || 0) + (currentHasVoted ? 2 : -2), // Reverse operation
+                            hasVoted: currentHasVoted
+                        }
+                    }
+                    return item
+                }))
+                console.error('Vote failed', res.error)
             }
-
-            // Real update based on weight
-            const weight = data.weight || 1
-            setWishlist(prev => prev.map(item =>
-                item.feature_id === id ? { ...item, upvote_count: (item.upvote_count || 0) + weight } : item
-            ))
-
         } catch (error) {
             console.error('Vote failed', error)
-        } finally {
-            setVoting(prev => ({ ...prev, [id]: false }))
         }
     }
 
@@ -222,25 +226,7 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                     </section>
 
                     {/* Direct Uplink */}
-                    <section>
-                        <h3 className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-6">Urgent Uplink</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-xl hover:bg-green-500/20 transition-all group w-full">
-                                <FaWhatsapp className="text-green-500 text-2xl group-hover:scale-110 transition-transform" />
-                                <div className="text-left">
-                                    <p className="text-white font-bold text-sm">WhatsApp Priority</p>
-                                    <p className="text-green-400 text-xs">Avg. Response: 5m</p>
-                                </div>
-                            </a>
-                            <a href="mailto:operational@arkalliance.com" className="flex items-center gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl hover:bg-blue-500/20 transition-all group w-full">
-                                <FaEnvelope className="text-blue-500 text-2xl group-hover:scale-110 transition-transform" />
-                                <div className="text-left">
-                                    <p className="text-white font-bold text-sm">Operations Email</p>
-                                    <p className="text-blue-400 text-xs">24/7 Monitoring</p>
-                                </div>
-                            </a>
-                        </div>
-                    </section>
+                    {/* Urgent Uplink section removed per user request */}
                 </div>
 
                 {/* RIGHT COLUMN: Roadmap Voting */}
@@ -264,10 +250,13 @@ export default function MissionControlView({ initialWishlist }: { initialWishlis
                         {wishlist.map(item => (
                             <div key={item.feature_id} className="flex items-start gap-4 p-4 bg-slate-900 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                                 <button
-                                    onClick={() => handleVote(item.feature_id, item.upvote_count)}
-                                    className="flex flex-col items-center justify-center min-w-[3rem] h-[3rem] rounded-lg bg-slate-800 border border-white/10 hover:bg-amber-500 hover:text-slate-900 group transition-all"
+                                    onClick={() => handleVote(item.feature_id, item.hasVoted)}
+                                    className={`flex flex-col items-center justify-center min-w-[3rem] h-[3rem] rounded-lg border transition-all ${item.hasVoted
+                                        ? 'bg-amber-500 border-amber-400 text-slate-900 shadow-[0_0_10px_rgba(245,158,11,0.4)]'
+                                        : 'bg-slate-800 border-white/10 hover:bg-slate-700 hover:text-amber-400'
+                                        }`}
                                 >
-                                    <FaChevronUp className="text-xs mb-0.5" />
+                                    <FaChevronUp className={`text-xs mb-0.5 transition-transform ${item.hasVoted ? 'scale-125' : ''}`} />
                                     <span className="font-bold text-sm">{item.upvote_count}</span>
                                 </button>
                                 <div>

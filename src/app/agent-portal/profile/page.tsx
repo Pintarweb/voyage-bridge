@@ -1,5 +1,5 @@
 'use client'
-// Force recompile: Agent Profile Page Updated with new fields 2026-01-14
+// Force recompile: Agent Profile Page Updated with new fields 2026-01-14 15:00
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
@@ -227,7 +227,7 @@ export default function AgentProfilePage() {
                                             name="website_url"
                                             value={profile.website_url}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-950/50 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-600"
+                                            className="w-full bg-slate-950/50 border border-white/10 rounded-xl !pl-14 pr-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-600"
                                             placeholder="https://www.example.com"
                                         />
                                     </div>
