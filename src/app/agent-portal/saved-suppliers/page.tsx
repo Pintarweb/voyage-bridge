@@ -52,47 +52,52 @@ export default async function SavedSuppliersPage() {
                             {savedItems.map((item: any) => {
                                 const supplier = item.supplier
                                 return (
-                                    <div key={item.id} className="group bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-300">
-                                        <div className="p-6 relative">
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div className="w-16 h-16 rounded-xl bg-slate-800 flex items-center justify-center border border-white/5 overflow-hidden">
+                                    <div key={item.id} className="relative group bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-500 hover:shadow-2xl">
+                                        <div className="p-8">
+                                            <div className="flex items-start justify-between mb-6">
+                                                <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center border border-white/10 overflow-hidden shadow-inner">
                                                     {supplier.logo_url ? (
                                                         <Image src={supplier.logo_url} alt={supplier.company_name} width={64} height={64} className="object-cover w-full h-full" />
                                                     ) : (
-                                                        <FaBuilding className="text-2xl text-slate-600" />
+                                                        <FaBuilding className="text-2xl text-amber-500" />
                                                     )}
                                                 </div>
-                                                <span className="px-3 py-1 bg-amber-500/10 text-amber-500 text-[10px] font-bold uppercase tracking-wider rounded-full border border-amber-500/20">
+                                                <span className="px-3 py-1 bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-amber-500/20">
                                                     {supplier.supplier_type}
                                                 </span>
                                             </div>
 
-                                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">{supplier.company_name}</h3>
+                                            <h3 className="text-2xl font-black text-white mb-2 leading-tight group-hover:text-amber-400 transition-colors uppercase tracking-tight line-clamp-1">{supplier.company_name}</h3>
 
-                                            <div className="space-y-2 mb-6">
-                                                <p className="flex items-center gap-2 text-sm text-slate-200 font-medium">
-                                                    <FaMapMarkerAlt className="text-amber-500" /> {supplier.city}, {supplier.country_code}
+                                            <div className="space-y-3 mb-8">
+                                                <p className="flex items-center gap-2 text-xs text-slate-400 font-bold uppercase tracking-widest">
+                                                    <FaMapMarkerAlt className="text-amber-500/70" /> {supplier.city}, {supplier.country_code}
                                                 </p>
                                                 {supplier.contact_email && (
-                                                    <p className="flex items-center gap-2 text-sm text-slate-200">
-                                                        <FaEnvelope className="text-slate-400" /> {supplier.contact_email}
-                                                    </p>
-                                                )}
-                                                {supplier.website_url && (
-                                                    <p className="flex items-center gap-2 text-sm text-slate-200">
-                                                        <FaGlobe className="text-slate-400" />
-                                                        <a href={supplier.website_url} target="_blank" className="hover:text-amber-400 hover:underline cursor-pointer">Visit Website</a>
+                                                    <p className="flex items-center gap-2 text-xs text-slate-400 truncate">
+                                                        <FaEnvelope className="text-blue-400/50" /> {supplier.contact_email}
                                                     </p>
                                                 )}
                                             </div>
 
-                                            <div className="flex gap-3 mt-auto">
-                                                <a href={`mailto:${supplier.contact_email}`} className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 text-white text-sm font-bold text-center rounded-xl transition-colors border border-white/5">
-                                                    Email
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <Link
+                                                    href={`/agent-portal/supplier/${supplier.id}`}
+                                                    className="inline-flex items-center justify-center py-3 bg-white text-slate-950 text-[10px] font-black uppercase tracking-tight rounded-xl hover:bg-amber-400 transition-all duration-300 transform active:scale-95"
+                                                >
+                                                    View Profile
+                                                </Link>
+                                                <a
+                                                    href={`mailto:${supplier.contact_email}`}
+                                                    className="inline-flex items-center justify-center py-3 bg-white/5 text-white text-[10px] font-black uppercase tracking-tight rounded-xl hover:bg-white/10 border border-white/5 transition-all"
+                                                >
+                                                    Contact Hub
                                                 </a>
-                                                {/* Could add a 'View Products' button linking to a filter view eventually */}
                                             </div>
                                         </div>
+
+                                        {/* Decorative shadow at bottom */}
+                                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
                                 )
                             })}

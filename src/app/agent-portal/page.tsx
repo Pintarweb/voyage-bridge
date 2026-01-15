@@ -44,8 +44,8 @@ export default async function PortalPage() {
         })
         .sort((a, b) => a.name.localeCompare(b.name))
 
-    // Fetch random trending products (simulated by fetching active products)
-    const { data: trendingProducts } = await supabase
+    // Fetch a pool of products
+    const { data: rawProducts } = await supabase
         .from('products')
         .select(`
             id,
@@ -57,7 +57,31 @@ export default async function PortalPage() {
             )
         `)
         .eq('status', 'active')
-        .limit(4)
+        .order('created_at', { ascending: false })
+        .limit(20)
+
+    // Simplified selection logic (Diversity + Recency)
+    const trendingProducts: any[] = []
+    const seenCategories = new Set()
+
+    if (rawProducts) {
+        // Step 1: Fill slots with category-diverse products
+        rawProducts.forEach(p => {
+            if (trendingProducts.length < 4 && !trendingProducts.find(tp => tp.id === p.id)) {
+                if (!seenCategories.has(p.product_category)) {
+                    trendingProducts.push(p)
+                    seenCategories.add(p.product_category)
+                }
+            }
+        })
+
+        // Step 2: Fill remaining slots with any available recent products
+        rawProducts.forEach(p => {
+            if (trendingProducts.length < 4 && !trendingProducts.find(tp => tp.id === p.id)) {
+                trendingProducts.push(p)
+            }
+        })
+    }
 
     // Fetch latest suppliers
     const { data: latestSuppliers } = await supabase

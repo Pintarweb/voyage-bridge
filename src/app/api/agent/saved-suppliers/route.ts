@@ -86,3 +86,37 @@ export async function GET(request: Request) {
     // Transform to flatten structure if needed, or return as is
     return NextResponse.json({ saved_suppliers: data })
 }
+
+export async function DELETE(request: Request) {
+    const supabase = await createClient()
+    const {
+        data: { user },
+        error: authError
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    try {
+        const { supplier_id } = await request.json()
+
+        if (!supplier_id) {
+            return NextResponse.json({ error: 'Missing supplier_id' }, { status: 400 })
+        }
+
+        const { error } = await supabase
+            .from('saved_suppliers')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('supplier_id', supplier_id)
+
+        if (error) throw error
+
+        return NextResponse.json({ success: true }, { status: 200 })
+
+    } catch (error: any) {
+        console.error('Error removing saved supplier:', error)
+        return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+}

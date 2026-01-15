@@ -1,7 +1,8 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
-import { FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaBoxOpen, FaInfoCircle } from 'react-icons/fa'
 import ProductList from '@/components/portal/ProductList'
+import PortalSidebar from '@/components/portal/PortalSidebar'
 
 export default async function ProductsPage({
     searchParams
@@ -14,19 +15,17 @@ export default async function ProductsPage({
 
     if (!country || !city || !type) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-8">
-                <div className="max-w-7xl mx-auto">
-                    <p className="text-slate-600">Missing required parameters</p>
-                    <Link href="/agent-portal" className="text-blue-600 hover:underline mt-4 inline-block">
-                        Return to search
-                    </Link>
-                </div>
+            <div className="p-8 text-white min-h-screen flex flex-col items-center justify-center">
+                <p className="text-xl font-bold mb-4">Missing mission parameters</p>
+                <Link href="/agent-portal" className="px-6 py-2 bg-amber-500 text-slate-950 font-bold rounded-lg hover:bg-amber-400 transition-all">
+                    Return to Mission Hub
+                </Link>
             </div>
         )
     }
 
-    // Fetch products with supplier details
-    const { data: products, error } = await supabase
+    // Fetch products with supplier details (ensuring we get supplier_type for filtering)
+    const { data: products } = await supabase
         .from('products')
         .select(`
             *,
@@ -35,84 +34,93 @@ export default async function ProductsPage({
                 company_name,
                 description,
                 website_url,
-                contact_email
+                contact_email,
+                supplier_type
             )
         `)
         .eq('country_code', country)
         .eq('city', city)
         .eq('status', 'active')
 
-    console.log('[Products Page] Query params:', { country, city, type })
-    console.log('[Products Page] Products fetched:', products?.length || 0)
-    console.log('[Products Page] Error:', error)
-    if (products && products.length > 0) {
-        console.log('[Products Page] Sample product:', JSON.stringify(products[0], null, 2))
-    }
+    // Filter products by the requested category (case-insensitive)
+    const filteredProducts = (products || []).filter((p: any) => {
+        const productCategory = p.product_category?.toUpperCase()
+        const supplierType = p.supplier?.supplier_type?.toUpperCase()
+        const targetType = type.toUpperCase()
 
-    const filteredProducts = (products || []).filter((p: any) =>
-        p.supplier_type?.toUpperCase() === type?.toUpperCase()
-    )
-
-    console.log('[Products Page] Filtered products:', filteredProducts.length)
-    console.log('[Products Page] Filter comparison:', {
-        productType: products?.[0]?.supplier_type,
-        productTypeUpper: products?.[0]?.supplier_type?.toUpperCase(),
-        urlType: type,
-        urlTypeUpper: type?.toUpperCase(),
-        match: products?.[0]?.supplier_type?.toUpperCase() === type?.toUpperCase()
+        return productCategory === targetType || supplierType === targetType
     })
 
-    // Fetch user's wishlist (handle gracefully if table doesn't exist)
+    // Fetch user's wishlist
     let wishlist: string[] = []
     const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
-        const { data: wishlistData, error: wishlistError } = await supabase
+        const { data: wishlistData } = await supabase
             .from('wishlists')
             .select('product_id')
             .eq('user_id', user.id)
 
-        if (wishlistError) {
-            console.log('[Products Page] Wishlist error (table may not exist yet):', wishlistError.message)
-        } else {
-            wishlist = wishlistData?.map(w => w.product_id) || []
-        }
+        wishlist = wishlistData?.map(w => w.product_id) || []
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Header */}
-                <div className="mb-8">
-                    <Link
-                        href={`/agent-portal/country/${country}`}
-                        className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 mb-4 transition-colors font-medium"
-                    >
-                        <FaArrowLeft /> Back to {country}
-                    </Link>
-                    <h1 className="text-4xl font-extrabold text-slate-900 mb-2">
-                        {type} in {city}
-                    </h1>
-                    <p className="text-slate-600">
-                        {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
-                    </p>
-                </div>
+        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-transparent">
+            <PortalSidebar />
 
-                {/* Product Grid */}
-                {filteredProducts.length === 0 ? (
-                    <div className="bg-white/80 backdrop-blur-md border border-white/50 rounded-2xl p-12 text-center shadow-lg">
-                        <p className="text-slate-500 text-lg mb-4">No products found matching your criteria.</p>
+            <main className="flex-1 lg:ml-20 xl:ml-64 relative flex flex-col overflow-y-auto h-[calc(100vh-64px)] no-scrollbar">
+                <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+
+                    {/* Cinematic Header */}
+                    <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <Link
                             href={`/agent-portal/country/${country}`}
-                            className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold rounded-lg transition-all shadow-md hover:shadow-lg"
+                            className="inline-flex items-center gap-2 text-slate-500 hover:text-amber-400 mb-6 transition-all font-black uppercase tracking-[0.2em] text-[10px] group"
                         >
-                            Back to Overview
+                            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                            Back to {country} Overview
                         </Link>
+
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                            <div>
+                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter drop-shadow-2xl mb-4">
+                                    {type} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-100">in {city}</span>
+                                </h1>
+                                <div className="flex items-center gap-4">
+                                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                                        <FaBoxOpen className="text-amber-500" />
+                                        {filteredProducts.length} Active Asset{filteredProducts.length !== 1 ? 's' : ''} Identified
+                                    </p>
+                                    <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">
+                                        Location Verified: {city}, {country}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                ) : (
-                    <ProductList products={filteredProducts} initialWishlist={wishlist} />
-                )}
-            </div>
+
+                    {/* Product Grid */}
+                    {filteredProducts.length === 0 ? (
+                        <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-20 text-center shadow-2xl animate-in fade-in zoom-in duration-500">
+                            <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-500/20">
+                                <FaInfoCircle className="text-amber-500 text-2xl" />
+                            </div>
+                            <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">No active inventory found</h3>
+                            <p className="text-slate-500 mb-8 max-w-sm mx-auto">This regional hub currently has 0 active {type.toLowerCase()} listings. Check back soon for updated network availability.</p>
+                            <Link
+                                href={`/agent-portal/country/${country}`}
+                                className="inline-block px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg hover:shadow-amber-500/20"
+                            >
+                                Back to Sector Overview
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="pb-20 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                            <ProductList products={filteredProducts} initialWishlist={wishlist} />
+                        </div>
+                    )}
+                </div>
+            </main>
         </div>
     )
 }
