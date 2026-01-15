@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { FaTimes, FaUser, FaBuilding, FaEnvelope, FaMapMarkerAlt, FaPhone, FaGlobe, FaHistory, FaBan, FaUnlock, FaTrash, FaKey, FaFileInvoiceDollar, FaBoxOpen, FaExternalLinkAlt, FaIdCard, FaPlane } from 'react-icons/fa'
+import { FaTimes, FaUser, FaBuilding, FaEnvelope, FaMapMarkerAlt, FaPhone, FaGlobe, FaBan, FaTrash, FaKey, FaFileInvoiceDollar, FaBoxOpen, FaExternalLinkAlt, FaIdCard, FaHistory, FaFingerprint, FaShieldAlt, FaCircle } from 'react-icons/fa'
 
 interface UserManagementModalProps {
     isOpen: boolean
@@ -53,16 +53,16 @@ export default function UserManagementModal({ isOpen, onClose, user, type, onUpd
 
         switch (action) {
             case 'reset_password':
-                title = 'Reset Password?'
-                description = `Are you sure you want to send a password reset email to ${user.email}? They will be prompted to create a new password upon clicking the link.`
+                title = 'REAUTHORIZE SYSTEM ACCESS?'
+                description = `Initialize secure password reset protocol for ${user.email}. This will invalidate current credentials and require new biometric-equivalent setup.`
                 break
             case 'freeze':
-                title = 'Freeze Account?'
-                description = `This will temporarily disable access for ${user.company_name || user.agency_name}. You can unfreeze it later. Are you sure?`
+                title = 'SUSPEND NODE ACTIVITY?'
+                description = `Initiate temporary freeze on ${user.company_name || user.agency_name}. All mission logic will be paused until manual override.`
                 break
             case 'deactivate':
-                title = 'Deactivate User?'
-                description = `WARNING: This action is destructive. It will permanently disable the account for ${user.company_name || user.agency_name} and may cascade to their listings. Are you sure?`
+                title = 'TERMINATE PROTOCOL?'
+                description = `CRITICAL: Permanent deactivation of ${user.company_name || user.agency_name}. This operation is irreversible and will purge all active signals and pipeline data.`
                 break
         }
 
@@ -73,16 +73,11 @@ export default function UserManagementModal({ isOpen, onClose, user, type, onUpd
         if (!confirmation.action) return
 
         setIsLoading(true)
-        setConfirmation({ ...confirmation, isOpen: false }) // Close confirm modal immediately or wait? Better wait or show loading in it. Let's close and show specific loading UI if needed, but existing isLoading handles it.
-
         try {
-            // Call parent handler which will call Server Actions
             await onUpdateStatus(user.id, confirmation.action)
-            // alert(`Action ${confirmation.action} completed successfully`) // Parent should handle notifications or we do it here. Let's rely on parent or just log.
             onClose()
         } catch (error) {
             console.error(error)
-            alert('Action failed')
         } finally {
             setIsLoading(false)
             setConfirmation({ isOpen: false, action: null, title: '', description: '' })
@@ -91,354 +86,332 @@ export default function UserManagementModal({ isOpen, onClose, user, type, onUpd
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity" onClick={onClose} />
 
-            <div className="relative w-full max-w-2xl bg-[#0F172A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-slide-up">
+            {/* Modal Container */}
+            <div className="relative w-full max-w-2xl bg-slate-900/90 border border-white/10 rounded-[2rem] shadow-[0_32px_128px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-500">
 
-                {/* Header */}
-                <div className="p-6 border-b border-white/10 bg-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${type === 'Agent' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                            {type === 'Agent' ? <FaUser /> : <FaBuilding />}
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-white">{user.company_name || user.agency_name || 'Unnamed User'}</h2>
-                            <div className="flex items-center gap-2 text-sm text-white/50">
-                                <span className="uppercase tracking-wider font-bold text-xs">{type}</span>
-                                <span>•</span>
-                                {(() => {
-                                    let status = 'Pending'
-                                    let colorClass = 'text-amber-400'
+                {/* Visual Accent Glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] pointer-events-none" />
 
-                                    if (user.is_approved) {
-                                        status = 'Active'
-                                        colorClass = 'text-green-400'
-                                    } else if (type === 'Agent') {
-                                        if (user.verification_status === 'rejected') {
-                                            status = 'Rejected'
-                                            colorClass = 'text-red-400'
+                {/* Header Section */}
+                <div className="p-8 border-b border-white/5 relative bg-slate-950/20">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-6">
+                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl border border-white/5 shadow-2xl ${type === 'Agent' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                                {type === 'Agent' ? <FaUser /> : <FaBuilding />}
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-black text-white tracking-tight uppercase mb-1">
+                                    {user.company_name || user.agency_name || 'UNIDENTIFIED UNIT'}
+                                </h2>
+                                <div className="flex items-center gap-3">
+                                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest ${type === 'Agent' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
+                                        <FaFingerprint className="text-[10px]" />
+                                        {type} NODE
+                                    </div>
+                                    <FaCircle className="text-[4px] text-slate-700" />
+                                    {(() => {
+                                        let status = 'pending'
+                                        let statusColor = 'text-amber-400 bg-amber-500/10 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
+
+                                        if (user.is_approved) {
+                                            status = 'active'
+                                            statusColor = 'text-green-400 bg-green-500/10 border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.1)]'
+                                        } else if (type === 'Agent') {
+                                            if (user.verification_status === 'rejected') {
+                                                status = 'rejected'
+                                                statusColor = 'text-red-400 bg-red-500/10 border-red-500/20'
+                                            }
+                                        } else {
+                                            if (user.subscription_status === 'canceled') {
+                                                status = 'offline'
+                                                statusColor = 'text-slate-500 bg-white/5 border-white/10'
+                                            } else if (user.subscription_status === 'past_due') {
+                                                status = 'frozen'
+                                                statusColor = 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+                                            } else if (user.rejection_reason) {
+                                                status = 'rejected'
+                                                statusColor = 'text-red-400 bg-red-500/10 border-red-500/20'
+                                            }
                                         }
-                                    } else {
-                                        // Supplier
-                                        if (user.subscription_status === 'canceled') {
-                                            status = 'Deactivated'
-                                            colorClass = 'text-gray-400'
-                                        } else if (user.subscription_status === 'past_due') {
-                                            status = 'Frozen'
-                                            colorClass = 'text-blue-400 animate-pulse'
-                                        } else if (user.rejection_reason) {
-                                            status = 'Rejected'
-                                            colorClass = 'text-red-400'
-                                        }
-                                    }
 
-                                    return <span className={colorClass}>{status}</span>
-                                })()}
+                                        return (
+                                            <div className={`
+                                                inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest
+                                                ${statusColor}
+                                            `}>
+                                                <div className={`w-1.5 h-1.5 rounded-full ${status === 'active' ? 'bg-green-500 animate-pulse' : 'bg-current shadow-sm'}`} />
+                                                {status}
+                                            </div>
+                                        )
+                                    })()}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/50 hover:text-white transition-colors">
-                        <FaTimes />
-                    </button>
-                </div>
-
-                {/* Tabs, if we had more sections. For now just content. */}
-                <div className="flex border-b border-white/10 bg-black/20">
-                    <button
-                        onClick={() => setActiveTab('details')}
-                        className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'details' ? 'border-cyan-500 text-white' : 'border-transparent text-white/40 hover:text-white'}`}
-                    >
-                        Details
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('history')}
-                        className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'history' ? 'border-cyan-500 text-white' : 'border-transparent text-white/40 hover:text-white'}`}
-                    >
-                        Billing
-                    </button>
-                    {type === 'Supplier' && (
                         <button
-                            onClick={() => setActiveTab('products')}
-                            className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'products' ? 'border-cyan-500 text-white' : 'border-transparent text-white/40 hover:text-white'}`}
+                            onClick={onClose}
+                            className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all"
                         >
-                            Products
+                            <FaTimes />
                         </button>
-                    )}
-                    <button
-                        onClick={() => setActiveTab('actions')}
-                        className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'actions' ? 'border-cyan-500 text-white' : 'border-transparent text-white/40 hover:text-white'}`}
-                    >
-                        Actions
-                    </button>
+                    </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-6 overflow-y-auto">
-                    {activeTab === 'details' && (
-                        <div className="space-y-6">
-                            {/* Entity Specific Header */}
-                            <div className="bg-white/5 rounded-xl p-4 border border-white/5 flex items-start gap-4">
-                                <div className={`mt-1 w-8 h-8 rounded-lg flex items-center justify-center text-lg ${type === 'Agent' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                                    {type === 'Agent' ? <FaIdCard /> : <FaBuilding />}
+                {/* Tactical Tab Navigation */}
+                <div className="flex p-2 bg-slate-950/40 border-b border-white/5 backdrop-blur-xl">
+                    {[
+                        { id: 'details', label: 'Node Intel', icon: FaIdCard },
+                        { id: 'history', label: 'Logistics', icon: FaHistory },
+                        ...(type === 'Supplier' ? [{ id: 'products', label: 'Asset Bank', icon: FaBoxOpen }] : []),
+                        { id: 'actions', label: 'Protocol Override', icon: FaShieldAlt }
+                    ].map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`
+                                flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                                ${activeTab === tab.id
+                                    ? 'bg-indigo-500 text-white shadow-[0_8px_32px_rgba(99,102,241,0.2)] scale-100'
+                                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                }
+                            `}
+                        >
+                            <tab.icon className={activeTab === tab.id ? 'text-white' : 'text-slate-600'} />
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Content Area */}
+                <div className="flex-1 p-8 overflow-y-auto no-scrollbar bg-slate-900/40">
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {activeTab === 'details' && (
+                            <div className="space-y-8">
+                                {/* Core Data Card */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    {[
+                                        { label: 'Strategic Email', value: user.email || user.contact_email, icon: FaEnvelope },
+                                        { label: 'Intelligence Sector', value: `${user.city ? `${user.city}, ` : ''}${user.country || user.country_code}`, icon: FaMapMarkerAlt },
+                                        { label: 'Signal Link', value: user.phone_number || user.contact_phone || 'DISCONNECTED', icon: FaPhone },
+                                        { label: 'Public Portal', value: user.website_url || 'N/A', icon: FaGlobe, isLink: true }
+                                    ].map((field, i) => (
+                                        <div key={i} className="bg-slate-950/40 border border-white/5 rounded-2xl p-4 group hover:border-white/10 transition-all">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <field.icon className="text-indigo-400 text-xs" />
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{field.label}</span>
+                                            </div>
+                                            {field.isLink && field.value !== 'N/A' ? (
+                                                <a href={field.value} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-white hover:text-indigo-400 flex items-center gap-2 truncate">
+                                                    {field.value.replace(/^https?:\/\//, '').split('/')[0]}
+                                                    <FaExternalLinkAlt className="text-[10px] opacity-40" />
+                                                </a>
+                                            ) : (
+                                                <div className="text-sm font-bold text-white truncate">{field.value}</div>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="text-sm font-bold text-white mb-2">{type === 'Agent' ? 'Agency Information' : 'Company Information'}</h4>
-                                    <div className="grid grid-cols-2 gap-4">
+
+                                {/* Registry Metadata */}
+                                <div className="bg-slate-950/20 rounded-3xl border border-white/5 p-6 shadow-inner">
+                                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <div className="w-1 h-3 bg-indigo-500 rounded-full" />
+                                        Entity Metadata Registry
+                                    </h4>
+                                    <div className="grid grid-cols-2 gap-y-6 gap-x-12">
                                         {type === 'Agent' ? (
                                             <>
                                                 <div>
-                                                    <div className="text-[10px] uppercase text-white/40 font-bold">Agency Name</div>
-                                                    <div className="text-sm text-white/80">{user.agency_name || 'N/A'}</div>
+                                                    <div className="text-[10px] uppercase text-slate-600 font-bold tracking-widest mb-1">Protocol ID</div>
+                                                    <div className="text-[13px] text-white font-black uppercase">{user.license_number || 'UNVERIFIED'}</div>
                                                 </div>
                                                 <div>
-                                                    <div className="text-[10px] uppercase text-white/40 font-bold">License #</div>
-                                                    <div className="text-sm text-white/80">{user.license_number || 'N/A'}</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-[10px] uppercase text-white/40 font-bold">IATA #</div>
-                                                    <div className="text-sm text-white/80">{user.iata_number || 'N/A'}</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-[10px] uppercase text-white/40 font-bold">CLIA #</div>
-                                                    <div className="text-sm text-white/80">{user.clia_number || 'N/A'}</div>
+                                                    <div className="text-[10px] uppercase text-slate-600 font-bold tracking-widest mb-1">Network Authority</div>
+                                                    <div className="text-[13px] text-white font-black uppercase">{user.iata_number ? `IATA ${user.iata_number}` : (user.clia_number ? `CLIA ${user.clia_number}` : 'GENERAL NODE')}</div>
                                                 </div>
                                             </>
                                         ) : (
                                             <>
-                                                <div className="col-span-2">
-                                                    <div className="text-[10px] uppercase text-white/40 font-bold">Business Name</div>
-                                                    <div className="text-sm text-white/80">{user.company_name || 'N/A'}</div>
+                                                <div>
+                                                    <div className="text-[10px] uppercase text-slate-600 font-bold tracking-widest mb-1">Asset Category</div>
+                                                    <div className="text-[13px] text-white font-black uppercase">{user.supplier_type || 'GENERAL PROVIDER'}</div>
                                                 </div>
                                                 <div>
-                                                    <div className="text-[10px] uppercase text-white/40 font-bold">Supplier Type</div>
-                                                    <div className="text-sm text-white/80">{user.supplier_type || 'N/A'}</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-[10px] uppercase text-white/40 font-bold">Tax/Reg ID</div>
-                                                    <div className="text-sm text-white/80">{user.tax_id || user.company_reg_no || 'N/A'}</div>
+                                                    <div className="text-[10px] uppercase text-slate-600 font-bold tracking-widest mb-1">Tax Residency</div>
+                                                    <div className="text-[13px] text-white font-black uppercase">{user.tax_id || user.company_reg_no || 'NOT DECLARED'}</div>
                                                 </div>
                                             </>
                                         )}
+                                        <div className="col-span-2 pt-4 mt-4 border-t border-white/5">
+                                            <div className="text-[10px] uppercase text-slate-600 font-bold tracking-widest mb-2">Global UUID</div>
+                                            <code className="text-indigo-400 font-mono text-[11px] block bg-white/5 p-3 rounded-xl border border-white/5 select-all">{user.id}</code>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        )}
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-white/40 uppercase">Email</label>
-                                    <div className="flex items-center gap-2 text-white/80">
-                                        <FaEnvelope className="text-cyan-500/50" />
-                                        {user.email || user.contact_email}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-white/40 uppercase">Location</label>
-                                    <div className="flex items-center gap-2 text-white/80">
-                                        <FaMapMarkerAlt className="text-cyan-500/50" />
-                                        {user.city ? `${user.city}, ` : ''}{user.country || user.country_code}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-white/40 uppercase">Phone</label>
-                                    <div className="flex items-center gap-2 text-white/80">
-                                        <FaPhone className="text-cyan-500/50" />
-                                        {user.phone_number || user.contact_phone || 'N/A'}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-white/40 uppercase">Website</label>
-                                    <div className="flex items-center gap-2 text-white/80">
-                                        <FaGlobe className="text-cyan-500/50" />
-                                        <a href={user.website_url} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 truncate flex items-center gap-1">
-                                            {user.website_url ? (user.website_url.replace(/^https?:\/\//, '').split('/')[0]) : 'N/A'}
-                                            {user.website_url && <FaExternalLinkAlt className="text-[10px]" />}
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                        {activeTab === 'actions' && (
+                            <div className="space-y-4">
+                                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Security & Node Management</h3>
 
-                            <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                                <label className="text-xs font-bold text-white/40 uppercase block mb-2">Registration ID</label>
-                                <code className="font-mono text-xs text-amber-500/80">{user.id}</code>
-                            </div>
-                        </div>
-                    )}
-
-                    {activeTab === 'actions' && (
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-white mb-4">Account Management</h3>
-
-                            <button
-                                onClick={() => handleActionClick('reset_password')}
-                                className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
-                                        <FaKey />
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="font-bold text-white text-sm">Reset Password</div>
-                                        <div className="text-xs text-white/40">Send password reset email to user</div>
-                                    </div>
-                                </div>
-                            </button>
-
-                            <button
-                                onClick={() => handleActionClick('freeze')}
-                                className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
-                                        <FaBan />
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="font-bold text-white text-sm">Freeze Account</div>
-                                        <div className="text-xs text-white/40">Temporarily disable access</div>
-                                    </div>
-                                </div>
-                            </button>
-
-                            <button
-                                onClick={() => handleActionClick('deactivate')}
-                                className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-xl transition-all group"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">
-                                        <FaTrash />
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="font-bold text-white group-hover:text-red-400 text-sm">Deactivate / Delete</div>
-                                        <div className="text-xs text-white/40 group-hover:text-red-400/60">Permanently remove user</div>
-                                    </div>
-                                </div>
-                            </button>
-                        </div>
-                    )}
-
-                    {activeTab === 'history' && (
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-white mb-4">Billing & Subscription History</h3>
-                            {type === 'Supplier' && user.payment_status === 'completed' ? (
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
-                                                <FaFileInvoiceDollar />
+                                {[
+                                    { id: 'reset_password', label: 'Password Reset', desc: 'Secure protocol to refresh unit access', icon: FaKey, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+                                    { id: 'freeze', label: 'Suspend Node', desc: 'Temporary halt of all platform permissions', icon: FaBan, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+                                    { id: 'deactivate', label: 'Purge Registry', desc: 'Permanently remove node from global registry', icon: FaTrash, color: 'text-red-400', bg: 'bg-red-500/10' }
+                                ].map((action) => (
+                                    <button
+                                        key={action.id}
+                                        onClick={() => handleActionClick(action.id)}
+                                        className="w-full flex items-center justify-between p-5 bg-slate-950/40 hover:bg-white/5 border border-white/5 rounded-2xl transition-all group"
+                                    >
+                                        <div className="flex items-center gap-5">
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl border border-white/5 group-hover:scale-110 transition-transform ${action.bg} ${action.color}`}>
+                                                <action.icon />
                                             </div>
-                                            <div>
-                                                <div className="font-bold text-white text-sm">Founding Member Subscription</div>
-                                                <div className="text-xs text-white/40">Paid via Stripe</div>
+                                            <div className="text-left">
+                                                <div className="font-black text-white text-[13px] uppercase tracking-tight">{action.label}</div>
+                                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{action.desc}</div>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <div className="font-bold text-white">$149.00</div>
-                                            <div className="text-xs text-green-400">Paid</div>
-                                            <div className="text-[10px] text-white/30">{new Date(user.created_at).toLocaleDateString()}</div>
+                                        <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 text-slate-600 group-hover:text-white transition-colors">
+                                            <FaFingerprint />
                                         </div>
-                                    </div>
-
-                                    {user.current_period_end && (
-                                        <div className="text-right text-[10px] text-emerald-400 font-mono">
-                                            Active until: {new Date(user.current_period_end).toLocaleDateString()}
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="text-center py-8 text-white/40 text-sm bg-white/5 rounded-xl border border-dashed border-white/10">
-                                    No billing history available.
-                                </div>
-                            )}
-
-                            <div className="mt-8">
-                                <h3 className="text-sm font-bold text-white mb-4">System Logistics</h3>
-                                <div className="space-y-3 bg-white/5 rounded-xl p-4 border border-white/5">
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-white/40">Joined Platform</span>
-                                        <span className="text-white/80">{new Date(user.created_at).toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-white/40">Last Login</span>
-                                        <span className="text-white/80">Never</span>
-                                    </div>
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-white/40">Verification Status</span>
-                                        <span className="text-white/80 uppercase">
-                                            {(() => {
-                                                if (user.is_approved) return 'Verified'
-                                                if (type === 'Agent' && user.verification_status) return user.verification_status
-                                                if (user.rejection_reason) return 'Rejected'
-                                                if (user.subscription_status === 'canceled') return 'Deactivated'
-                                                if (user.subscription_status === 'past_due') return 'Frozen'
-                                                return 'Pending'
-                                            })()}
-                                        </span>
-                                    </div>
-                                </div>
+                                    </button>
+                                ))}
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {activeTab === 'products' && (
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-white mb-4">Product History</h3>
-
-                            {isLoadingProducts ? (
-                                <div className="text-center py-8 text-white/40 animate-pulse">Loading products...</div>
-                            ) : products.length > 0 ? (
-                                <div className="space-y-2">
-                                    {products.map(product => (
-                                        <div key={product.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5 hover:border-white/10 transition-all">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-xs">
-                                                    <FaBoxOpen />
+                        {activeTab === 'history' && (
+                            <div className="space-y-8">
+                                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Billing & Operational Logistics</h3>
+                                {type === 'Supplier' && user.payment_status === 'completed' ? (
+                                    <div className="bg-slate-950/40 border border-white/5 rounded-3xl p-6 shadow-2xl">
+                                        <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 text-xl">
+                                                    <FaFileInvoiceDollar />
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-bold text-white">{product.product_name}</div>
-                                                    <div className="text-[10px] text-white/40 uppercase">{product.product_category} • {product.country_code}</div>
+                                                    <div className="font-black text-white text-[13px] uppercase tracking-tight">Founding Member Subscription</div>
+                                                    <div className="text-[10px] text-green-400/60 font-black uppercase tracking-widest">Pipeline Active • Verified via Stripe</div>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <span className={`text-[10px] px-2 py-1 rounded border ${product.status === 'active' ? 'border-green-500/20 text-green-400 bg-green-500/10' : 'border-white/10 text-white/30 bg-white/5'}`}>
-                                                    {product.status || 'Draft'}
-                                                </span>
+                                                <div className="text-2xl font-black text-white">$149.00</div>
+                                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(user.created_at).toLocaleDateString()}</div>
                                             </div>
                                         </div>
-                                    ))}
+
+                                        {user.current_period_end && (
+                                            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                                <span>Protocol Expiry</span>
+                                                <span className="text-emerald-400">{new Date(user.current_period_end).toLocaleDateString()}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
+                                        <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">No strategic billing history located in core files.</div>
+                                    </div>
+                                )}
+
+                                <div>
+                                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">System Logistics Data</h3>
+                                    <div className="space-y-2">
+                                        {[
+                                            { label: 'Registry Date', value: new Date(user.created_at).toLocaleString() },
+                                            { label: 'Last Data Sync', value: 'Never Recorded' },
+                                            { label: 'Authority Level', value: user.is_approved ? 'Level 4 (Verified)' : 'Level 1 (Unverified)' }
+                                        ].map((log, i) => (
+                                            <div key={i} className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
+                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{log.label}</span>
+                                                <span className="text-[11px] text-white font-bold uppercase tracking-tight">{log.value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            ) : (
-                                <div className="text-center py-12 text-white/40 bg-white/5 rounded-xl border border-dashed border-white/10">
-                                    <FaBoxOpen className="mx-auto text-2xl mb-2 opacity-30" />
-                                    No products found for this supplier.
-                                </div>
-                            )}
-                        </div>
-                    )}
+                            </div>
+                        )}
+
+                        {activeTab === 'products' && (
+                            <div className="space-y-6">
+                                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Strategic Asset Bank</h3>
+
+                                {isLoadingProducts ? (
+                                    <div className="flex flex-col items-center justify-center py-20 animate-pulse">
+                                        <div className="w-12 h-12 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin mb-4" />
+                                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Scanning Asset Vault...</div>
+                                    </div>
+                                ) : products.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {products.map(product => (
+                                            <div key={product.id} className="flex items-center justify-between p-4 bg-slate-950/40 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                                                        <FaBoxOpen />
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-[13px] font-black text-white uppercase tracking-tight">{product.product_name}</div>
+                                                        <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">{product.product_category} • Hub: {product.country_code}</div>
+                                                    </div>
+                                                </div>
+                                                <div className={`text-[9px] px-3 py-1 rounded-full border font-black uppercase tracking-widest ${product.status === 'active' ? 'border-green-500/20 text-green-400 bg-green-500/10' : 'border-white/10 text-slate-500 bg-white/5'}`}>
+                                                    {product.status || 'Draft'}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-24 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
+                                        <FaBoxOpen className="mx-auto text-3xl mb-4 text-slate-800" />
+                                        <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">No strategic assets secured in bank.</div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Confirmation Modal Overlay */}
+                {/* Overdrive Action Confirmation Modal */}
                 {confirmation.isOpen && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-                        <div className="bg-[#1A1A20] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up">
-                            <h3 className="text-xl font-bold text-white mb-2">{confirmation.title}</h3>
-                            <p className="text-white/60 text-sm mb-6">{confirmation.description}</p>
-                            <div className="flex gap-3">
+                    <div className="absolute inset-0 z-[110] flex items-center justify-center p-8 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+                        <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-10 max-w-sm w-full shadow-[0_32px_128px_rgba(0,0,0,0.8)] animate-in zoom-in-95 slide-in-from-bottom-8 duration-500 text-center relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-50" />
+
+                            <div className="w-20 h-20 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-3xl mx-auto mb-8 shadow-2xl">
+                                <FaShieldAlt />
+                            </div>
+
+                            <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-4">{confirmation.title}</h3>
+                            <p className="text-slate-500 text-xs font-bold leading-relaxed mb-10 uppercase tracking-widest opacity-80">{confirmation.description}</p>
+
+                            <div className="flex gap-4">
                                 <button
                                     onClick={() => setConfirmation({ ...confirmation, isOpen: false })}
-                                    className="flex-1 py-3 text-sm font-bold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-all"
+                                    className="flex-1 py-4 text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-[0.2em] bg-white/5 hover:bg-white/10 rounded-2xl transition-all"
                                 >
-                                    Cancel
+                                    Abort
                                 </button>
                                 <button
                                     onClick={executeAction}
-                                    className={`flex-1 py-3 text-sm font-bold text-white rounded-xl transition-all shadow-lg ${confirmation.action === 'deactivate' ? 'bg-red-500 hover:bg-red-400' : 'bg-cyan-500 hover:bg-cyan-400'}`}
+                                    disabled={isLoading}
+                                    className={`
+                                        flex-1 py-4 text-[10px] font-black text-white uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl
+                                        ${confirmation.action === 'deactivate' ? 'bg-red-600 hover:bg-red-500 shadow-red-500/20' : 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/20'}
+                                        ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                                    `}
                                 >
-                                    Confirm
+                                    {isLoading ? 'SYNCING...' : 'CONFIRM'}
                                 </button>
                             </div>
                         </div>
                     </div>
                 )}
             </div>
-        </div >
+        </div>
     )
 }

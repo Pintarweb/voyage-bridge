@@ -9,10 +9,34 @@ import UserManagementModal from './UserManagementModal'
 import { handleUserApproval, rejectSupplier, manageUserStatus } from '@/app/actions/admin'
 
 import UserFeedbackModule from './UserFeedbackModule'
-import { FaCheck, FaTimes, FaEllipsisV, FaBuilding, FaUserTie, FaNetworkWired, FaLock, FaUnlock, FaPowerOff, FaSync, FaBolt, FaChevronDown, FaBullhorn } from 'react-icons/fa'
+import { FaCheck, FaTimes, FaEllipsisV, FaBuilding, FaUserTie, FaNetworkWired, FaLock, FaUnlock, FaPowerOff, FaSync, FaBolt, FaChevronDown, FaBullhorn, FaUsers, FaShieldAlt, FaSatelliteDish } from 'react-icons/fa'
 
 import AdminFeedbackTable from './AdminFeedbackTable'
 import AdminSystemControl from './AdminSystemControl'
+import UserManagementModule from './UserManagementModule'
+import UserRow from './UserRow'
+import VerificationModule from './VerificationModule'
+
+// Cinematic Helper Components
+const MonitorCard = ({ label, value, subtext, icon, highlight = false }: any) => (
+    <div className={`
+        relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-white/10 group
+        ${highlight ? 'shadow-[0_20px_40px_rgba(79,70,229,0.1)]' : ''}
+    `}>
+        {highlight && <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[40px]" />}
+        <div className="flex justify-between items-start mb-6">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl border border-white/5 bg-slate-950 group-hover:scale-110 transition-transform ${highlight ? 'text-indigo-400 border-indigo-500/20' : 'text-slate-400'}`}>
+                {icon}
+            </div>
+        </div>
+        <div>
+            <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2">{label}</h3>
+            <div className="text-4xl font-black text-white tracking-tighter mb-2">{value}</div>
+            <div className="text-[13px] text-slate-600 font-bold uppercase tracking-widest">{subtext}</div>
+        </div>
+    </div>
+)
+
 
 type Tab = 'overview' | 'verifications' | 'users' | 'user_voice' | 'feedback_data' | 'system'
 
@@ -38,10 +62,6 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
     // User Management State
     const [selectedManagementUser, setSelectedManagementUser] = useState<any>(null)
     const [isUserManagementModalOpen, setIsUserManagementModalOpen] = useState(false)
-    const [filterRole, setFilterRole] = useState<'all' | 'agent' | 'supplier'>('all')
-    const [filterLocation, setFilterLocation] = useState<string>('all')
-
-    const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'pending' | 'rejected'>('all')
 
     // Realtime Counts (Active Only)
     const [agentCount, setAgentCount] = useState(allAgents.filter(a => a.is_approved).length)
@@ -248,176 +268,115 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
         }
     }
 
-    const uniqueLocations = Array.from(new Set(allUsers.map(u => u.country || u.country_code || 'Unknown'))).sort()
-
-    const filteredUsers = allUsers.filter(user => {
-        if (filterRole !== 'all' && user.type.toLowerCase() !== filterRole) return false
-
-        const userLoc = user.country || user.country_code || 'Unknown'
-        if (filterLocation !== 'all' && userLoc !== filterLocation) return false
-
-        let status = 'pending'
-        if (user.is_approved) {
-            status = 'active'
-        } else if (user.type === 'Agent') {
-            if (user.verification_status === 'rejected') status = 'rejected'
-        } else {
-            // Supplier Logic
-            if (user.subscription_status === 'canceled') status = 'deactivated'
-            else if (user.subscription_status === 'past_due') status = 'frozen' // Maps to 'frozen' action
-            else if (user.rejection_reason) status = 'rejected'
-        }
-
-        if (filterStatus !== 'all' && status !== filterStatus) return false
-
-        return true
-    })
-
-    const UserRow = ({ user, type }: { user: any, type: 'Agent' | 'Supplier' }) => (
-        <tr
-            onClick={() => {
-                setSelectedManagementUser(user)
-                setIsUserManagementModalOpen(true)
-            }}
-            className="border-b border-white/5 hover:bg-white/5 transition-colors group cursor-pointer"
-        >
-            <td className="py-4 px-4">
-                <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${type === 'Agent' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                        {type === 'Agent' ? <FaUserTie /> : <FaBuilding />}
-                    </div>
-                    <div>
-                        <div className="font-bold text-white text-sm">{user.company_name || user.agency_name || 'N/A'}</div>
-                        <div className="text-[10px] text-white/40 uppercase tracking-widest">{type}</div>
-                    </div>
-                </div>
-            </td>
-            <td className="py-4 px-4 text-sm text-white/70">{user.email || user.contact_email}</td>
-            <td className="py-4 px-4 text-sm text-white/70">
-                <div className="flex items-center gap-2">
-                    <span>{getCountryInfo(user.country_code || user.country).flag}</span>
-                    <span>{getCountryInfo(user.country_code || user.country).name}</span>
-                </div>
-            </td>
-            <td className="py-4 px-4">
-                {(() => {
-                    let status = 'pending'
-                    let statusClasses = 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-
-                    if (user.is_approved) {
-                        status = 'active'
-                        statusClasses = 'bg-green-500/10 text-green-400 border-green-500/20'
-                    } else if (type === 'Agent') {
-                        if (user.verification_status === 'rejected') {
-                            status = 'rejected'
-                            statusClasses = 'bg-red-500/10 text-red-400 border-red-500/20'
-                        }
-                    } else {
-                        // Supplier
-                        if (user.subscription_status === 'canceled') {
-                            status = 'deactivated'
-                            statusClasses = 'bg-gray-500/10 text-gray-400 border-gray-500/20'
-                        } else if (user.subscription_status === 'past_due') {
-                            status = 'frozen'
-                            statusClasses = 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                        } else if (user.rejection_reason) {
-                            status = 'rejected'
-                            statusClasses = 'bg-red-500/10 text-red-400 border-red-500/20'
-                        }
-                    }
-
-                    return (
-                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border ${statusClasses}`}>
-                            {status}
-                        </span>
-                    )
-                })()}
-            </td>
-            <td className="py-4 px-4 text-right">
-                <button className="p-2 text-white/40 hover:text-white transition-colors">
-                    <FaEllipsisV />
-                </button>
-            </td>
-        </tr>
-    )
+    const handleViewUser = (user: any) => {
+        setSelectedManagementUser(user)
+        setIsUserManagementModalOpen(true)
+    }
 
     return (
-        <div className="h-full flex flex-col">
-            {/* Tab Navigation */}
-            <div className="flex items-center space-x-1 mb-8 bg-black/20 p-1 rounded-xl w-fit border border-white/10 backdrop-blur-sm">
-                {[
-                    { id: 'overview', label: 'Overview', icon: FaNetworkWired, count: null },
-                    { id: 'verifications', label: 'Verifications', icon: FaCheck, count: pendingAgents.length + pendingSuppliers.length },
-                    { id: 'users', label: 'User Management', icon: FaNetworkWired, count: null },
-                    { id: 'user_voice', label: 'User Voice', icon: FaBullhorn, count: unreadCount },
-                    { id: 'feedback_data', label: 'Data View', icon: FaEllipsisV, count: priorityCount, countColor: 'bg-red-500 text-white' },
-                    { id: 'system', label: 'System Control', icon: FaPowerOff, count: null },
-                ].map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id as Tab)}
-                        className={`
-                            relative px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2
-                            ${activeTab === tab.id
-                                ? 'bg-white/10 text-white shadow-[0_0_15px_rgba(255,255,255,0.1)] border border-white/10'
-                                : 'text-white/40 hover:text-white hover:bg-white/5 border border-transparent'
-                            }
-                        `}
-                    >
-                        <tab.icon className={activeTab === tab.id ? 'text-cyan-400' : ''} />
-                        {tab.label}
-                        {tab.count !== null && tab.count > 0 && (
-                            <span className={`ml-2 text-[10px] font-black px-1.5 py-0.5 rounded-full ${(tab as any).countColor || 'bg-amber-500 text-black'}`}>
-                                {tab.count}
-                            </span>
-                        )}
-                    </button>
-                ))}
+        <div className="h-full flex flex-col pt-4">
+            {/* Header Title Section */}
+            <div className="mb-8 px-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                <h2 className="text-4xl font-black text-white tracking-tighter uppercase mb-2">
+                    Command <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-indigo-100">Hub</span>
+                </h2>
+                <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[13px]">Strategic Platform Intelligence • Session Active</p>
+            </div>
+
+            {/* Tab Navigation (Tactical Design) */}
+            <div className="px-6 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+                <div className="flex items-center space-x-2 bg-slate-900/40 backdrop-blur-xl p-1.5 rounded-2xl w-fit border border-white/5 shadow-2xl">
+                    {[
+                        { id: 'overview', label: 'Monitor', icon: FaNetworkWired, iconColor: 'text-indigo-400', count: null },
+                        { id: 'verifications', label: 'Verifications', icon: FaCheck, iconColor: 'text-emerald-400', count: pendingAgents.length + pendingSuppliers.length },
+                        { id: 'users', label: 'Network', icon: FaUsers, iconColor: 'text-blue-400', count: null },
+                        { id: 'user_voice', label: 'Voice', icon: FaBullhorn, iconColor: 'text-purple-400', count: unreadCount },
+                        { id: 'feedback_data', label: 'Intelligence', icon: FaEllipsisV, iconColor: 'text-amber-400', count: priorityCount, countColor: 'bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]' },
+                        { id: 'system', label: 'Control', icon: FaPowerOff, iconColor: 'text-slate-400', count: null },
+                    ].map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => {
+                                if (tab.id === 'overview') {
+                                    router.push('/admin')
+                                } else {
+                                    router.push(`/admin?tab=${tab.id}`)
+                                }
+                                setActiveTab(tab.id as Tab)
+                            }}
+                            className={`
+                                overflow-hidden relative group px-6 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all flex items-center gap-3
+                                ${activeTab === tab.id
+                                    ? 'bg-indigo-600/10 text-white border border-indigo-500/20 shadow-[0_10px_20px_rgba(79,70,229,0.1)]'
+                                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                                }
+                            `}
+                        >
+                            <tab.icon className={`${activeTab === tab.id ? tab.iconColor : 'text-slate-600 group-hover:text-indigo-400'} transition-colors`} />
+                            {tab.label}
+                            {tab.count !== null && tab.count > 0 && (
+                                <span className={`text-[12px] font-black px-2 py-0.5 rounded-md ${(tab as any).countColor || 'bg-amber-500 text-black shadow-[0_0_10px_rgba(245,158,11,0.3)]'}`}>
+                                    {tab.count}
+                                </span>
+                            )}
+                            {activeTab === tab.id && (
+                                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
+                            )}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 px-6 overflow-y-auto no-scrollbar pb-20">
                 {/* Module Overview */}
                 {activeTab === 'overview' && (
-                    <div className="space-y-6 animate-fade-in">
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg">
-                                <h3 className="text-white/60 text-sm font-bold uppercase tracking-wider mb-2">Total Active Users</h3>
-                                <div className="text-4xl font-bold text-white mb-2">{agentCount + supplierCount}</div>
-                                <div className="flex gap-4 text-xs text-white/50">
-                                    <span>Agents: <b className="text-white">{agentCount}</b></span>
-                                    <span>Suppliers: <b className="text-white">{supplierCount}</b></span>
-                                </div>
-                            </div>
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg">
-                                <h3 className="text-white/60 text-sm font-bold uppercase tracking-wider mb-2">Pending Actions</h3>
-                                <div className="text-4xl font-bold text-amber-400 mb-2">{pendingAgents.length + pendingSuppliers.length}</div>
-                                <div className="text-xs text-white/50">Requires immediate attention</div>
-                            </div>
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg">
-                                <h3 className="text-white/60 text-sm font-bold uppercase tracking-wider mb-2">Total Active Products</h3>
-                                <div className="text-4xl font-bold text-cyan-400 mb-2">{activeProductsCount}</div>
-                                <div className="text-xs text-white/50">Live Marketplace Items</div>
-                            </div>
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg">
-                                <h3 className="text-white/60 text-sm font-bold uppercase tracking-wider mb-2">System Health</h3>
-                                <div className="text-4xl font-bold text-green-400 mb-2">99.9%</div>
-                                <div className="text-xs text-white/50">All systems operational</div>
-                            </div>
+                            <MonitorCard
+                                label="Network Scale"
+                                value={agentCount + supplierCount}
+                                subtext={`${agentCount} Agents • ${supplierCount} Partners`}
+                                icon={<FaUsers className="text-indigo-400" />}
+                            />
+                            <MonitorCard
+                                label="Pending Items"
+                                value={pendingAgents.length + pendingSuppliers.length}
+                                subtext="Awaiting Protocol Review"
+                                icon={<FaShieldAlt className="text-amber-400" />}
+                                highlight={true}
+                            />
+                            <MonitorCard
+                                label="Market Inventory"
+                                value={activeProductsCount}
+                                subtext="Verified Assets Live"
+                                icon={<FaSatelliteDish className="text-blue-400" />}
+                            />
+                            <MonitorCard
+                                label="Uptime Status"
+                                value="99.9%"
+                                subtext="System Operational"
+                                icon={<div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]" />}
+                            />
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg">
-                                <h3 className="text-lg font-bold text-white mb-4">Recent Activity</h3>
+                            <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl">
+                                <div className="flex items-center justify-between mb-8">
+                                    <h3 className="text-base font-black text-slate-500 uppercase tracking-widest">Real-time Activity Pipeline</h3>
+                                    <span className="text-[11px] text-indigo-400 font-bold uppercase tracking-widest bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">Live Sync</span>
+                                </div>
                                 <div className="space-y-4">
-                                    {[1, 2, 3].map((i) => (
-                                        <div key={i} className="flex gap-4 items-center p-3 rounded-xl bg-white/5 border border-white/5">
-                                            <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
-                                            <div className="flex-1">
-                                                <div className="text-sm text-white">New user registration</div>
-                                                <div className="text-xs text-white/40">User ID: #{1000 + i} joined the platform</div>
+                                    {[1, 2, 3, 4].map((i) => (
+                                        <div key={i} className="flex gap-4 items-center p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-all group">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-950 flex items-center justify-center text-indigo-400 border border-white/5 group-hover:scale-110 transition-transform">
+                                                <FaNetworkWired className="text-xs" />
                                             </div>
-                                            <div className="text-xs text-white/40">{i * 5}m ago</div>
+                                            <div className="flex-1">
+                                                <div className="text-base font-bold text-white group-hover:text-indigo-300 transition-colors">Protocol Entry #{1000 + i} Captured</div>
+                                                <div className="text-[13px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Automated Traffic Log • Strategic Hub</div>
+                                            </div>
+                                            <div className="text-[11px] font-mono text-slate-500">{i * 5}m ago</div>
                                         </div>
                                     ))}
                                 </div>
@@ -431,7 +390,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                                             <select
                                                 value={growthMetric}
                                                 onChange={(e) => setGrowthMetric(e.target.value as any)}
-                                                className="appearance-none bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-wider text-white/70 pl-3 pr-8 py-1.5 outline-none focus:border-cyan-500 focus:text-white hover:bg-white/10 hover:border-white/20 cursor-pointer min-w-[120px] transition-all [&>option]:bg-[#0a0a0a] [&>option]:text-white"
+                                                className="appearance-none bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-wider text-white/70 pl-3 pr-8 py-1.5 outline-none focus:border-cyan-500 focus:text-white hover:bg-white/10 hover:border-white/20 cursor-pointer min-w-[120px] transition-all [&>option]:bg-[#0a0a0a] [&>option]:text-white"
                                             >
                                                 <option value="views">Views</option>
                                                 <option value="wishlisted">Wishlisted</option>
@@ -440,14 +399,14 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                                                 <option value="agents">Agents</option>
                                                 <option value="sales">Sales</option>
                                             </select>
-                                            <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-[10px] pointer-events-none group-hover/select:text-cyan-400 transition-colors" />
+                                            <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-xs pointer-events-none group-hover/select:text-cyan-400 transition-colors" />
                                         </div>
                                         <div className="flex bg-black/30 border border-white/10 rounded-lg p-0.5">
                                             {(['day', 'week', 'month'] as const).map((tf) => (
                                                 <button
                                                     key={tf}
                                                     onClick={() => setGrowthTimeFrame(tf)}
-                                                    className={`px-3 py-1 text-[10px] rounded-md transition-all ${growthTimeFrame === tf ? 'bg-cyan-500 text-white font-bold' : 'text-white/40 hover:text-white'}`}
+                                                    className={`px-3 py-1 text-xs rounded-md transition-all ${growthTimeFrame === tf ? 'bg-cyan-500 text-white font-bold' : 'text-white/40 hover:text-white'}`}
                                                 >
                                                     {tf.charAt(0).toUpperCase() + tf.slice(1)}
                                                 </button>
@@ -475,7 +434,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                                                     style={{ height: `${h}%` }}
                                                     className={`w-full absolute bottom-0 bg-gradient-to-t ${barGradient} rounded-t-xl transition-all duration-500 opacity-80 group-hover:opacity-100 shadow-[0_0_20px_rgba(255,255,255,0.1)]`}
                                                 >
-                                                    <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-lg border border-white/20 transition-all transform translate-y-2 group-hover:translate-y-0 whitespace-nowrap z-20 shadow-xl">
+                                                    <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/20 transition-all transform translate-y-2 group-hover:translate-y-0 whitespace-nowrap z-20 shadow-xl">
                                                         {h} {growthMetric}
                                                         <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black/90"></div>
                                                     </div>
@@ -496,191 +455,23 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
 
                 {/* Module A: Verifications */}
                 {activeTab === 'verifications' && (
-                    <div className="space-y-6 animate-fade-in">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                                <span className="w-1 h-6 bg-amber-500 rounded-full"></span>
-                                Pending Verification Queue
-                            </h2>
-                            <span className="text-sm text-white/40">Showing {pendingAgents.length + pendingSuppliers.length} pending items</span>
-                        </div>
-
-                        {pendingAgents.length === 0 && pendingSuppliers.length === 0 ? (
-                            <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/5">
-                                <p className="text-white/40">Queue empty. All systems clear.</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {/* Agents */}
-                                {pendingAgents.map((agent) => (
-                                    <div key={agent.id} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg group hover:border-cyan-500/30 transition-all">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl font-bold border border-blue-500/30">
-                                                <FaUserTie />
-                                            </div>
-                                            <span className="bg-blue-500/10 text-blue-300 text-[10px] font-bold px-2 py-1 rounded border border-blue-500/20 uppercase">
-                                                Agent
-                                            </span>
-                                        </div>
-                                        <h3 className="text-lg font-bold text-white mb-1">{agent.agency_name}</h3>
-                                        <p className="text-sm text-white/60 mb-4">{agent.email}</p>
-
-                                        <div className="space-y-2 mb-6">
-                                            <div className="flex justify-between text-xs border-b border-white/5 pb-2">
-                                                <span className="text-white/40">Location</span>
-                                                <span className="text-white/80">{agent.country || 'Unknown'}</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs border-b border-white/5 pb-2">
-                                                <span className="text-white/40">IATA / Lic</span>
-                                                <span className="text-white/80 font-mono">{agent.license_number || 'N/A'}</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <button
-                                                onClick={() => handleVerification('agent', agent.id, 'rejected')}
-                                                disabled={isLoading}
-                                                className="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/10 text-white/60 hover:text-white text-xs font-bold transition-all"
-                                            >
-                                                Reject
-                                            </button>
-                                            <button
-                                                onClick={() => handleVerification('agent', agent.id, 'approved')}
-                                                disabled={isLoading}
-                                                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-xs hover:from-amber-400 hover:to-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all"
-                                            >
-                                                Approve
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {/* Suppliers */}
-                                {pendingSuppliers.map((supplier) => (
-                                    <div
-                                        key={supplier.id}
-                                        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg group hover:border-amber-500/30 transition-all cursor-pointer relative overflow-hidden"
-                                        onClick={() => openVerificationModal(supplier)}
-                                    >
-                                        <div className="absolute inset-0 bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                        <div className="relative z-10">
-                                            <div className="flex justify-between items-start mb-4">
-                                                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl font-bold border border-amber-500/30">
-                                                    <FaBuilding />
-                                                </div>
-                                                <span className="bg-amber-500/10 text-amber-300 text-[10px] font-bold px-2 py-1 rounded border border-amber-500/20 uppercase">
-                                                    Supplier
-                                                </span>
-                                            </div>
-                                            <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
-                                                {supplier.company_name}
-                                                <FaChevronDown className="-rotate-90 text-white/30 text-xs group-hover:translate-x-1 transition-transform" />
-                                            </h3>
-                                            <p className="text-sm text-white/60 mb-4">{supplier.contact_email}</p>
-
-                                            <div className="space-y-2 mb-6">
-                                                <div className="flex justify-between text-xs border-b border-white/5 pb-2">
-                                                    <span className="text-white/40">Location</span>
-                                                    <span className="text-white/80">{supplier.country_code || 'Unknown'}</span>
-                                                </div>
-                                                <div className="flex justify-between text-xs border-b border-white/5 pb-2">
-                                                    <span className="text-white/40">Reg No</span>
-                                                    <span className="text-white/80 font-mono">{supplier.company_reg_no || 'N/A'}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="block w-full text-center py-2 rounded-xl bg-white/5 text-white/40 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">
-                                                Click to Verify
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <VerificationModule
+                        pendingAgents={pendingAgents}
+                        pendingSuppliers={pendingSuppliers}
+                        onVerify={handleVerification}
+                        onOpenModal={openVerificationModal}
+                        isLoading={isLoading}
+                    />
                 )}
 
                 {/* Module B: User Management */}
                 {activeTab === 'users' && (
-                    <div className="space-y-6">
-                        {/* Filters */}
-                        <div className="flex flex-wrap gap-4 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm animate-fade-in">
-                            <div className="relative group">
-                                <label className="text-[10px] uppercase font-bold text-white/40 mb-1 block">Role</label>
-                                <select
-                                    value={filterRole}
-                                    onChange={(e) => setFilterRole(e.target.value as any)}
-                                    className="bg-black/20 border border-white/10 rounded-lg text-sm text-white pl-3 pr-8 py-2 outline-none focus:border-cyan-500 cursor-pointer min-w-[150px] appearance-none"
-                                >
-                                    <option value="all">All Roles</option>
-                                    <option value="agent">Agents</option>
-                                    <option value="supplier">Suppliers</option>
-                                </select>
-                                <FaChevronDown className="absolute right-3 bottom-3 text-white/50 text-xs pointer-events-none" />
-                            </div>
-
-                            <div className="relative group">
-                                <label className="text-[10px] uppercase font-bold text-white/40 mb-1 block">Location</label>
-                                <select
-                                    value={filterLocation}
-                                    onChange={(e) => setFilterLocation(e.target.value)}
-                                    className="bg-black/20 border border-white/10 rounded-lg text-sm text-white pl-3 pr-8 py-2 outline-none focus:border-cyan-500 cursor-pointer min-w-[150px] appearance-none"
-                                >
-                                    <option value="all">All Locations</option>
-                                    {uniqueLocations.map(loc => {
-                                        const { name, flag } = getCountryInfo(loc)
-                                        return <option key={loc} value={loc}>{flag} {name}</option>
-                                    })}
-                                </select>
-                                <FaChevronDown className="absolute right-3 bottom-3 text-white/50 text-xs pointer-events-none" />
-                            </div>
-
-                            <div className="relative group">
-                                <label className="text-[10px] uppercase font-bold text-white/40 mb-1 block">Status</label>
-                                <select
-                                    value={filterStatus}
-                                    onChange={(e) => setFilterStatus(e.target.value as any)}
-                                    className="bg-black/20 border border-white/10 rounded-lg text-sm text-white pl-3 pr-8 py-2 outline-none focus:border-cyan-500 cursor-pointer min-w-[150px] appearance-none"
-                                >
-                                    <option value="all">All Status</option>
-                                    <option value="active">Active</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="rejected">Rejected</option>
-                                    <option value="frozen">Frozen</option>
-                                    <option value="deactivated">Deactivated</option>
-                                </select>
-                                <FaChevronDown className="absolute right-3 bottom-3 text-white/50 text-xs pointer-events-none" />
-                            </div>
-                        </div>
-
-                        {/* Table */}
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden animate-fade-in shadow-xl">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-black/20 border-b border-white/10 text-xs uppercase tracking-wider text-white/50 font-semibold">
-                                        <th className="py-4 px-4">Entity</th>
-                                        <th className="py-4 px-4">Contact</th>
-                                        <th className="py-4 px-4">Location</th>
-                                        <th className="py-4 px-4">Status</th>
-                                        <th className="py-4 px-4 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredUsers.length > 0 ? (
-                                        filteredUsers.map((user) => (
-                                            <UserRow key={user.id} user={user} type={user.type} />
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={5} className="py-12 text-center text-white/40">
-                                                No users found matching filters.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <UserManagementModule
+                        allAgents={allAgents}
+                        allSuppliers={allSuppliers}
+                        onViewUser={handleViewUser}
+                        onManageUser={handleManagementAction}
+                    />
                 )}
 
                 {/* Module C: User Voice (Visual High Level) */}
@@ -693,35 +484,41 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                     <AdminFeedbackTable />
                 )}
 
-
-
-                // ... existing render logic ...
-
                 {/* Search Results Module */}
                 {(activeTab as any) === 'search_results' && (
-                    <div className="space-y-6 animate-fade-in">
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                            <span className="w-1 h-6 bg-cyan-500 rounded-full"></span>
-                            Search Results for "{searchQuery}"
-                        </h2>
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                            <div>
+                                <h2 className="text-2xl font-black text-white tracking-tight uppercase">Intelligence Scan</h2>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Registry Match for "{searchQuery}"</p>
+                            </div>
+                        </div>
+
                         {searchResults.length === 0 ? (
-                            <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/5">
-                                <p className="text-white/40">No matching records found.</p>
+                            <div className="text-center py-32 bg-slate-900/40 backdrop-blur-xl border border-dashed border-white/10 rounded-3xl">
+                                <h3 className="text-xl font-black text-white uppercase mb-2">No Records Found</h3>
+                                <p className="text-slate-500 text-sm font-medium">Verify your query and re-initialize scan.</p>
                             </div>
                         ) : (
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+                            <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-black/20 border-b border-white/10 text-xs uppercase tracking-wider text-white/50 font-semibold">
-                                            <th className="py-4 px-4">Entity</th>
-                                            <th className="py-4 px-4">Contact</th>
-                                            <th className="py-4 px-4">Role</th>
-                                            <th className="py-4 px-4 text-right">Actions</th>
+                                        <tr className="bg-slate-950 border-b border-white/5 text-[10px] uppercase font-black tracking-widest text-slate-500">
+                                            <th className="py-5 px-6">Entity</th>
+                                            <th className="py-5 px-6">Contact Logic</th>
+                                            <th className="py-5 px-6">Role Protocol</th>
+                                            <th className="py-5 px-6 text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {searchResults.map(user => (
-                                            <UserRow key={user.id} user={user} type={user.type} />
+                                            <UserRow
+                                                key={user.id}
+                                                user={user}
+                                                type={user.type}
+                                                onView={handleViewUser}
+                                                getCountryInfo={getCountryInfo}
+                                            />
                                         ))}
                                     </tbody>
                                 </table>
