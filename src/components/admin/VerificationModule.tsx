@@ -7,6 +7,7 @@ interface VerificationModuleProps {
     pendingSuppliers: any[]
     onVerify: (type: 'agent' | 'supplier', id: string, status: 'approved' | 'rejected') => Promise<void>
     onOpenModal: (supplier: any) => void
+    onOpenAgentModal: (agent: any) => void
     isLoading: boolean
 }
 
@@ -24,7 +25,7 @@ const VerificationProp = ({ label, value, isMono = false, isStatus = false }: an
     </div>
 )
 
-export default function VerificationModule({ pendingAgents, pendingSuppliers, onVerify, onOpenModal, isLoading }: VerificationModuleProps) {
+export default function VerificationModule({ pendingAgents, pendingSuppliers, onVerify, onOpenModal, onOpenAgentModal, isLoading }: VerificationModuleProps) {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
             <div className="flex items-center justify-between border-b border-white/5 pb-6">
@@ -49,39 +50,33 @@ export default function VerificationModule({ pendingAgents, pendingSuppliers, on
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Agents */}
                     {pendingAgents.map((agent) => (
-                        <div key={agent.id} className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl group hover:border-indigo-500/30 transition-all duration-500 h-fit">
-                            <div className="flex justify-between items-start mb-6">
-                                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 text-xl border border-indigo-500/20 group-hover:scale-110 transition-transform">
-                                    <FaUserTie />
+                        <div
+                            key={agent.id}
+                            className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl group hover:border-indigo-500/30 transition-all duration-500 cursor-pointer relative overflow-hidden h-fit"
+                            onClick={() => onOpenAgentModal(agent)}
+                        >
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 text-xl border border-indigo-500/20 group-hover:scale-110 transition-transform">
+                                        <FaUserTie />
+                                    </div>
+                                    <span className="bg-indigo-500/10 text-indigo-400 text-[10px] font-black px-3 py-1.5 rounded-lg border border-indigo-500/20 uppercase tracking-widest leading-none">
+                                        Agent Profile
+                                    </span>
                                 </div>
-                                <span className="bg-indigo-500/10 text-indigo-400 text-[10px] font-black px-3 py-1.5 rounded-lg border border-indigo-500/20 uppercase tracking-widest leading-none">
-                                    Agent Profile
-                                </span>
-                            </div>
-                            <h3 className="text-xl font-black text-white mb-1 uppercase tracking-tight">{agent.agency_name}</h3>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-6">{agent.email}</p>
+                                <h3 className="text-xl font-black text-white mb-1 uppercase tracking-tight">{agent.agency_name}</h3>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-6">{agent.email}</p>
 
-                            <div className="space-y-3 mb-8">
-                                <VerificationProp label="Mission Sector" value={agent.country || 'Global'} />
-                                <VerificationProp label="Protocol ID" value={agent.license_number || 'UNVERIFIED'} isMono />
-                                <VerificationProp label="Auth Status" value="Awaiting Hub Signal" isStatus />
-                            </div>
+                                <div className="space-y-3 mb-8">
+                                    <VerificationProp label="Mission Sector" value={agent.country || 'Global'} />
+                                    <VerificationProp label="Protocol ID" value={agent.license_number || 'UNVERIFIED'} isMono />
+                                    <VerificationProp label="Auth Status" value="Awaiting Hub Signal" isStatus />
+                                </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <button
-                                    onClick={() => onVerify('agent', agent.id, 'rejected')}
-                                    disabled={isLoading}
-                                    className="py-3 px-4 rounded-xl border border-white/5 hover:bg-red-500/10 hover:border-red-500/30 text-slate-500 hover:text-red-400 text-[10px] font-black uppercase tracking-widest transition-all"
-                                >
-                                    Deny Signal
-                                </button>
-                                <button
-                                    onClick={() => onVerify('agent', agent.id, 'approved')}
-                                    disabled={isLoading}
-                                    className="py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest transition-all shadow-[0_10px_20px_rgba(79,70,229,0.2)] hover:shadow-[0_10px_25px_rgba(79,70,229,0.3)]"
-                                >
-                                    Authorize
-                                </button>
+                                <div className="w-full py-3 rounded-xl bg-white/5 border border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-indigo-500 transition-all duration-300">
+                                    Analyze Credentials
+                                </div>
                             </div>
                         </div>
                     ))}

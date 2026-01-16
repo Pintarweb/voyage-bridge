@@ -116,8 +116,11 @@ export default function UserFeedbackModule() {
             }
         }
         loadData()
-        loadData()
     }, [])
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [inboxFilter])
 
     useEffect(() => {
         loadTemplates()

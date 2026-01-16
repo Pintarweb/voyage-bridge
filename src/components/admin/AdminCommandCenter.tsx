@@ -5,17 +5,19 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SupplierVerificationModal from './SupplierVerificationModal'
+import AgentVerificationModal from './AgentVerificationModal'
 import UserManagementModal from './UserManagementModal'
 import { handleUserApproval, rejectSupplier, manageUserStatus } from '@/app/actions/admin'
 
 import UserFeedbackModule from './UserFeedbackModule'
-import { FaCheck, FaTimes, FaEllipsisV, FaBuilding, FaUserTie, FaNetworkWired, FaLock, FaUnlock, FaPowerOff, FaSync, FaBolt, FaChevronDown, FaBullhorn, FaUsers, FaShieldAlt, FaSatelliteDish } from 'react-icons/fa'
+import { FaCheck, FaTimes, FaEllipsisV, FaBuilding, FaUserTie, FaNetworkWired, FaLock, FaUnlock, FaPowerOff, FaSync, FaBolt, FaChevronDown, FaBullhorn, FaUsers, FaShieldAlt, FaSatelliteDish, FaEnvelopeOpen } from 'react-icons/fa'
 
 import AdminFeedbackTable from './AdminFeedbackTable'
 import AdminSystemControl from './AdminSystemControl'
 import UserManagementModule from './UserManagementModule'
 import UserRow from './UserRow'
 import VerificationModule from './VerificationModule'
+import AdminBillingModule from './AdminBillingModule'
 
 // Cinematic Helper Components
 const MonitorCard = ({ label, value, subtext, icon, highlight = false }: any) => (
@@ -25,7 +27,7 @@ const MonitorCard = ({ label, value, subtext, icon, highlight = false }: any) =>
     `}>
         {highlight && <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[40px]" />}
         <div className="flex justify-between items-start mb-6">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl border border-white/5 bg-slate-950 group-hover:scale-110 transition-transform ${highlight ? 'text-indigo-400 border-indigo-500/20' : 'text-slate-400'}`}>
+            <div className={`w-16 h-16 rounded-3xl flex items-center justify-center text-3xl border border-white/5 bg-slate-950 group-hover:scale-110 transition-transform ${highlight ? 'text-indigo-400 border-indigo-500/20' : 'text-slate-400'}`}>
                 {icon}
             </div>
         </div>
@@ -53,11 +55,14 @@ interface AdminCommandCenterProps {
 export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, allAgents, allSuppliers, initialActiveProductsCount, unreadCount, priorityCount }: AdminCommandCenterProps) {
     const [activeTab, setActiveTab] = useState<Tab>('overview')
     const [isLoading, setIsLoading] = useState(false)
-    const [growthTimeFrame, setGrowthTimeFrame] = useState<'day' | 'week' | 'month'>('week')
+    const [growthTimeFrame, setGrowthTimeFrame] = useState<'day' | 'week' | 'month' | 'year'>('week')
     const [growthMetric, setGrowthMetric] = useState<'views' | 'wishlisted' | 'products' | 'suppliers' | 'agents' | 'sales'>('views')
 
     const [selectedSupplier, setSelectedSupplier] = useState<any>(null)
     const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false)
+
+    const [selectedAgent, setSelectedAgent] = useState<any>(null)
+    const [isAgentVerificationModalOpen, setIsAgentVerificationModalOpen] = useState(false)
 
     // User Management State
     const [selectedManagementUser, setSelectedManagementUser] = useState<any>(null)
@@ -118,6 +123,9 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
         } else if (growthTimeFrame === 'month') {
             // Simulate weekly data for the month (4 weeks)
             return baseData.slice(0, 4).map(v => Math.min(100, Math.floor(v * 1.5)))
+        } else if (growthTimeFrame === 'year') {
+            // Simulate quarterly data (4 quarters)
+            return [baseData[0] * 2, baseData[2] * 2.5, baseData[4] * 3, baseData[6] * 4].map(v => Math.floor(v))
         }
         return baseData
     }
@@ -125,11 +133,31 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
     const growthLabels = {
         day: ['00', '04', '08', '12', '16', '20', '24'],
         week: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        month: ['Week 1', 'Week 2', 'Week 3', 'Week 4']
+        month: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        year: ['Q1', 'Q2', 'Q3', 'Q4']
     }
 
     const currentGrowthData = getGrowthData()
     const currentGrowthLabels = growthLabels[growthTimeFrame]
+
+    // Human-readable period display
+    const getCurrentPeriodLabel = () => {
+        const now = new Date()
+        switch (growthTimeFrame) {
+            case 'day':
+                return now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+            case 'week':
+                const startOfWeek = new Date(now)
+                startOfWeek.setDate(now.getDate() - now.getDay())
+                const endOfWeek = new Date(now)
+                endOfWeek.setDate(now.getDate() + (6 - now.getDay()))
+                return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+            case 'month':
+                return now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+            default:
+                return now.getFullYear().toString()
+        }
+    }
 
     const handleVerification = async (type: 'agent' | 'supplier', id: string, status: 'approved' | 'rejected') => {
         if (type === 'supplier' && status === 'approved') {
@@ -168,6 +196,11 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
     const openVerificationModal = (supplier: any) => {
         setSelectedSupplier(supplier)
         setIsVerificationModalOpen(true)
+    }
+
+    const openAgentVerificationModal = (agent: any) => {
+        setSelectedAgent(agent)
+        setIsAgentVerificationModalOpen(true)
     }
 
     const handleModalApprove = async (id: string, data: any) => {
@@ -235,9 +268,9 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
     useEffect(() => {
         if (searchQuery) {
             setActiveTab('search_results' as any)
-        } else if (tabParam && ['overview', 'verifications', 'users', 'user_voice', 'feedback_data', 'system'].includes(tabParam)) {
+        } else if (tabParam && ['overview', 'verifications', 'users', 'user_voice', 'feedback_data', 'system', 'billing'].includes(tabParam)) {
             setActiveTab(tabParam as any)
-        } else if (activeTab === 'search_results' as any) {
+        } else {
             setActiveTab('overview')
         }
     }, [searchQuery, tabParam])
@@ -283,49 +316,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                 <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[13px]">Strategic Platform Intelligence • Session Active</p>
             </div>
 
-            {/* Tab Navigation (Tactical Design) */}
-            <div className="px-6 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-                <div className="flex items-center space-x-2 bg-slate-900/40 backdrop-blur-xl p-1.5 rounded-2xl w-fit border border-white/5 shadow-2xl">
-                    {[
-                        { id: 'overview', label: 'Monitor', icon: FaNetworkWired, iconColor: 'text-indigo-400', count: null },
-                        { id: 'verifications', label: 'Verifications', icon: FaCheck, iconColor: 'text-emerald-400', count: pendingAgents.length + pendingSuppliers.length },
-                        { id: 'users', label: 'Network', icon: FaUsers, iconColor: 'text-blue-400', count: null },
-                        { id: 'user_voice', label: 'Voice', icon: FaBullhorn, iconColor: 'text-purple-400', count: unreadCount },
-                        { id: 'feedback_data', label: 'Intelligence', icon: FaEllipsisV, iconColor: 'text-amber-400', count: priorityCount, countColor: 'bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]' },
-                        { id: 'system', label: 'Control', icon: FaPowerOff, iconColor: 'text-slate-400', count: null },
-                    ].map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => {
-                                if (tab.id === 'overview') {
-                                    router.push('/admin')
-                                } else {
-                                    router.push(`/admin?tab=${tab.id}`)
-                                }
-                                setActiveTab(tab.id as Tab)
-                            }}
-                            className={`
-                                overflow-hidden relative group px-6 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all flex items-center gap-3
-                                ${activeTab === tab.id
-                                    ? 'bg-indigo-600/10 text-white border border-indigo-500/20 shadow-[0_10px_20px_rgba(79,70,229,0.1)]'
-                                    : 'text-slate-500 hover:text-white hover:bg-white/5'
-                                }
-                            `}
-                        >
-                            <tab.icon className={`${activeTab === tab.id ? tab.iconColor : 'text-slate-600 group-hover:text-indigo-400'} transition-colors`} />
-                            {tab.label}
-                            {tab.count !== null && tab.count > 0 && (
-                                <span className={`text-[12px] font-black px-2 py-0.5 rounded-md ${(tab as any).countColor || 'bg-amber-500 text-black shadow-[0_0_10px_rgba(245,158,11,0.3)]'}`}>
-                                    {tab.count}
-                                </span>
-                            )}
-                            {activeTab === tab.id && (
-                                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
-                            )}
-                        </button>
-                    ))}
-                </div>
-            </div>
+
 
             {/* Content Area */}
             <div className="flex-1 min-h-0 px-6 overflow-y-auto no-scrollbar pb-20">
@@ -347,16 +338,16 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                                 highlight={true}
                             />
                             <MonitorCard
-                                label="Market Inventory"
+                                label="Live Products"
                                 value={activeProductsCount}
-                                subtext="Verified Assets Live"
+                                subtext="Verified Inventory Live"
                                 icon={<FaSatelliteDish className="text-blue-400" />}
                             />
                             <MonitorCard
                                 label="Uptime Status"
                                 value="99.9%"
                                 subtext="System Operational"
-                                icon={<div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]" />}
+                                icon={<div className="w-4 h-4 rounded-full bg-green-500 animate-pulse shadow-[0_0_15px_#22c55e]" />}
                             />
                         </div>
 
@@ -384,7 +375,12 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
 
                             <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg flex flex-col">
                                 <div className="flex justify-between items-start mb-6 gap-4">
-                                    <h3 className="text-lg font-bold text-white">Platform Growth</h3>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-white">Platform Growth</h3>
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
+                                            Current Period: <span className="text-indigo-400">{getCurrentPeriodLabel()}</span>
+                                        </p>
+                                    </div>
                                     <div className="flex gap-2">
                                         <div className="relative group/select">
                                             <select
@@ -402,7 +398,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                                             <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-xs pointer-events-none group-hover/select:text-cyan-400 transition-colors" />
                                         </div>
                                         <div className="flex bg-black/30 border border-white/10 rounded-lg p-0.5">
-                                            {(['day', 'week', 'month'] as const).map((tf) => (
+                                            {(['day', 'week', 'month', 'year'] as const).map((tf) => (
                                                 <button
                                                     key={tf}
                                                     onClick={() => setGrowthTimeFrame(tf)}
@@ -460,6 +456,7 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                         pendingSuppliers={pendingSuppliers}
                         onVerify={handleVerification}
                         onOpenModal={openVerificationModal}
+                        onOpenAgentModal={openAgentVerificationModal}
                         isLoading={isLoading}
                     />
                 )}
@@ -531,6 +528,11 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                 {activeTab === 'system' && (
                     <AdminSystemControl />
                 )}
+
+                {/* Module F: Billing & Subscriptions */}
+                {activeTab === 'billing' && (
+                    <AdminBillingModule />
+                )}
             </div>
 
             <SupplierVerificationModal
@@ -540,6 +542,14 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                 onApprove={handleModalApprove}
                 onReject={handleModalReject}
                 onRequestInfo={handleModalRequestInfo}
+            />
+
+            <AgentVerificationModal
+                isOpen={isAgentVerificationModalOpen}
+                onClose={() => setIsAgentVerificationModalOpen(false)}
+                agent={selectedAgent}
+                onApprove={(id, data) => handleVerification('agent', id, 'approved')}
+                onReject={(id, data) => handleVerification('agent', id, 'rejected')}
             />
 
             <UserManagementModal

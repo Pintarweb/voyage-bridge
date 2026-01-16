@@ -11,7 +11,7 @@ export default function Footer() {
     const { language } = useLanguage()
     const pathname = usePathname()
 
-    const isPortal = pathname?.startsWith('/agent-portal') || pathname?.startsWith('/supplier')
+    const isPortal = pathname?.startsWith('/agent-portal') || pathname?.startsWith('/supplier') || pathname?.startsWith('/admin')
 
     if (isPortal) return null
 

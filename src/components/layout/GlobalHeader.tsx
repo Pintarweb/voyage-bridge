@@ -21,7 +21,8 @@ export default function GlobalHeader() {
 
     // Determine type based on pathname
     const type = pathname?.startsWith('/agent-portal') ? 'portal' :
-        pathname?.startsWith('/supplier') ? 'supplier' : 'public'
+        pathname?.startsWith('/supplier') ? 'supplier' :
+            pathname?.startsWith('/admin') ? 'admin' : 'public'
 
     useEffect(() => {
         const getUser = async () => {
@@ -124,7 +125,7 @@ export default function GlobalHeader() {
     const currentLang = LANGUAGES.find(l => l.code === language)
 
     // Dedicated portals have their own headers
-    if (type === 'portal' || type === 'supplier') {
+    if (type === 'portal' || type === 'supplier' || type === 'admin') {
         return null
     }
 

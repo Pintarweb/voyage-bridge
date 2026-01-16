@@ -45,11 +45,30 @@ export default async function AdminLayout({
 
     const liveUserCount = (agentCount || 0) + (supplierCount || 0)
 
+    // Fetch Pending Verifications for Sidebar
+    const { count: pendingAgents } = await supabase
+        .from('agent_profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_approved', false)
+        .eq('role', 'pending_agent')
+        .neq('verification_status', 'rejected')
+
+    const { count: pendingSuppliers } = await supabase
+        .from('suppliers')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_approved', false)
+        .eq('payment_status', 'completed')
+
+    const pendingTotal = (pendingAgents || 0) + (pendingSuppliers || 0)
+
     // Unread Notifications
-    const { data: allFeedback } = await supabase.from('feedback_entries').select('entry_id')
+    const { data: allFeedback } = await supabase.from('feedback_entries').select('entry_id, metric_score')
     const { data: allResponses } = await supabase.from('feedback_responses').select('feedback_id')
     const respondedIds = new Set(allResponses?.map((r: any) => r.feedback_id))
     const unreadCount = allFeedback?.filter((f: any) => !respondedIds.has(f.entry_id)).length || 0
+
+    // Priority Count (High Priority Feedbacks with score <= 2)
+    const priorityCount = allFeedback?.filter((f: any) => f.metric_score !== null && f.metric_score <= 2).length || 0
 
     return (
         <div className="relative min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500/30">
@@ -72,7 +91,11 @@ export default async function AdminLayout({
 
                 <div className="flex flex-1 overflow-hidden">
                     <Suspense fallback={<div className="w-24 xl:w-72 bg-slate-950/80 mt-16" />}>
-                        <AdminSidebar />
+                        <AdminSidebar
+                            pendingCount={pendingTotal}
+                            unreadCount={unreadCount}
+                            priorityCount={priorityCount || 0}
+                        />
                     </Suspense>
 
                     <main className="flex-1 lg:ml-24 xl:ml-72 relative flex flex-col overflow-y-auto h-[calc(100vh-64px)] no-scrollbar bg-black/20">

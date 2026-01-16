@@ -1,10 +1,16 @@
 'use client'
 
-import { FaColumns, FaUsers, FaShieldAlt, FaCog, FaChartLine, FaEnvelopeOpen, FaSatelliteDish, FaFingerprint } from 'react-icons/fa'
+import { FaColumns, FaUsers, FaShieldAlt, FaCog, FaChartLine, FaEnvelopeOpen, FaSatelliteDish, FaFingerprint, FaCreditCard } from 'react-icons/fa'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+    pendingCount?: number
+    unreadCount?: number
+    priorityCount?: number
+}
+
+export default function AdminSidebar({ pendingCount = 0, unreadCount = 0, priorityCount = 0 }: AdminSidebarProps) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
@@ -35,6 +41,7 @@ export default function AdminSidebar() {
                             label="Verification"
                             active={searchParams.get('tab') === 'verifications'}
                             href="/admin?tab=verifications"
+                            count={pendingCount}
                         />
                     </div>
                 </div>
@@ -47,18 +54,33 @@ export default function AdminSidebar() {
                             label="Intelligence"
                             active={searchParams.get('tab') === 'feedback_data'}
                             href="/admin?tab=feedback_data"
+                            count={priorityCount}
+                            countColor="bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]"
                         />
                         <SidebarItem
                             icon={<FaChartLine />}
                             label="Voice"
                             active={searchParams.get('tab') === 'user_voice'}
                             href="/admin?tab=user_voice"
+                            count={unreadCount}
                         />
                         <SidebarItem
                             icon={<FaCog />}
                             label="System Logic"
                             active={searchParams.get('tab') === 'system'}
                             href="/admin?tab=system"
+                        />
+                    </div>
+                </div>
+
+                <div className="px-4">
+                    <h3 className="text-[13px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6">Financial Hub</h3>
+                    <div className="space-y-1">
+                        <SidebarItem
+                            icon={<FaCreditCard />}
+                            label="Billing & Subs"
+                            active={searchParams.get('tab') === 'billing'}
+                            href="/admin?tab=billing"
                         />
                     </div>
                 </div>
@@ -81,7 +103,7 @@ export default function AdminSidebar() {
     )
 }
 
-function SidebarItem({ icon, label, active = false, href, badge }: { icon: any, label: string, active?: boolean, href?: string, badge?: string }) {
+function SidebarItem({ icon, label, active = false, href, badge, count, countColor }: { icon: any, label: string, active?: boolean, href?: string, badge?: string, count?: number, countColor?: string }) {
     const router = useRouter()
     return (
         <button
@@ -110,6 +132,12 @@ function SidebarItem({ icon, label, active = false, href, badge }: { icon: any, 
                 {badge && (
                     <span className="hidden xl:block px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-400 text-[12px] font-black uppercase tracking-widest border border-indigo-500/20">
                         {badge}
+                    </span>
+                )}
+
+                {count !== undefined && count > 0 && (
+                    <span className={`hidden xl:block px-2 py-0.5 rounded-md text-[12px] font-black uppercase tracking-widest ${countColor || 'bg-amber-500 text-black shadow-[0_0_10px_rgba(245,158,11,0.3)]'}`}>
+                        {count}
                     </span>
                 )}
             </div>

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { FaGlobe, FaSearch, FaBell, FaShieldAlt } from 'react-icons/fa'
+import { createClient } from '@/utils/supabase/client'
+import { FaGlobe, FaSearch, FaShieldAlt } from 'react-icons/fa'
 import LogoutButton from './LogoutButton'
 import { useDebouncedCallback } from 'use-debounce'
-import { createClient } from '@/utils/supabase/client'
 
 interface AdminHeaderProps {
     unreadCount: number
@@ -18,8 +18,38 @@ export default function AdminHeader({ unreadCount, liveUserCount, adminName = 'A
     const router = useRouter()
     const searchParams = useSearchParams()
 
+    const supabase = createClient()
+    const [presenceCount, setPresenceCount] = useState(0)
+    const [systemStatus, setSystemStatus] = useState<'connecting' | 'online'>('connecting')
+
     // Initialize search from URL if present
     const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '')
+
+    useEffect(() => {
+        const channel = supabase.channel('online-users')
+        channel
+            .on('presence', { event: 'sync' }, () => {
+                const state = channel.presenceState()
+                setPresenceCount(Object.keys(state).length)
+            })
+            .on('presence', { event: 'join' }, () => {
+                const state = channel.presenceState()
+                setPresenceCount(Object.keys(state).length)
+            })
+            .on('presence', { event: 'leave' }, () => {
+                const state = channel.presenceState()
+                setPresenceCount(Object.keys(state).length)
+            })
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    setSystemStatus('online')
+                }
+            })
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
+    }, [supabase])
 
     const handleSearch = useDebouncedCallback((term: string) => {
         const params = new URLSearchParams(searchParams.toString())
@@ -50,14 +80,16 @@ export default function AdminHeader({ unreadCount, liveUserCount, adminName = 'A
                 {/* System Stats (Cinematic Pill) */}
                 <div className="hidden md:flex items-center gap-4 bg-white/5 px-4 py-1.5 rounded-full border border-white/10">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></div>
-                        <span className="text-[11px] font-black text-green-400 uppercase tracking-widest">Active</span>
+                        <div className={`w-2 h-2 rounded-full animate-pulse shadow-sm ${systemStatus === 'online' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-amber-500 shadow-[0_0_8px_#f59e0b]'}`}></div>
+                        <span className={`text-[11px] font-black uppercase tracking-widest ${systemStatus === 'online' ? 'text-green-400' : 'text-amber-400'}`}>
+                            {systemStatus === 'online' ? 'Active' : 'Syncing'}
+                        </span>
                     </div>
                     <div className="w-[1px] h-3 bg-white/10"></div>
                     <div className="flex items-center gap-2">
                         <FaGlobe className="text-xs text-slate-500" />
                         <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
-                            Live Users: <span className="text-white">{liveUserCount}</span>
+                            Live Users: <span className="text-white">{presenceCount}</span>
                         </span>
                     </div>
                 </div>
@@ -66,7 +98,7 @@ export default function AdminHeader({ unreadCount, liveUserCount, adminName = 'A
             {/* Admin Command Search */}
             <div className="flex-1 max-w-xl px-8 hidden sm:block">
                 <div className="relative group">
-                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                    <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors z-10" />
                     <input
                         type="text"
                         placeholder="Search Intelligence: Supplier ID, Agent Email..."
@@ -75,23 +107,14 @@ export default function AdminHeader({ unreadCount, liveUserCount, adminName = 'A
                             setSearchTerm(e.target.value)
                             handleSearch(e.target.value)
                         }}
-                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:bg-slate-900 transition-all shadow-inner"
+                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pr-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:bg-slate-900 transition-all shadow-inner relative z-0"
+                        style={{ paddingLeft: '4.5rem' }}
                     />
                 </div>
             </div>
 
             {/* Right Actions */}
             <div className="flex items-center gap-6">
-                <button
-                    className="relative p-2.5 text-slate-400 hover:text-white transition-all hover:bg-white/5 rounded-xl group"
-                    onClick={() => router.push('/admin?tab=user_voice')}
-                >
-                    <FaBell className="group-hover:scale-110 transition-transform" />
-                    {unreadCount > 0 && (
-                        <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-slate-950 animate-pulse"></span>
-                    )}
-                </button>
-
                 <div className="h-8 w-[1px] bg-white/5"></div>
 
                 <div className="flex items-center gap-4">

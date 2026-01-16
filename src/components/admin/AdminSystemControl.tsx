@@ -143,6 +143,9 @@ export default function AdminSystemControl() {
         generateMockData()
     }, [timeRange])
 
+    const currentLoad = performanceData.length > 0 ? performanceData[performanceData.length - 1].load : 12
+    const currentUsers = performanceData.length > 0 ? performanceData[performanceData.length - 1].users : 150
+
     // Filter reports based on selected range
     const filteredReports = reports.filter(r => historyFilter === 'all' || r.period === historyFilter)
 
@@ -406,19 +409,24 @@ export default function AdminSystemControl() {
                     <div className="grid grid-cols-3 gap-6">
                         <div className="p-4 rounded-xl bg-black/20 border border-white/5">
                             <div className="text-xs text-white/40 uppercase font-bold tracking-widest mb-2">Current Load</div>
-                            <div className="text-2xl font-mono text-cyan-400 font-bold">12%</div>
+                            <div className={`text-2xl font-mono font-bold ${currentLoad > 70 ? 'text-red-400' : 'text-cyan-400'}`}>{currentLoad}%</div>
                             <div className="w-full bg-white/10 h-1.5 rounded-full mt-3 overflow-hidden">
-                                <div className="bg-cyan-400 h-full w-[12%] shadow-[0_0_10px_#22d3ee]"></div>
+                                <div
+                                    className={`h-full transition-all duration-1000 ${currentLoad > 70 ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]'}`}
+                                    style={{ width: `${currentLoad}%` }}
+                                ></div>
                             </div>
                         </div>
                         <div className="p-4 rounded-xl bg-black/20 border border-white/5">
-                            <div className="text-xs text-white/40 uppercase font-bold tracking-widest mb-2">Capacity</div>
-                            <div className="text-2xl font-mono text-green-400 font-bold">~10k</div>
-                            <div className="text-[10px] text-white/30 mt-2">Concurrent Users</div>
+                            <div className="text-xs text-white/40 uppercase font-bold tracking-widest mb-2">Active Users</div>
+                            <div className="text-2xl font-mono text-purple-400 font-bold">~{currentUsers}</div>
+                            <div className="text-[10px] text-white/30 mt-2">Simulated Concurrency</div>
                         </div>
                         <div className="p-4 rounded-xl bg-black/20 border border-white/5 flex flex-col justify-center items-center text-center">
-                            <div className="text-green-500 font-bold mb-1">HEALTHY</div>
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <div className={`font-bold mb-1 ${currentLoad > 80 ? 'text-red-500' : currentLoad > 50 ? 'text-amber-500' : 'text-green-500'}`}>
+                                {currentLoad > 80 ? 'CRITICAL' : currentLoad > 50 ? 'STRAINED' : 'HEALTHY'}
+                            </div>
+                            <div className={`w-2 h-2 rounded-full animate-pulse ${currentLoad > 80 ? 'bg-red-500 shadow-[0_0_8px_#ef4444]' : currentLoad > 50 ? 'bg-amber-500 shadow-[0_0_8px_#f59e0b]' : 'bg-green-500 shadow-[0_0_8px_#22c55e]'}`}></div>
                         </div>
                     </div>
                 </div>

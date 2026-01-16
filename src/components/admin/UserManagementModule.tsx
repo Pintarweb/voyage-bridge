@@ -155,13 +155,14 @@ export default function UserManagementModule({ allAgents, allSuppliers, onViewUs
                 <div className="flex items-center gap-4">
                     <div className="relative group/search">
                         <div className="absolute inset-0 bg-indigo-500/5 blur-xl group-focus-within/search:bg-indigo-500/10 transition-all rounded-full" />
-                        <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/search:text-indigo-400 transition-colors text-xs z-10" />
+                        <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/search:text-indigo-400 transition-colors text-xs z-20" />
                         <input
                             type="text"
                             placeholder="SEARCH INTELLIGENCE REGISTRY..."
                             value={localSearch}
                             onChange={(e) => setLocalSearch(e.target.value)}
-                            className="relative z-10 bg-slate-950/50 border border-white/10 rounded-[1.25rem] text-[13px] font-black uppercase tracking-[0.1em] text-white pl-14 pr-32 py-4 outline-none focus:border-indigo-500/50 focus:bg-slate-900/80 transition-all min-w-[400px] placeholder:text-slate-700 shadow-inner backdrop-blur-md"
+                            className="relative z-10 bg-slate-950/50 border border-white/10 rounded-[1.25rem] text-[13px] font-black uppercase tracking-[0.1em] text-white pr-32 py-4 outline-none focus:border-indigo-500/50 focus:bg-slate-900/80 transition-all min-w-[400px] placeholder:text-slate-700 shadow-inner backdrop-blur-md"
+                            style={{ paddingLeft: '4.5rem' }}
                         />
                         <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-3 z-10">
                             {localSearch && (
