@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
 import { FaCloudUploadAlt, FaTimes, FaCheckCircle, FaBuilding, FaPhone, FaEnvelope, FaUser, FaInfoCircle, FaCar, FaMapMarkedAlt, FaSuitcase, FaMoneyBillWave, FaListUl, FaRocket, FaArrowLeft, FaSave } from 'react-icons/fa'
+import ImageUploader from './FormElements/ImageUploader'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -138,34 +138,7 @@ export default function TransportProductForm({ supplier, productId, onSuccess }:
         setFormData(prev => ({ ...prev, [name]: value }))
     }
 
-    // Image Upload Logic
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        if (files.length + acceptedFiles.length > 5) {
-            alert('Max 5 images allowed')
-            return
-        }
-        const newFiles = [...files, ...acceptedFiles]
-        setFiles(newFiles)
-        const newPreviews = acceptedFiles.map(file => URL.createObjectURL(file))
-        setPreviews(prev => [...prev, ...newPreviews])
-    }, [files])
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        accept: { 'image/*': [] },
-        maxSize: 5242880,
-    })
-
-    const removeFile = (index: number) => {
-        const newFiles = [...files]
-        newFiles.splice(index, 1)
-        setFiles(newFiles)
-
-        const newPreviews = [...previews]
-        if (newPreviews[index].startsWith('blob:')) URL.revokeObjectURL(newPreviews[index])
-        newPreviews.splice(index, 1)
-        setPreviews(newPreviews)
-    }
 
     const handleSubmit = async (e: React.FormEvent, status: 'draft' | 'active') => {
         e.preventDefault()
@@ -584,39 +557,12 @@ export default function TransportProductForm({ supplier, productId, onSuccess }:
                     <div className="space-y-6">
                         <div>
                             <label className={glassLabelClass}>Images * (Max 5)</label>
-                            <div
-                                {...getRootProps()}
-                                className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-300 group bg-black/20 ${isDragActive
-                                    ? 'border-blue-500 bg-blue-500/10'
-                                    : 'border-white/10 hover:border-blue-500/50 hover:bg-black/40'
-                                    }`}
-                            >
-                                <input {...getInputProps()} />
-                                <div className="mx-auto w-16 h-16 mb-4 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                                    <FaCloudUploadAlt className="text-3xl text-blue-400" />
-                                </div>
-                                <p className="text-gray-300 font-medium mb-1 group-hover:text-blue-300 transition-colors">Click or drag images to upload</p>
-                                <p className="text-xs text-gray-500">JPG, PNG (Max 5MB)</p>
-                            </div>
-
-                            {previews.length > 0 && (
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
-                                    {previews.map((src, idx) => (
-                                        <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group shadow-lg border border-white/10">
-                                            <img src={src} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeFile(idx)}
-                                                    className="bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-full backdrop-blur-sm transition-transform hover:scale-110"
-                                                >
-                                                    <FaTimes size={14} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            <ImageUploader
+                                files={files}
+                                previews={previews}
+                                onFilesChange={setFiles}
+                                onPreviewsChange={setPreviews}
+                            />
                         </div>
 
                         <div>

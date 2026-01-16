@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
 import {
-    FaCloudUploadAlt, FaTimes, FaCheckCircle, FaBuilding, FaMapMarkerAlt,
+    FaTimes, FaCheckCircle, FaBuilding, FaMapMarkerAlt,
     FaPhone, FaEnvelope, FaUser, FaInfoCircle, FaBed, FaClock,
     FaSwimmingPool, FaWifi, FaParking, FaUtensils, FaDumbbell,
     FaPaw, FaStar, FaRocket, FaArrowLeft, FaPlus, FaCamera, FaTag, FaChevronDown
 } from 'react-icons/fa'
+import ImageUploader from './FormElements/ImageUploader'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -154,34 +154,7 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
         }
     }
 
-    // Image Upload Logic
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        if (files.length + acceptedFiles.length > 5) {
-            alert('Max 5 images allowed')
-            return
-        }
-        const newFiles = [...files, ...acceptedFiles]
-        setFiles(newFiles)
-        const newPreviews = acceptedFiles.map(file => URL.createObjectURL(file))
-        setPreviews(prev => [...prev, ...newPreviews])
-    }, [files])
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        accept: { 'image/*': [] },
-        maxSize: 5242880,
-    })
-
-    const removeFile = (index: number) => {
-        const newFiles = [...files]
-        newFiles.splice(index, 1)
-        setFiles(newFiles)
-
-        const newPreviews = [...previews]
-        if (newPreviews[index].startsWith('blob:')) URL.revokeObjectURL(newPreviews[index])
-        newPreviews.splice(index, 1)
-        setPreviews(newPreviews)
-    }
 
     const handleSubmit = async (e: React.SyntheticEvent, status: 'draft' | 'active') => {
         e.preventDefault()
@@ -626,39 +599,12 @@ export default function HotelProductForm({ supplier, productId, onSuccess }: Hot
                     <div className="p-8 space-y-8">
                         <div className="space-y-3">
                             <label className="block text-sm font-medium text-white/90">Product Images</label>
-                            <div
-                                {...getRootProps()}
-                                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 group ${isDragActive
-                                    ? 'border-blue-400 bg-blue-400/10'
-                                    : 'border-white/10 bg-white/5 hover:border-blue-400/50 hover:bg-white/10'
-                                    }`}
-                            >
-                                <input {...getInputProps()} />
-                                <div className="w-20 h-20 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-                                    <FaCloudUploadAlt className="text-4xl text-blue-300" />
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Drag & drop images here</h3>
-                                <p className="text-white/50">or click to select files (Max 5)</p>
-                            </div>
-
-                            {previews.length > 0 && (
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
-                                    {previews.map((src, idx) => (
-                                        <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group shadow-lg border border-white/10">
-                                            <img src={src} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
-                                                    className="p-2 bg-red-500/80 rounded-full text-white hover:bg-red-500 transition-colors"
-                                                >
-                                                    <FaTimes />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            <ImageUploader
+                                files={files}
+                                previews={previews}
+                                onFilesChange={setFiles}
+                                onPreviewsChange={setPreviews}
+                            />
                         </div>
 
                         <div className="space-y-2">

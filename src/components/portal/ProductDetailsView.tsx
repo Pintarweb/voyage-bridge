@@ -6,6 +6,9 @@ import { FaArrowLeft, FaMapMarkerAlt, FaBuilding, FaMoneyBillWave, FaStar, FaSha
 import { useCurrency } from '@/context/CurrencyContext'
 import Image from 'next/image'
 import { createClient } from '@/utils/supabase/client'
+import ImageGallery from './ImageGallery'
+import SupplierContactModal from './SupplierContactModal'
+import { getCountryInfo } from '@/utils/geo'
 
 type Product = {
     id: string
@@ -63,14 +66,6 @@ export default function ProductDetailsView({ product }: { product: Product }) {
     }
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
-    const nextImage = () => setCurrentImageIndex(prev => (prev + 1) % images.length)
-    const prevImage = () => setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length)
-
-    useEffect(() => {
-        if (images.length <= 1) return
-        const interval = setInterval(nextImage, 5000)
-        return () => clearInterval(interval)
-    }, [images.length])
 
     // --- View Count ---
     const hasViewed = useRef(false)
@@ -207,43 +202,14 @@ export default function ProductDetailsView({ product }: { product: Product }) {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     <div className="lg:col-span-8 space-y-8">
-                        {/* Main Hero Card */}
-                        <div className="relative h-[400px] md:h-[500px] w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group">
-                            <Image
-                                src={images[currentImageIndex]}
-                                alt={product.product_name || 'Product Image'}
-                                fill
-                                className="object-cover transition-all duration-1000 ease-in-out"
-                                priority
+                        <div className="relative group rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+                            <ImageGallery
+                                images={images}
+                                onIndexChange={setCurrentImageIndex}
+                                height="h-[400px] md:h-[500px]"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
 
-                            {images.length > 1 && (
-                                <>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); prevImage() }}
-                                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/30 backdrop-blur-sm text-white hover:bg-amber-500 hover:text-black transition-all opacity-0 group-hover:opacity-100"
-                                    >
-                                        <FaChevronLeft />
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); nextImage() }}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/30 backdrop-blur-sm text-white hover:bg-amber-500 hover:text-black transition-all opacity-0 group-hover:opacity-100"
-                                    >
-                                        <FaChevronRight />
-                                    </button>
-                                    <div className="absolute top-4 right-4 flex gap-1 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
-                                        {images.map((_, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={`w-1.5 h-1.5 rounded-full transition-all ${idx === currentImageIndex ? 'bg-amber-500 w-3' : 'bg-white/50'}`}
-                                            />
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-
-                            <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+                            <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10 pointer-events-none">
                                 <div className="flex items-center gap-3 mb-4 animate-in slide-in-from-bottom-2 fade-in duration-700">
                                     <span className="px-3 py-1 bg-amber-500 text-slate-900 text-xs font-black uppercase tracking-wider rounded">
                                         {product.product_category}
@@ -262,7 +228,7 @@ export default function ProductDetailsView({ product }: { product: Product }) {
                                 <div className="flex items-center gap-4 text-base md:text-lg text-slate-300 animate-in slide-in-from-bottom-6 fade-in duration-700 delay-200">
                                     <span className="flex items-center gap-2">
                                         <FaMapMarkerAlt className="text-amber-500" />
-                                        {product.city}, {product.country_code}
+                                        {product.city}, {getCountryInfo(product.country_code).name} {getCountryInfo(product.country_code).flag}
                                     </span>
                                 </div>
                             </div>
@@ -377,109 +343,15 @@ export default function ProductDetailsView({ product }: { product: Product }) {
                             </p>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
 
             {/* Supplier Contact Modal */}
-            {showSupplierModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200" onClick={() => setShowSupplierModal(false)}>
-                    <div
-                        className="bg-slate-900 border border-white/10 rounded-2xl p-0 max-w-2xl w-full shadow-2xl relative overflow-hidden flex flex-col md:flex-row"
-                        onClick={e => e.stopPropagation()}
-                    >
-                        {/* Supplier Side Panel */}
-                        <div className="bg-slate-950 p-8 md:w-1/3 border-r border-white/5 flex flex-col items-center text-center">
-                            <div className="w-24 h-24 rounded-full bg-slate-800 mb-6 flex items-center justify-center text-3xl font-bold text-amber-500 border-2 border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] overflow-hidden relative">
-                                {product.supplier?.logo_url ? (
-                                    <Image
-                                        src={product.supplier.logo_url}
-                                        alt={product.supplier.company_name}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    product.supplier?.company_name?.[0]
-                                )}
-                            </div>
-                            <h2 className="text-xl font-bold text-white mb-2">{product.supplier.company_name}</h2>
-                            <div className="flex items-center gap-1 text-xs text-slate-400 mb-6">
-                                <FaMapMarkerAlt /> {product.supplier.city || 'Global'}, {product.supplier.country_code || 'Supplier'}
-                            </div>
-
-                            <div className="flex gap-2 w-full justify-center">
-                                <button className="p-2 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors"><FaFacebook size={14} /></button>
-                                <button className="p-2 bg-slate-800 rounded-full hover:bg-pink-600 transition-colors"><FaInstagram size={14} /></button>
-                                <button className="p-2 bg-slate-800 rounded-full hover:bg-blue-500 transition-colors"><FaLinkedin size={14} /></button>
-                            </div>
-                        </div>
-
-                        {/* Details Content */}
-                        <div className="p-8 md:w-2/3 bg-slate-900">
-                            <button
-                                onClick={() => setShowSupplierModal(false)}
-                                className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
-                            >
-                                <FaTimes />
-                            </button>
-
-                            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-6">Contact & Details</h3>
-
-                            {product.supplier.description && (
-                                <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-                                    {product.supplier.description}
-                                </p>
-                            )}
-
-                            <div className="space-y-3">
-                                <a
-                                    href={`mailto:${product.supplier.contact_email}`}
-                                    className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-800 hover:border-amber-500/50 border border-transparent transition-all group"
-                                >
-                                    <div className="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                                        <FaEnvelope size={12} />
-                                    </div>
-                                    <div className="text-left overflow-hidden">
-                                        <p className="text-[10px] text-slate-500 uppercase font-bold">Email</p>
-                                        <p className="text-white text-sm font-medium truncate">{product.supplier.contact_email}</p>
-                                    </div>
-                                </a>
-
-                                {product.supplier.phone_number && (
-                                    <a
-                                        href={`tel:${product.supplier.phone_number}`}
-                                        className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-800 hover:border-green-500/50 border border-transparent transition-all group"
-                                    >
-                                        <div className="w-8 h-8 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
-                                            <FaPhone size={12} />
-                                        </div>
-                                        <div className="text-left overflow-hidden">
-                                            <p className="text-[10px] text-slate-500 uppercase font-bold">Phone</p>
-                                            <p className="text-white text-sm font-medium truncate">{product.supplier.phone_number}</p>
-                                        </div>
-                                    </a>
-                                )}
-
-                                {product.supplier.website_url && (
-                                    <a
-                                        href={product.supplier.website_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-800 hover:border-purple-500/50 border border-transparent transition-all group"
-                                    >
-                                        <div className="w-8 h-8 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                                            <FaGlobe size={12} />
-                                        </div>
-                                        <div className="text-left overflow-hidden">
-                                            <p className="text-[10px] text-slate-500 uppercase font-bold">Website</p>
-                                            <p className="text-white text-sm font-medium truncate">{product.supplier.website_url}</p>
-                                        </div>
-                                    </a>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+            <SupplierContactModal
+                isOpen={showSupplierModal}
+                onClose={() => setShowSupplierModal(false)}
+                supplier={product.supplier as any}
+            />
+        </div >
     )
 }

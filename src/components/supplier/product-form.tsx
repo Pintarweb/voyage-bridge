@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
 import { FaCloudUploadAlt, FaTimes, FaHotel, FaMapMarkerAlt, FaTag, FaBuilding, FaDownload } from 'react-icons/fa'
+import ImageUploader from './FormElements/ImageUploader'
 import { createClient } from '@/utils/supabase/client'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -569,46 +569,7 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
         return type // Fallback to original if no match
     }
 
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        if (files.length + acceptedFiles.length > 5) {
-            alert('Max 5 images allowed')
-            return
-        }
-        const newFiles = [...files, ...acceptedFiles]
-        setFiles(newFiles)
 
-        // Create previews
-        const newPreviews = acceptedFiles.map(file => URL.createObjectURL(file))
-        setPreviews(prev => [...prev, ...newPreviews])
-    }, [files])
-
-    const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-        onDrop,
-        accept: { 'image/*': [] },
-        maxSize: 5242880, // 5MB
-        noClick: false
-    })
-
-
-    const removeFile = (index: number) => {
-        const existingCount = previews.length - files.length
-
-        if (index >= existingCount) {
-            // It's a new file
-            const fileIndex = index - existingCount
-            const newFiles = [...files]
-            newFiles.splice(fileIndex, 1)
-            setFiles(newFiles)
-        }
-
-        const newPreviews = [...previews]
-        // Revoke if it's a blob URL
-        if (newPreviews[index].startsWith('blob:')) {
-            URL.revokeObjectURL(newPreviews[index])
-        }
-        newPreviews.splice(index, 1)
-        setPreviews(newPreviews)
-    }
 
     const isHotel = formData.product_category?.toLowerCase().includes('hotel')
     const isTransport = formData.product_category?.toLowerCase().includes('transport') || formData.product_category?.toLowerCase().includes('airline')
@@ -909,57 +870,12 @@ export default function ProductForm({ onSuccess, productId, mode = 'create' }: P
                     </div>
                     {content.media}
                 </h3>
-                <div
-                    {...getRootProps()}
-                    className={`mt-1 flex justify-center px-6 pt-10 pb-10 border-2 border-dashed rounded-xl transition-all duration-200 ${isDragActive ? 'border-white bg-white/20' : 'border-white/20 hover:border-white/40 hover:bg-white/5'
-                        }`}
-                >
-                    <input {...getInputProps()} />
-                    <div className="space-y-2 text-center">
-                        <FaCloudUploadAlt className="mx-auto h-16 w-16 text-blue-200" />
-                        <div className="text-lg text-white font-medium">
-                            {content.dragDrop}
-                        </div>
-                        <button
-                            type="button"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                open();
-                            }}
-                            className="mt-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
-                        >
-                            {content.uploadImage}
-                        </button>
-                        <p className="text-sm text-blue-200">
-                            {content.maxImages}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Previews */}
-                {previews.length > 0 && (
-                    <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
-                        {previews.map((preview, index) => (
-                            <div key={index} className="relative group aspect-square rounded-xl overflow-hidden bg-black/20 border border-white/10 shadow-lg">
-                                <img
-                                    src={preview}
-                                    alt={`Preview ${index + 1}`}
-                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                />
-                                <div className="absolute top-2 right-2 flex gap-2 transition-all">
-                                    <button
-                                        type="button"
-                                        onClick={() => removeFile(index)}
-                                        className="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full backdrop-blur-sm"
-                                        title={content.remove}
-                                    >
-                                        <FaTimes size={14} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <ImageUploader
+                    files={files}
+                    previews={previews}
+                    onFilesChange={setFiles}
+                    onPreviewsChange={setPreviews}
+                />
             </div>
 
             <div className="fixed bottom-8 right-8 z-50">
