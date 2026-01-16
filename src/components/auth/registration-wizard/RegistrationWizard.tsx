@@ -133,7 +133,7 @@ function WizardContent() {
                                 70% OFF Your First Year <br />
                                 <span className="text-lg font-bold not-italic text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]">+ 30-Day Free Trial!</span>
                             </h3>
-                            <p className="text-sm text-blue-100 font-medium">
+                            <p className="text-sm text-slate-200 font-medium">
                                 Join the elite network of suppliers who are already transforming their business. Secure your spot and lock in these lifetime benefits today!
                             </p>
                         </div>
@@ -168,7 +168,7 @@ function WizardContent() {
                         <div
                             key={step}
                             className={`h-2 rounded-full flex-1 transition-all duration-500 ${step < currentStep
-                                ? 'bg-blue-500 shadow-[0_0_12px_#3b82f6]' // Completed
+                                ? 'bg-amber-600 shadow-[0_0_12px_rgba(245,158,11,0.5)]' // Completed
                                 : step === currentStep
                                     ? 'bg-amber-400 shadow-[0_0_15px_#fbbf24]' // Current
                                     : 'bg-white/10 backdrop-blur-sm' // Future

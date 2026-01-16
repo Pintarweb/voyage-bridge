@@ -391,18 +391,25 @@ export default function Step3Profile() {
 
                 <div>
                     <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.category} *</label>
-                    <select
-                        name="supplier_type"
-                        value={formData.supplier_type}
-                        onChange={handleSupplierTypeChange}
-                        required
-                        className={`block w-full rounded-xl border ${errors.supplier_type ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm [&>option]:bg-gray-900`}
-                    >
-                        <option value="">{content.selectCategory}</option>
-                        {SUPPLIER_TYPES.map((type) => (
-                            <option key={type} value={type}>{type}</option>
-                        ))}
-                    </select>
+                    <div className="relative">
+                        <select
+                            name="supplier_type"
+                            value={formData.supplier_type}
+                            onChange={handleSupplierTypeChange}
+                            required
+                            className={`appearance-none block w-full rounded-xl border ${errors.supplier_type ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 pr-10 text-white focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm [&>option]:bg-slate-900 [&>option]:text-white`}
+                        >
+                            <option value="" className="text-slate-400">{content.selectCategory}</option>
+                            {SUPPLIER_TYPES.map((type) => (
+                                <option key={type} value={type} className="py-2">{type}</option>
+                            ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                     {errors.supplier_type && <p className="mt-1 text-xs text-red-400 ml-1">{errors.supplier_type}</p>}
                 </div>
 
@@ -413,7 +420,7 @@ export default function Step3Profile() {
                         value={formData.description}
                         onChange={handleChange}
                         rows={4}
-                        className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
+                        className="block w-full rounded-xl border border-white/10 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm"
                     />
                 </div>
 
@@ -426,7 +433,7 @@ export default function Step3Profile() {
                         onChange={handleChange}
                         required
                         placeholder="https://example.com"
-                        className={`block w-full rounded-xl border ${errors.website_url ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                        className={`block w-full rounded-xl border ${errors.website_url ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
                     />
                     {errors.website_url && <p className="mt-1 text-xs text-red-400 ml-1">{errors.website_url}</p>}
                 </div>
@@ -452,7 +459,7 @@ export default function Step3Profile() {
                                     placeholder={social.placeholder}
                                     value={(formData as any)[social.name]}
                                     onChange={handleChange}
-                                    className="block w-full rounded-xl border border-white/10 bg-white/5 pl-12 pr-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm text-xs"
+                                    className="block w-full rounded-xl border border-white/10 bg-slate-900/50 pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm text-xs"
                                 />
                             </div>
                         ))}

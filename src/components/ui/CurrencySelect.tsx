@@ -38,42 +38,38 @@ export default function CurrencySelect({ value, onChange, currencies, className,
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [wrapperRef])
 
-    const bgClass = theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'
-    const dropdownBgClass = theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'
-    const hoverClass = theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-    const inputClass = theme === 'dark' ? 'bg-gray-900 border-gray-700 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'
+    const bgClass = theme === 'dark' ? 'bg-slate-900/50 border-white/10 text-white' : 'bg-white border-gray-300 text-gray-900'
+    const dropdownBgClass = theme === 'dark' ? 'bg-slate-900 border-white/10' : 'bg-white border-gray-300'
+    const hoverClass = theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-gray-100'
+    const inputClass = theme === 'dark' ? 'bg-slate-950 border-white/10 text-white placeholder-slate-500' : 'bg-gray-50 border-gray-300 text-gray-900'
 
     return (
-        <div className={`relative ${className}`} ref={wrapperRef}>
+        <div className={`relative ${className} ${isOpen ? 'z-50' : 'z-0'}`} ref={wrapperRef}>
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full flex items-center justify-between border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 ${bgClass}`}
+                className={`w-full flex items-center justify-between border rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all ${bgClass}`}
             >
                 {selectedCurrency ? (
-                    <div className="flex items-center">
-                        <img
-                            src={`https://flagcdn.com/w40/${selectedCurrency.flagCode.toLowerCase()}.png`}
-                            alt={selectedCurrency.code}
-                            className="w-6 h-4 mr-2 object-cover rounded-sm"
-                        />
-                        <span className="truncate">{selectedCurrency.name} ({selectedCurrency.code})</span>
+                    <div className="flex items-center gap-3">
+                        <span className="font-mono font-bold text-amber-500">{selectedCurrency.code}</span>
+                        <span className="truncate text-sm opacity-80">{selectedCurrency.name}</span>
                     </div>
                 ) : (
-                    <span className="text-gray-500">Select Currency</span>
+                    <span className="text-slate-400">Select Currency</span>
                 )}
-                <svg className="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 ml-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
 
             {isOpen && (
-                <div className={`absolute z-10 mt-1 w-full border rounded-md shadow-lg max-h-60 overflow-auto ${dropdownBgClass}`}>
-                    <div className={`p-2 sticky top-0 border-b ${dropdownBgClass}`}>
+                <div className={`absolute z-50 mt-2 w-full border rounded-xl shadow-2xl max-h-60 overflow-auto backdrop-blur-xl ${dropdownBgClass}`}>
+                    <div className={`p-2 sticky top-0 border-b ${theme === 'dark' ? 'bg-slate-900/95 border-white/10' : 'bg-white border-gray-200'}`}>
                         <input
                             type="text"
                             placeholder="Search currency..."
-                            className={`w-full border rounded px-2 py-1 text-sm focus:outline-none focus:border-teal-500 ${inputClass}`}
+                            className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 ${inputClass}`}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             autoFocus

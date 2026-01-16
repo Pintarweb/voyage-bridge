@@ -79,34 +79,20 @@ function RegisterPageContent() {
     const content = t[language as keyof typeof t] || t['en-US']
 
     return (
-        <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen bg-blue-950 overflow-hidden">
-            {/* Background Map/Video Placeholder */}
-            <div className="absolute inset-0 z-0 overflow-hidden">
-                {/* Lighter overlay for brighter background */}
-                <div className="absolute inset-0 bg-blue-950/10 z-10" />
-                <style jsx global>{`
-                  @keyframes pan-slow {
-                    0% { transform: scale(1.1) translate(0, 0); }
-                    100% { transform: scale(1.25) translate(-2%, -2%); }
-                  }
-                  .animate-pan-slow {
-                    animation: pan-slow 40s ease-in-out infinite alternate;
-                  }
-                  /* Autofill Transparency Fix */
-                  input:-webkit-autofill,
-                  input:-webkit-autofill:hover, 
-                  input:-webkit-autofill:focus, 
-                  input:-webkit-autofill:active {
-                      -webkit-box-shadow: 0 0 0 30px rgba(23, 37, 84, 0.8) inset !important;
-                      -webkit-text-fill-color: white !important;
-                      caret-color: white !important;
-                      transition: background-color 5000s ease-in-out 0s;
-                  }
-                `}</style>
+        <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen bg-slate-950 overflow-hidden">
+            {/* Background Atmosphere */}
+            <div className="absolute inset-0 z-0">
+                {/* Main Visual: Business/Luxury Travel Theme */}
+                <div className="absolute inset-0 bg-slate-950/60 z-10 mix-blend-multiply" /> {/* Dark Cinematic Tint */}
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-900/10 via-transparent to-slate-950/80 z-20" /> {/* Lighting Gradient */}
+
+                {/* Amber Light Leak (Left) */}
+                <div className="absolute top-0 left-[-10%] w-[50%] h-full bg-amber-600/10 blur-[150px] z-20 pointer-events-none" />
+
                 <img
-                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
-                    alt="Global Trade Network"
-                    className="w-full h-full object-cover animate-pan-slow"
+                    src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
+                    alt="Global Business Travel"
+                    className="w-full h-full object-cover opacity-60"
                 />
             </div>
 
@@ -115,7 +101,7 @@ function RegisterPageContent() {
                     <h2 className="mt-6 text-3xl font-bold tracking-tight text-white drop-shadow-md">
                         {content.title}
                     </h2>
-                    <p className="mt-2 text-sm text-blue-200">
+                    <p className="mt-2 text-sm text-slate-300">
                         {content.subtitle}
                     </p>
                     <p className="mt-6 text-xl md:text-2xl font-extrabold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)] animate-fade-in-up">
@@ -123,7 +109,10 @@ function RegisterPageContent() {
                     </p>
                 </div>
 
-                <div className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-amber-400/30 shadow-[0_0_60px_rgba(245,158,11,0.15)] ring-1 ring-white/10">
+                <div className="bg-slate-950/40 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-[0_0_60px_rgba(245,158,11,0.1)] ring-1 ring-white/5 relative">
+                    {/* 1px Silver-Gold Border Effect */}
+                    <div className="absolute inset-0 border border-amber-500/10 rounded-3xl pointer-events-none" />
+
                     <RegistrationWizard initialEmail={email} onSubmissionStart={() => {
                         console.log('Disabling Exit Intent due to submission')
                         setIsSubmitting(true)

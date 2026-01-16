@@ -430,7 +430,7 @@ export default function Step1Identity() {
                             onChange={handleChange}
                             required
                             autoComplete="off"
-                            className={`block w-full rounded-xl border ${errors.email ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                            className={`block w-full rounded-xl border ${errors.email ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
                             placeholder="e.g. name@company.com"
                         />
                         {errors.email && <p className="mt-1 text-xs text-red-400 ml-1">{errors.email}</p>}
@@ -446,7 +446,7 @@ export default function Step1Identity() {
                             value={formData.company_name}
                             onChange={handleChange}
                             required
-                            className={`block w-full rounded-xl border ${errors.company_name ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                            className={`block w-full rounded-xl border ${errors.company_name ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
                         />
                         {errors.company_name && <p className="mt-1 text-xs text-red-400 ml-1">{errors.company_name}</p>}
                     </div>
@@ -457,7 +457,7 @@ export default function Step1Identity() {
                             name="trading_name"
                             value={formData.trading_name}
                             onChange={handleChange}
-                            className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
+                            className="block w-full rounded-xl border border-white/10 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm"
                         />
                     </div>
                 </div>
@@ -469,7 +469,7 @@ export default function Step1Identity() {
                             value={formData.country_code}
                             onChange={handleCountryChange}
                             theme="dark"
-                            className={`rounded-xl border ${errors.country_code ? 'border-red-500' : 'border-white/10'} bg-white/5 text-white focus:border-blue-400 focus:ring-blue-400 transition-all backdrop-blur-sm`}
+                            className={`rounded-xl border ${errors.country_code ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 text-white focus:border-amber-500 focus:ring-amber-500 transition-all backdrop-blur-sm`}
                         />
                         {errors.country_code && <p className="mt-1 text-xs text-red-400 ml-1">{errors.country_code}</p>}
                     </div>
@@ -480,7 +480,7 @@ export default function Step1Identity() {
                             onChange={handleCurrencyChange}
                             currencies={CURRENCIES}
                             theme="dark"
-                            className={`rounded-xl border ${errors.base_currency ? 'border-red-500' : 'border-white/10'} bg-white/5 text-white focus:border-blue-400 focus:ring-blue-400 transition-all backdrop-blur-sm`}
+                            className={`rounded-xl border ${errors.base_currency ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 text-white focus:border-amber-500 focus:ring-amber-500 transition-all backdrop-blur-sm`}
                         />
                         {errors.base_currency && <p className="mt-1 text-xs text-red-400 ml-1">{errors.base_currency}</p>}
                     </div>
@@ -494,7 +494,7 @@ export default function Step1Identity() {
                         value={formData.address_line_1}
                         onChange={handleChange}
                         required
-                        className={`block w-full rounded-xl border ${errors.address_line_1 ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                        className={`block w-full rounded-xl border ${errors.address_line_1 ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
                     />
                     {errors.address_line_1 && <p className="mt-1 text-xs text-red-400 ml-1">{errors.address_line_1}</p>}
                 </div>
@@ -508,7 +508,7 @@ export default function Step1Identity() {
                             value={formData.city}
                             onChange={handleChange}
                             required
-                            className={`block w-full rounded-xl border ${errors.city ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                            className={`block w-full rounded-xl border ${errors.city ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
                         />
                         {errors.city && <p className="mt-1 text-xs text-red-400 ml-1">{errors.city}</p>}
                     </div>
@@ -520,7 +520,7 @@ export default function Step1Identity() {
                             value={formData.postcode}
                             onChange={handleChange}
                             required
-                            className={`block w-full rounded-xl border ${errors.postcode ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                            className={`block w-full rounded-xl border ${errors.postcode ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
                         />
                         {errors.postcode && <p className="mt-1 text-xs text-red-400 ml-1">{errors.postcode}</p>}
                     </div>

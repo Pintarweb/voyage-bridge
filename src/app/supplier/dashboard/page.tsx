@@ -17,6 +17,7 @@ import ProductTab from '@/components/supplier/dashboard/tabs/ProductTab'
 import SupplierReports from './reports/page' // Import the report page as a component
 import { ChangeSlotsModal, CancelSubscriptionModal } from '@/components/supplier/dashboard/SubscriptionModals'
 import FeatureWishlist from '@/components/feedback/FeatureWishlist'
+import SupplierSidebar from '@/components/supplier/dashboard/SupplierSidebar'
 
 export default function Dashboard() {
     const [user, setUser] = useState<any>(null)
@@ -112,118 +113,94 @@ export default function Dashboard() {
     ]
 
     return (
-        <div className="min-h-screen relative flex flex-col font-sans text-white bg-blue-950 overflow-hidden">
+        <div className="min-h-screen relative flex font-sans text-white bg-slate-950 overflow-hidden">
 
-            {/* Background - Copied from /auth/supplier/page.tsx */}
-            {/* Background - Copied from /auth/supplier/page.tsx */}
-            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                {/* Lighter overlay for brighter background */}
-                <div className="absolute inset-0 bg-blue-950/10 z-10" />
-                <style jsx global>{`
-                  @keyframes pan-slow {
-                    0% { transform: scale(1.1) translate(0, 0); }
-                    100% { transform: scale(1.25) translate(-2%, -2%); }
-                  }
-                  .animate-pan-slow {
-                    animation: pan-slow 40s ease-in-out infinite alternate;
-                  }
-                  /* Autofill Transparency Fix */
-                  input:-webkit-autofill,
-                  input:-webkit-autofill:hover, 
-                  input:-webkit-autofill:focus, 
-                  input:-webkit-autofill:active {
-                      -webkit-box-shadow: 0 0 0 30px rgba(23, 37, 84, 0.8) inset !important;
-                      -webkit-text-fill-color: white !important;
-                      caret-color: white !important;
-                      transition: background-color 5000s ease-in-out 0s;
-                  }
-                `}</style>
+            {/* Background Atmosphere */}
+            <div className="fixed inset-0 z-0">
+                <div className="absolute inset-0 bg-slate-950/70 z-10 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 via-transparent to-slate-950/90 z-20" />
+                <div className="absolute top-0 right-[-10%] w-[60%] h-[60%] bg-amber-600/10 blur-[150px] z-20 pointer-events-none" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[150px] z-20 pointer-events-none" />
+
                 <img
-                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
-                    alt="Global Trade Network"
-                    className="w-full h-full object-cover animate-pan-slow"
+                    src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
+                    alt="Global Business Travel"
+                    className="w-full h-full object-cover opacity-60"
                 />
             </div>
 
-            {/* Main Layout */}
-            <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col min-h-screen">
+            {/* Sidebar Navigation */}
+            <SupplierSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-                {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold">
-                            {content.welcomeBack}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">{supplier?.company_name || 'Partner'}</span>
-                        </h1>
-                        <p className="text-white/60 text-sm">Manage your global inventory and performance.</p>
-                    </div>
-                    <button
-                        onClick={handleLogout}
-                        className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-sm font-bold transition-all flex items-center gap-2 backdrop-blur-md"
-                    >
-                        <FaSignOutAlt /> {content.logout}
-                    </button>
-                </div>
+            {/* Main Content Area */}
+            <div className="relative z-20 flex-1 ml-0 lg:ml-20 xl:ml-64 transition-all duration-300">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full min-h-screen flex flex-col">
 
-                {/* Tab Navigation */}
-                <div className="flex flex-wrap gap-2 mb-8 bg-white/5 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 w-fit mx-auto md:mx-0">
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all ${activeTab === tab.id
-                                ? 'bg-amber-500 text-blue-950 shadow-lg shadow-amber-500/20'
-                                : 'text-white/60 hover:text-white hover:bg-white/5'
-                                }`}
-                        >
-                            <tab.icon /> {tab.label}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Content Area */}
-                <div className="flex-1 pb-20">
-                    {activeTab === 'overview' && (
-                        <OverviewTab
-                            supplier={supplier}
-                            products={products}
-                            content={content}
-                            handleLogout={handleLogout}
-                        />
-                    )}
-                    {activeTab === 'account' && (
-                        <AccountTab
-                            supplier={supplier}
-                            user={user}
-                            handleLogout={handleLogout}
-                        />
-                    )}
-                    {activeTab === 'billing' && (
-                        <BillingTab
-                            supplier={supplier}
-                            user={user}
-                        />
-                    )}
-                    {activeTab === 'products' && (
-                        <ProductTab
-                            products={products}
-                            supplier={supplier}
-                            content={content}
-                            onProductUpdate={fetchDashboardData}
-                            onOpenSlotModal={() => setIsSlotsModalOpen(true)}
-                        />
-                    )}
-                    {activeTab === 'reports' && (
-                        // We wrap SupplierReports in a container to prevent it taking full screen over tabs if poorly styled
-                        // But mostly it should be fine.
-                        <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                            <SupplierReports />
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-white drop-shadow-md">
+                                {content.welcomeBack}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">{supplier?.company_name || 'Partner'}</span>
+                            </h1>
+                            <p className="text-slate-400 text-sm mt-1">Manage your global inventory and performance.</p>
                         </div>
-                    )}
-                    {activeTab === 'community' && (
-                        <FeatureWishlist />
-                    )}
-                </div>
+                        <button
+                            onClick={handleLogout}
+                            className="px-5 py-2.5 bg-slate-900/50 hover:bg-slate-900 border border-white/10 hover:border-amber-500/30 rounded-xl text-sm font-bold text-white transition-all flex items-center gap-2 backdrop-blur-md shadow-lg"
+                        >
+                            <FaSignOutAlt className="text-amber-500" /> {content.logout}
+                        </button>
+                    </div>
 
+                    {/* Content Views */}
+                    <div className="flex-1 pb-20 fade-in">
+                        {activeTab === 'overview' && (
+                            <OverviewTab
+                                supplier={supplier}
+                                products={products}
+                                content={content}
+                                handleLogout={handleLogout}
+                            />
+                        )}
+                        {activeTab === 'products' && (
+                            <ProductTab
+                                products={products}
+                                supplier={supplier}
+                                content={content}
+                                onProductUpdate={fetchDashboardData}
+                                onOpenSlotModal={() => setIsSlotsModalOpen(true)}
+                            />
+                        )}
+                        {activeTab === 'reports' && (
+                            <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-fade-in-up">
+                                <SupplierReports />
+                            </div>
+                        )}
+                        {activeTab === 'account' && (
+                            <AccountTab
+                                supplier={supplier}
+                                user={user}
+                                handleLogout={handleLogout}
+                            />
+                        )}
+                        {activeTab === 'billing' && (
+                            <BillingTab
+                                supplier={supplier}
+                                user={user}
+                            />
+                        )}
+                        {activeTab === 'community' && (
+                            <div className="max-w-4xl mx-auto">
+                                <div className="text-center mb-8">
+                                    <h2 className="text-2xl font-bold text-white mb-2">Community Wishlist</h2>
+                                    <p className="text-slate-400">Vote on features you want to see next in ArkAlliance.</p>
+                                </div>
+                                <FeatureWishlist />
+                            </div>
+                        )}
+                    </div>
+
+                </div>
             </div>
 
             {/* Modals placed correctly at the end of the root div */}
@@ -232,7 +209,6 @@ export default function Dashboard() {
                 onClose={() => setIsSlotsModalOpen(false)}
                 currentSlots={supplier?.total_slots || 1}
                 onUpdate={async (newSlots) => {
-                    // Logic to update slots (API call)
                     try {
                         const response = await fetch('/api/stripe/manage-subscription', {
                             method: 'POST',
@@ -247,8 +223,13 @@ export default function Dashboard() {
                     }
                 }}
             />
-            {/* We also need CancelSubscriptionModal if we want it to work fully, though triggers are in BillingTab currently */}
-            {/* But since we imported it, we might as well render it if we lift state later. For now, it's fine. */}
+            <CancelSubscriptionModal
+                isOpen={isCancelModalOpen}
+                onClose={() => setIsCancelModalOpen(false)}
+                onConfirm={async () => {
+                    router.push('/api/stripe/create-portal-session')
+                }}
+            />
 
         </div>
     )

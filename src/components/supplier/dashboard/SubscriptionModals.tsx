@@ -49,76 +49,76 @@ export function ChangeSlotsModal({ isOpen, onClose, currentSlots, onUpdate }: Ch
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-gray-200 dark:border-gray-700 m-4">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
+            <div className="bg-slate-950/90 rounded-3xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 m-4 animate-scale-in">
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-2xl font-bold text-white tracking-tight">
                         {step === 'input' ? 'Modify Plan' : 'Confirm Changes'}
                     </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                    <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-full">
                         <FaTimes />
                     </button>
                 </div>
 
                 {step === 'input' ? (
                     /* Step 1: Input */
-                    <div className="mb-6">
-                        <div className="mb-6 text-center">
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Total Slots
+                    <div className="mb-8">
+                        <div className="mb-8 text-center bg-black/20 rounded-2xl p-6 border border-white/5">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
+                                Total Product Slots
                             </label>
-                            <div className="flex items-center justify-center gap-4">
+                            <div className="flex items-center justify-center gap-6">
                                 <button
                                     onClick={() => setSlots(Math.max(1, slots - 1))}
-                                    className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                    className="w-12 h-12 rounded-xl bg-slate-800 border border-white/10 flex items-center justify-center text-xl font-bold text-white hover:bg-slate-700 hover:border-amber-500/50 hover:text-amber-400 transition-all shadow-lg active:scale-95"
                                 >
                                     -
                                 </button>
-                                <span className="text-3xl font-bold w-16 text-center text-gray-900 dark:text-white">{slots}</span>
+                                <span className="text-4xl font-bold w-20 text-center text-white">{slots}</span>
                                 <button
                                     onClick={() => setSlots(slots + 1)}
-                                    className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                    className="w-12 h-12 rounded-xl bg-slate-800 border border-white/10 flex items-center justify-center text-xl font-bold text-white hover:bg-slate-700 hover:border-amber-500/50 hover:text-amber-400 transition-all shadow-lg active:scale-95"
                                 >
                                     +
                                 </button>
                             </div>
                         </div>
 
-                        <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
+                        <div className="p-5 bg-slate-900/50 rounded-2xl border border-white/10 space-y-3">
                             <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-600 dark:text-gray-400">Current Monthly Cost</span>
-                                <span className="text-base font-semibold text-gray-900 dark:text-white">${oldPrice}</span>
+                                <span className="text-sm text-slate-400 font-medium">Current Monthly Cost</span>
+                                <span className="text-base font-bold text-white opacity-60">${oldPrice}</span>
                             </div>
-                            <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-2">
-                                <span className="text-sm font-medium text-gray-900 dark:text-white">New Monthly Cost</span>
-                                <span className="text-xl font-bold text-blue-600 dark:text-blue-400">${newPrice}</span>
+                            <div className="flex justify-between items-center border-t border-white/10 pt-3">
+                                <span className="text-sm font-bold text-white">New Monthly Cost</span>
+                                <span className="text-2xl font-bold text-amber-400">${newPrice}</span>
                             </div>
                         </div>
                     </div>
                 ) : (
                     /* Step 2: Confirmation */
-                    <div className="mb-6 space-y-4">
-                        <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <div className="mb-8 space-y-6">
+                        <div className="p-5 bg-slate-900/50 rounded-2xl border border-white/10">
                             <div className="grid grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Slots</p>
-                                    <p className="text-lg font-medium text-gray-900 dark:text-white">
-                                        {currentSlots} <span className="text-gray-400 mx-1">→</span> {slots}
+                                    <p className="text-xs text-slate-500 uppercase font-bold mb-1">Slots</p>
+                                    <p className="text-lg font-bold text-white">
+                                        {currentSlots} <span className="text-amber-500/50 mx-1">→</span> {slots}
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Monthly Fee</p>
-                                    <p className="text-lg font-medium text-gray-900 dark:text-white">
-                                        ${oldPrice} <span className="text-gray-400 mx-1">→</span> ${newPrice}
+                                    <p className="text-xs text-slate-500 uppercase font-bold mb-1">Monthly Fee</p>
+                                    <p className="text-lg font-bold text-white">
+                                        ${oldPrice} <span className="text-amber-500/50 mx-1">→</span> ${newPrice}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-900/30">
-                                <p className="text-sm text-blue-800 dark:text-blue-200 leading-snug">
+                            <div className="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20">
+                                <p className="text-sm text-blue-300 leading-relaxed font-medium">
                                     {diff > 0
-                                        ? "Since you are adding slots, you will be charged a prorated amount for the remainder of this billing cycle immediately."
-                                        : "Since you are reducing slots, the new lower fee will be reflected starting from your next billing cycle."
+                                        ? "Prorated charges for additional slots will be applied immediately."
+                                        : "Lower fee will be reflected starting from your next billing cycle."
                                     }
                                 </p>
                             </div>
@@ -126,19 +126,19 @@ export function ChangeSlotsModal({ isOpen, onClose, currentSlots, onUpdate }: Ch
                     </div>
                 )}
 
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                     {step === 'input' ? (
                         <>
                             <button
                                 onClick={onClose}
-                                className="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                className="flex-1 py-3.5 rounded-xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 hover:text-white transition-all uppercase tracking-wider text-xs"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleNext}
                                 disabled={diff === 0}
-                                className="flex-1 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold hover:from-amber-400 hover:to-amber-500 transition-all shadow-[0_0_20px_rgba(245,158,11,0.2)] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs"
                             >
                                 Review Changes
                             </button>
@@ -147,14 +147,14 @@ export function ChangeSlotsModal({ isOpen, onClose, currentSlots, onUpdate }: Ch
                         <>
                             <button
                                 onClick={() => setStep('input')}
-                                className="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                className="flex-1 py-3.5 rounded-xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 hover:text-white transition-all uppercase tracking-wider text-xs"
                             >
                                 Back
                             </button>
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="flex-1 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+                                className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold hover:from-amber-400 hover:to-amber-500 transition-all shadow-[0_0_20px_rgba(245,158,11,0.2)] disabled:opacity-50 flex items-center justify-center uppercase tracking-wider text-xs"
                             >
                                 {loading ? 'Processing...' : 'Confirm Update'}
                             </button>
@@ -197,26 +197,26 @@ export function PauseModal({ isOpen, onClose, onPause }: PauseModalProps) {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-200 dark:border-gray-700 m-4">
-                <div className="text-center mb-6">
-                    <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <FaExclamationTriangle className="text-xl" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
+            <div className="bg-slate-950/90 rounded-3xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 m-4 animate-scale-in">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-500/20 shadow-[0_0_25px_rgba(245,158,11,0.15)]">
+                        <FaExclamationTriangle className="text-2xl" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-2xl font-bold text-white mb-3">
                         {step === 'warning' ? 'Pause Subscription?' : 'Confirm Pause'}
                     </h3>
 
                     {step === 'warning' ? (
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-slate-400 leading-relaxed">
                             Are you sure you want to pause your subscription? This will temporarily hide your products from the marketplace.
                         </p>
                     ) : (
-                        <div className="text-left text-sm text-gray-600 dark:text-gray-300 space-y-3 bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                            <p className="font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-2">
+                        <div className="text-left text-sm text-slate-300 space-y-3 bg-slate-900/50 p-5 rounded-xl border border-white/10">
+                            <p className="font-bold text-white border-b border-white/10 pb-2 mb-2">
                                 Please review the consequences:
                             </p>
-                            <ul className="list-disc pl-4 space-y-1">
+                            <ul className="list-disc pl-4 space-y-1 text-slate-400">
                                 <li>Your account will be paused at the <strong>end of your billing cycle</strong>.</li>
                                 <li>Your products will be hidden from the marketplace.</li>
                                 <li>You can re-activate your account anytime.</li>
@@ -225,18 +225,18 @@ export function PauseModal({ isOpen, onClose, onPause }: PauseModalProps) {
                     )}
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                     {step === 'warning' ? (
                         <>
                             <button
                                 onClick={onClose}
-                                className="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                className="flex-1 py-3.5 rounded-xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 hover:text-white transition-all uppercase tracking-wider text-xs"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={() => setStep('confirm')}
-                                className="flex-1 py-2 rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition-colors flex items-center justify-center"
+                                className="flex-1 py-3.5 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] flex items-center justify-center uppercase tracking-wider text-xs"
                             >
                                 Next
                             </button>
@@ -245,14 +245,14 @@ export function PauseModal({ isOpen, onClose, onPause }: PauseModalProps) {
                         <>
                             <button
                                 onClick={() => setStep('warning')}
-                                className="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                className="flex-1 py-3.5 rounded-xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 hover:text-white transition-all uppercase tracking-wider text-xs"
                             >
                                 Back
                             </button>
                             <button
                                 onClick={handlePause}
                                 disabled={loading}
-                                className="flex-1 py-2 rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition-colors disabled:opacity-50 flex items-center justify-center"
+                                className="flex-1 py-3.5 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] disabled:opacity-50 flex items-center justify-center uppercase tracking-wider text-xs"
                             >
                                 {loading ? 'Processing...' : 'Confirm Pause'}
                             </button>
@@ -289,29 +289,29 @@ export function ResumeModal({ isOpen, onClose, onResume }: ResumeModalProps) {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-200 dark:border-gray-700 m-4">
-                <div className="text-center mb-6">
-                    <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <FaPlay className="text-xl pl-1" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
+            <div className="bg-slate-950/90 rounded-3xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 m-4 animate-scale-in">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/20 shadow-[0_0_25px_rgba(16,185,129,0.15)]">
+                        <FaPlay className="text-2xl pl-1" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Resume Subscription?</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <h3 className="text-2xl font-bold text-white mb-2">Resume Subscription?</h3>
+                    <p className="text-sm text-slate-400">
                         Your products will be visible again, and billing will resume immediately.
                     </p>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        className="flex-1 py-3.5 rounded-xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 hover:text-white transition-all uppercase tracking-wider text-xs"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleResume}
                         disabled={loading}
-                        className="flex-1 py-2 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+                        className="flex-1 py-3.5 rounded-xl bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] disabled:opacity-50 flex items-center justify-center uppercase tracking-wider text-xs"
                     >
                         {loading ? 'Resuming...' : 'Confirm Resume'}
                     </button>
@@ -331,28 +331,31 @@ export function CancelSubscriptionModal({ isOpen, onClose, onConfirm }: CancelSu
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-200 dark:border-gray-700 m-4">
-                <div className="text-center mb-6">
-                    <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <FaTimes className="text-xl" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
+            <div className="bg-slate-950/90 rounded-3xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 m-4 animate-scale-in">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20 shadow-[0_0_25px_rgba(239,68,68,0.15)]">
+                        <FaTimes className="text-3xl" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Cancel Subscription?</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                        We're sorry to see you go. This action will redirect you to our billing portal to finalize cancellation.
+                    <h3 className="text-2xl font-bold text-white mb-2">Cancel Subscription?</h3>
+                    <p className="text-sm text-slate-400 mb-2">
+                        We're sorry to see you go.
+                    </p>
+                    <p className="text-xs text-slate-500">
+                        This action will redirect you to our billing portal to finalize cancellation.
                     </p>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        className="flex-1 py-3.5 rounded-xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 hover:text-white transition-all uppercase tracking-wider text-xs"
                     >
                         Keep It
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="flex-1 py-2 rounded-xl bg-red-600 text-white font-medium hover:bg-red-700 transition-colors flex items-center justify-center"
+                        className="flex-1 py-3.5 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)] flex items-center justify-center uppercase tracking-wider text-xs"
                     >
                         Proceed to Cancel
                     </button>

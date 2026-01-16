@@ -268,7 +268,7 @@ export default function Step2Legal() {
                             value={formData.company_reg_no}
                             onChange={handleChange}
                             required
-                            className={`block w-full rounded-xl border ${errors.company_reg_no ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm`}
+                            className={`block w-full rounded-xl border ${errors.company_reg_no ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
                         />
                         {errors.company_reg_no && <p className="mt-1 text-xs text-red-400 ml-1">{errors.company_reg_no}</p>}
                     </div>
@@ -279,7 +279,7 @@ export default function Step2Legal() {
                             name="license_no"
                             value={formData.license_no}
                             onChange={handleChange}
-                            className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
+                            className="block w-full rounded-xl border border-white/10 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm"
                         />
                     </div>
                 </div>
@@ -291,14 +291,14 @@ export default function Step2Legal() {
                         name="tax_id"
                         value={formData.tax_id}
                         onChange={handleChange}
-                        className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all backdrop-blur-sm"
+                        className="block w-full rounded-xl border border-white/10 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm"
                     />
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
                         <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.phone} *</label>
-                        <div className={`phone-input-container rounded-xl border ${errors.phone_number ? 'border-red-500' : 'border-white/10'} bg-white/5 px-4 py-3 transition-all backdrop-blur-sm focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 focus-within:shadow-[0_0_15px_rgba(59,130,246,0.3)]`}>
+                        <div className={`phone-input-container rounded-xl border ${errors.phone_number ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 transition-all backdrop-blur-sm focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500 focus-within:shadow-[0_0_15px_rgba(245,158,11,0.3)]`}>
                             <PhoneInput
                                 international
                                 defaultCountry={formData.country_code as any}

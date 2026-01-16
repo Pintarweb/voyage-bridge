@@ -103,24 +103,24 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
     return (
         <div className="space-y-8">
             {/* Toolbar */}
-            <div className="flex flex-col md:flex-row justify-between gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
+            <div className="flex flex-col md:flex-row justify-between gap-4 bg-slate-950/40 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-lg">
                 <div className="flex gap-4 flex-1">
                     <div className="relative flex-1 max-w-md">
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                         <input
                             type="text"
                             placeholder={content.searchPlaceholder || "Search products..."}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-amber-500/50 transition-colors"
+                            className="w-full pl-10 pr-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
                         />
                     </div>
                     <div className="relative">
-                        <FaFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+                        <FaFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="pl-10 pr-8 py-2.5 bg-black/20 border border-white/10 rounded-xl text-white appearance-none focus:outline-none focus:border-amber-500/50 cursor-pointer"
+                            className="pl-10 pr-10 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white appearance-none focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 cursor-pointer hover:bg-slate-800 transition-colors"
                         >
                             <option value="all">All Products</option>
                             <option value="active">Active</option>
@@ -131,10 +131,10 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
                 </div>
 
                 <div className="flex gap-3">
-                    <button onClick={() => alert("Folder creation coming soon!")} className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-xl transition-colors flex items-center gap-2">
-                        <FaFolder className="text-amber-400" /> New Folder
+                    <button onClick={() => alert("Folder creation coming soon!")} className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-white/10 text-white font-bold rounded-xl transition-all flex items-center gap-2 shadow-md">
+                        <FaFolder className="text-amber-500" /> New Folder
                     </button>
-                    <Link href="/supplier/dashboard/products/create" className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-blue-950 font-bold rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                    <Link href="/supplier/dashboard/products/create" className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:to-orange-500 text-white font-bold rounded-xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transform hover:-translate-y-0.5">
                         <FaPlus /> New Product
                     </Link>
                 </div>
@@ -143,10 +143,10 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
             {/* Folders Row (Mock) */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {folders.map(folder => (
-                    <div key={folder.id} className="bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl cursor-pointer transition-all group">
+                    <div key={folder.id} className="bg-slate-950/40 hover:bg-slate-900 border border-white/5 hover:border-amber-500/30 p-4 rounded-xl cursor-pointer transition-all group">
                         <FaFolder className="text-amber-500/50 group-hover:text-amber-400 mb-3 text-3xl transition-colors" />
-                        <div className="font-bold text-white text-sm truncate">{folder.name}</div>
-                        <div className="text-xs text-white/40">{folder.count} items</div>
+                        <div className="font-bold text-slate-200 group-hover:text-white text-sm truncate transition-colors">{folder.name}</div>
+                        <div className="text-xs text-slate-500">{folder.count} items</div>
                     </div>
                 ))}
             </div>
@@ -157,72 +157,73 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                         key={product.id}
-                        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden group hover:border-amber-500/30 transition-all hover:-translate-y-1"
+                        className="bg-slate-950/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden group hover:border-amber-500/30 transition-all hover:-translate-y-1 shadow-lg"
                     >
                         {/* Image */}
-                        <div className="relative h-48 bg-black/40">
+                        <div className="relative h-48 bg-slate-900">
                             {getMainImage(product.photo_urls) ? (
-                                <img src={getMainImage(product.photo_urls)} alt={product.product_name} className="w-full h-full object-cover" />
+                                <img src={getMainImage(product.photo_urls)} alt={product.product_name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-white/20">
+                                <div className="w-full h-full flex items-center justify-center text-slate-700">
                                     <FaBox size={40} />
                                 </div>
                             )}
                             <div className="absolute top-3 right-3 flex gap-2">
-                                <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase backdrop-blur-md ${product.status === 'active' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                                    product.status === 'draft' ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30' :
-                                        'bg-red-500/20 text-red-400 border border-red-500/30'
+                                <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase backdrop-blur-md shadow-sm ${product.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                                    product.status === 'draft' ? 'bg-slate-500/20 text-slate-400 border border-slate-500/30' :
+                                        'bg-red-500/10 text-red-400 border border-red-500/20'
                                     }`}>
                                     {product.status}
                                 </span>
                             </div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent pointer-events-none" />
                         </div>
 
                         <div className="p-5">
-                            <h3 className="font-bold text-white text-lg mb-1 truncate">{product.product_name}</h3>
-                            <div className="flex items-center text-xs text-white/50 mb-4">
-                                <FaMapMarkerAlt className="mr-1" /> {product.city || 'No location'}
+                            <h3 className="font-bold text-white text-lg mb-1 truncate group-hover:text-amber-400 transition-colors">{product.product_name}</h3>
+                            <div className="flex items-center text-xs text-slate-400 mb-4">
+                                <FaMapMarkerAlt className="mr-1 text-slate-500" /> {product.city || 'No location'}
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 mb-4 py-4 border-y border-white/5">
                                 <div className="text-center border-r border-white/5">
                                     <div className="text-lg font-bold text-white">{product.view_count || 0}</div>
-                                    <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold">Views</div>
+                                    <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Views</div>
                                 </div>
                                 <div className="text-center">
                                     <div className="text-lg font-bold text-white">{product.wishlist_count || 0}</div>
-                                    <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold">Wishlists</div>
+                                    <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Wishlists</div>
                                 </div>
                             </div>
 
                             <div className="flex gap-2 text-xs font-bold pt-4 border-t border-white/5 mt-4">
-                                <Link href={`/supplier/dashboard/products/create?id=${product.id}`} className="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-colors flex items-center justify-center gap-1">
+                                <Link href={`/supplier/dashboard/products/create?id=${product.id}`} className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-lg text-white transition-all flex items-center justify-center gap-1 hover:shadow-md">
                                     <FaEdit /> Edit
                                 </Link>
 
                                 {product.status === 'active' && (
-                                    <button onClick={() => handleUpdateStatus(product.id, 'draft')} className="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/60 hover:text-white transition-colors flex items-center justify-center gap-1" title="Set to Draft">
+                                    <button onClick={() => handleUpdateStatus(product.id, 'draft')} className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1" title="Set to Draft">
                                         <FaFileAlt /> Draft
                                     </button>
                                 )}
 
                                 {product.status === 'draft' && (
-                                    <button onClick={() => handleUpdateStatus(product.id, 'active')} className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg text-green-400 transition-colors flex items-center justify-center gap-1" title="Publish">
+                                    <button onClick={() => handleUpdateStatus(product.id, 'active')} className="flex-1 py-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-emerald-400 transition-all flex items-center justify-center gap-1 hover:shadow-md" title="Publish">
                                         <FaPlus /> Publish
                                     </button>
                                 )}
 
                                 {product.status !== 'archived' ? (
-                                    <button onClick={() => handleUpdateStatus(product.id, 'archived')} className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/60 hover:text-red-400 transition-colors" title="Archive">
+                                    <button onClick={() => handleUpdateStatus(product.id, 'archived')} className="px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-lg text-slate-400 hover:text-red-400 transition-all" title="Archive">
                                         <FaArchive />
                                     </button>
                                 ) : (
-                                    <button onClick={() => handleUpdateStatus(product.id, 'draft')} className="flex-1 py-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg text-green-400 transition-colors flex items-center justify-center gap-1" title="Restore to Draft">
+                                    <button onClick={() => handleUpdateStatus(product.id, 'draft')} className="flex-1 py-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-emerald-400 transition-all flex items-center justify-center gap-1" title="Restore to Draft">
                                         <FaTrashRestore /> Restore
                                     </button>
                                 )}
 
-                                <button onClick={() => handleDelete(product.id)} className="px-4 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-red-400 transition-colors" title="Permanently Delete">
+                                <button onClick={() => handleDelete(product.id)} className="px-4 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-red-400 transition-all hover:shadow-md" title="Permanently Delete">
                                     <FaTrash />
                                 </button>
                             </div>
@@ -233,11 +234,11 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
                 {/* Empty State */}
                 {filteredProducts.length === 0 && (
                     <div className="col-span-full py-20 text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/5 mb-4">
-                            <FaBox className="text-white/20 text-3xl" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-900 border border-white/5 mb-4 shadow-inner">
+                            <FaBox className="text-slate-600 text-3xl" />
                         </div>
                         <h3 className="text-white font-bold text-lg">No products found</h3>
-                        <p className="text-white/40 text-sm">Try adjusting your search or filters.</p>
+                        <p className="text-slate-500 text-sm mt-1">Try adjusting your search or filters.</p>
                     </div>
                 )}
             </div>
