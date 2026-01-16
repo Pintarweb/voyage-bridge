@@ -90,7 +90,6 @@ export default function PortalDashboard({ products, agencyName }: { products: an
                     <ProductCard
                         key={product.id}
                         product={product}
-                        onBook={handleBook}
                         isWishlisted={wishlist.has(product.id)}
                         onToggleWishlist={toggleWishlist}
                     />

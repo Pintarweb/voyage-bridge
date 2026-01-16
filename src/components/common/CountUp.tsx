@@ -5,9 +5,18 @@ import React, { useState, useEffect } from 'react'
 interface CountUpProps {
     end: number
     duration?: number
+    prefix?: string
+    suffix?: string
+    decimals?: number
 }
 
-const CountUp: React.FC<CountUpProps> = ({ end, duration = 2 }) => {
+const CountUp: React.FC<CountUpProps> = ({
+    end,
+    duration = 2,
+    prefix = '',
+    suffix = '',
+    decimals = 0
+}) => {
     const [count, setCount] = useState(0)
 
     useEffect(() => {
@@ -23,7 +32,7 @@ const CountUp: React.FC<CountUpProps> = ({ end, duration = 2 }) => {
             const percentage = Math.min(progress / (duration * 1000), 1)
             const easedProgress = easeOutQuart(percentage)
 
-            setCount(Math.floor(end * easedProgress))
+            setCount(end * easedProgress)
 
             if (progress < duration * 1000) {
                 animationFrame = requestAnimationFrame(animate)
@@ -35,7 +44,14 @@ const CountUp: React.FC<CountUpProps> = ({ end, duration = 2 }) => {
         return () => cancelAnimationFrame(animationFrame)
     }, [end, duration])
 
-    return <>{count.toLocaleString()}</>
+    const formattedValue = count.toLocaleString(undefined, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+    })
+
+    return (
+        <>{prefix}{formattedValue}{suffix}</>
+    )
 }
 
 export default CountUp

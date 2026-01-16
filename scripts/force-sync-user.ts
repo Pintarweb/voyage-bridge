@@ -60,7 +60,7 @@ async function syncUser(userId: string) {
     }
 
     const isPaused = subscription.pause_collection?.behavior === 'void'
-    let periodEnd = subscription.current_period_end
+    let periodEnd = (subscription as any).current_period_end
     if (!periodEnd) {
         console.warn('current_period_end missing, using fallback')
         periodEnd = subscription.cancel_at || Math.floor(Date.now() / 1000)

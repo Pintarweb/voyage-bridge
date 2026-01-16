@@ -57,10 +57,8 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
                 const sub = await stripe.subscriptions.retrieve(session.subscription)
                 console.log('[Stripe Logic] Retrieved Full Subscription Object:', JSON.stringify(sub, null, 2))
 
-                // 1. Current Period End
-                if (sub.current_period_end) {
-                    // @ts-ignore
-                    updateData.current_period_end = new Date(sub.current_period_end * 1000).toISOString()
+                if ((sub as any).current_period_end) {
+                    updateData.current_period_end = new Date((sub as any).current_period_end * 1000).toISOString()
                 } else {
                     console.warn('[Stripe Logic] sub.current_period_end is missing! Using 30 days from now as fallback.')
                     updateData.current_period_end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -207,7 +205,6 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
             periodEnd = Math.floor(Date.now() / 1000)
         }
     }
-
     const currentPeriodEnd = new Date(periodEnd * 1000).toISOString()
 
     // Update Access
@@ -220,11 +217,8 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
     }
 
     // Capture trial_end if present (crucial for trial subscriptions)
-    // @ts-ignore
-    if (freshSub.trial_end) {
-        // @ts-ignore
-        updateData.trial_end = new Date(freshSub.trial_end * 1000).toISOString()
-        // @ts-ignore
+    if ((freshSub as Stripe.Subscription).trial_end) {
+        updateData.trial_end = new Date((freshSub as Stripe.Subscription).trial_end! * 1000).toISOString()
         console.log(`[Stripe Logic] Captured trial_end for update: ${updateData.trial_end}`)
     }
 

@@ -84,7 +84,7 @@ export default function SupplierCard({
     }
 
     return (
-        <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 hover:border-amber-500/30 transition-all duration-500 group shadow-2xl">
+        <div className="relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 md:p-8 hover:border-amber-500/50 transition-all duration-500 group shadow-2xl">
             {/* Background Accent */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 blur-[80px] -z-10 group-hover:bg-amber-500/10 transition-all duration-500" />
 

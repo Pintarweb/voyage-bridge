@@ -116,17 +116,7 @@ export async function POST(req: Request) {
             await handleSubscriptionChange(updatedSub, userId)
 
             if (customerEmail) {
-                let periodEnd = updatedSub.current_period_end
-
-                // Fallback logic
-                if (!periodEnd) {
-                    if ((updatedSub as any).trial_end) {
-                        periodEnd = (updatedSub as any).trial_end
-                    } else {
-                        periodEnd = (updatedSub as any).cancel_at || Math.floor(Date.now() / 1000)
-                    }
-                }
-
+                const periodEnd = (updatedSub as any).current_period_end || (updatedSub as any).trial_end || (updatedSub as any).cancel_at || Math.floor(Date.now() / 1000)
                 const endDate = new Date(periodEnd * 1000).toISOString()
 
                 await sendSubscriptionUpdateEmail(customerEmail, 'pause', {

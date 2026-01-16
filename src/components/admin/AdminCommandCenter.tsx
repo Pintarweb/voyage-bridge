@@ -271,7 +271,8 @@ export default function AdminCommandCenter({ pendingAgents, pendingSuppliers, al
                             />
                             <MonitorCard
                                 label="Uptime Status"
-                                value="99.9%"
+                                value={99.9}
+                                suffix="%"
                                 subtext="System Operational"
                                 icon={<div className="w-4 h-4 rounded-full bg-green-500 animate-pulse shadow-[0_0_15px_#22c55e]" />}
                             />

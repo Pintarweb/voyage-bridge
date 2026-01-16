@@ -35,7 +35,6 @@ async function checkUserMetadata() {
         console.log('User found!')
         console.log('User ID:', agent.id)
         console.log('Email:', agent.email)
-        console.log('\nraw_user_meta_data:', JSON.stringify(agent.raw_user_meta_data, null, 2))
         console.log('\nuser_metadata:', JSON.stringify(agent.user_metadata, null, 2))
     } else {
         console.log('User not found')

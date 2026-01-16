@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import ProductForm from '@/components/supplier/product-form'
 import HotelProductForm from '@/components/supplier/HotelProductForm'
 import TransportProductForm from '@/components/supplier/TransportProductForm'
@@ -11,7 +11,7 @@ import { FaArrowLeft } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
 import { createClient } from '@/utils/supabase/client'
 
-export default function CreateProductPage() {
+function CreateProductContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const mode = searchParams.get('edit') === 'true' ? 'edit' : 'create'
@@ -236,5 +236,17 @@ export default function CreateProductPage() {
                 </main>
             </div>
         </div>
+    )
+}
+
+export default function CreateProductPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex h-screen items-center justify-center text-foreground">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+            </div>
+        }>
+            <CreateProductContent />
+        </Suspense>
     )
 }

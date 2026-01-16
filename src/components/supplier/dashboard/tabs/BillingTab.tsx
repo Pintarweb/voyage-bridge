@@ -4,7 +4,21 @@ import React, { useState } from 'react'
 import { FaCreditCard, FaEdit, FaTimes, FaPause, FaPlay, FaHistory, FaFileInvoiceDollar } from 'react-icons/fa'
 import { ChangeSlotsModal, CancelSubscriptionModal } from '../SubscriptionModals'
 
-export default function BillingTab({ supplier, user }) {
+interface Supplier {
+    id: string;
+    company_name: string;
+    total_slots?: number;
+    subscription_status?: string;
+    trial_end?: string;
+    current_period_end?: string;
+    payment_status?: string;
+}
+
+interface User {
+    id: string;
+}
+
+export default function BillingTab({ supplier, user }: { supplier: Supplier, user: User }) {
     const [isSlotsModalOpen, setIsSlotsModalOpen] = useState(false)
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
 

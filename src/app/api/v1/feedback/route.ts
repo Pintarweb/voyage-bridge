@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         if (metric_score && metric_score <= 2) {
             // In a real system, this would trigger a notification service, email, or Slack alert.
             // For this implementation, the Admin Board will query for these "High Frustration" entries.
-            console.log('High Priority Alert Triggered for User:', user.id)
+            console.log('High Priority Alert Triggered for User:', user?.id)
         }
 
         return NextResponse.json({ success: true, data }, { status: 201 })
