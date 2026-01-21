@@ -8,18 +8,13 @@ export async function registerSupplier(formData: any) {
     const supabaseServer = await createClient()
 
     const email = formData.email
+    const password = formData.password
 
-    // 1. Generate a temporary high-entropy password
-    // This allows us to "Passwordless" sign them up by not asking them for it,
-    // but satisfying the Auth requirements for an immediate session.
-    // They can reset it later via email if they want to login again on a new device.
-    const tempPassword = crypto.randomUUID() + crypto.randomUUID()
-
-    // 2. Create User via Admin API (skips email verification if confirmed: true)
+    // 1. Create User via Admin API (skips email verification if confirmed: true)
     // We set email_confirm: true to verify them immediately.
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
         email: email,
-        password: tempPassword,
+        password: password,
         email_confirm: true,
         user_metadata: {
             role: 'pending_supplier',
@@ -91,7 +86,7 @@ export async function registerSupplier(formData: any) {
     // 4. Sign In the user immediately to establish session cookies
     const { error: signInError } = await supabaseServer.auth.signInWithPassword({
         email: email,
-        password: tempPassword
+        password: password
     })
 
     if (signInError) {

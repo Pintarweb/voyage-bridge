@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -97,8 +97,21 @@ export default function SupplierAuthPage() {
     const [error, setError] = useState('')
     const [isNavigating, setIsNavigating] = useState(false)
     const router = useRouter()
-    const supabase = createClient()
     const { language } = useLanguage()
+    const supabase = createClient()
+
+    // 1. Auto-redirect if already logged in
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+                // If they have a session, send them towards the dashboard. 
+                // Middleware will catch them and send them to /approval-pending if needed.
+                router.push('/supplier/dashboard')
+            }
+        }
+        checkSession()
+    }, [router, supabase])
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()

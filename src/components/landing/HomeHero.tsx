@@ -10,9 +10,10 @@ interface HomeHeroProps {
     ctaAgentText: string
     ctaSupplierText: string
     statsComponent: React.ReactNode
+    user?: any
 }
 
-const HomeHero: React.FC<HomeHeroProps> = ({ ctaAgentText, ctaSupplierText, statsComponent }) => {
+const HomeHero: React.FC<HomeHeroProps> = ({ ctaAgentText, ctaSupplierText, statsComponent, user }) => {
     return (
         <section className="relative z-10 pt-20 pb-16 lg:pt-32 lg:pb-24 px-4 overflow-hidden min-h-[90vh] flex flex-col justify-center">
             {/* BACKGROUND: Deep Slate + Animated Globe Overlay */}
@@ -82,21 +83,35 @@ const HomeHero: React.FC<HomeHeroProps> = ({ ctaAgentText, ctaSupplierText, stat
 
                     {/* Enhanced CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 items-center">
-                        <Link
-                            href="/auth/agent"
-                            className="group relative px-10 py-5 bg-gradient-to-r from-amber-500 to-amber-700 text-white font-bold text-xl rounded-full shadow-[0_0_40px_rgba(245,158,11,0.4)] hover:shadow-[0_0_60px_rgba(245,158,11,0.6)] transition-all transform hover:-translate-y-1 overflow-hidden"
-                        >
-                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                            <span className="relative flex items-center gap-3">
-                                {ctaAgentText} <FaArrowRight />
-                            </span>
-                        </Link>
-                        <Link
-                            href="/auth/supplier"
-                            className="px-10 py-5 bg-slate-900/60 border border-white/20 backdrop-blur-xl text-white font-semibold text-xl rounded-full hover:bg-white/10 hover:border-white/40 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3"
-                        >
-                            <FaBuilding className="text-slate-400" /> {ctaSupplierText}
-                        </Link>
+                        {user ? (
+                            <Link
+                                href="/supplier/dashboard"
+                                className="group relative px-12 py-5 bg-gradient-to-r from-amber-500 to-amber-700 text-white font-black text-2xl rounded-full shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:shadow-[0_0_70px_rgba(245,158,11,0.7)] transition-all transform hover:-translate-y-1 overflow-hidden"
+                            >
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                                <span className="relative flex items-center gap-3">
+                                    Go to Portal <FaArrowRight />
+                                </span>
+                            </Link>
+                        ) : (
+                            <>
+                                <Link
+                                    href="/auth/agent"
+                                    className="group relative px-10 py-5 bg-gradient-to-r from-amber-500 to-amber-700 text-white font-bold text-xl rounded-full shadow-[0_0_40px_rgba(245,158,11,0.4)] hover:shadow-[0_0_60px_rgba(245,158,11,0.6)] transition-all transform hover:-translate-y-1 overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                                    <span className="relative flex items-center gap-3">
+                                        {ctaAgentText} <FaArrowRight />
+                                    </span>
+                                </Link>
+                                <Link
+                                    href="/auth/supplier"
+                                    className="px-10 py-5 bg-slate-900/60 border border-white/20 backdrop-blur-xl text-white font-semibold text-xl rounded-full hover:bg-white/10 hover:border-white/40 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3"
+                                >
+                                    <FaBuilding className="text-slate-400" /> {ctaSupplierText}
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </motion.div>
             </div>

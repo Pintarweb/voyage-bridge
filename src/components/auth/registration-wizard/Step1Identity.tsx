@@ -348,6 +348,11 @@ export default function Step1Identity() {
     const validate = () => {
         const newErrors: Record<string, string> = {}
         if (!formData.email) newErrors.email = content.errors.email
+        if (!formData.password) {
+            newErrors.password = content.errors.password
+        } else if (formData.password.length < 6) {
+            newErrors.password = content.errors.passwordLength
+        }
         if (!formData.company_name) newErrors.company_name = content.errors.companyName
         if (!formData.country_code) newErrors.country_code = content.errors.country
         if (!formData.base_currency) newErrors.base_currency = content.errors.currency
@@ -434,6 +439,20 @@ export default function Step1Identity() {
                             placeholder="e.g. name@company.com"
                         />
                         {errors.email && <p className="mt-1 text-xs text-red-400 ml-1">{errors.email}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold !text-white uppercase tracking-wider mb-2 ml-1">{content.password} *</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-password"
+                            className={`block w-full rounded-xl border ${errors.password ? 'border-red-500' : 'border-white/10'} bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all backdrop-blur-sm`}
+                            placeholder="Min 6 characters"
+                        />
+                        {errors.password && <p className="mt-1 text-xs text-red-400 ml-1">{errors.password}</p>}
                     </div>
                 </div>
 

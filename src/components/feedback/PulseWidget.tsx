@@ -1,9 +1,16 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaHeart } from 'react-icons/fa'
 
 export default function PulseWidget() {
-    const [state, setState] = useState<'rating' | 'thankyou' | 'minimized'>('rating')
+    const [state, setState] = useState<'rating' | 'thankyou' | 'minimized' | 'hidden'>('rating')
+
+    useEffect(() => {
+        const hasSubmitted = localStorage.getItem('pulse_feedback_submitted')
+        if (hasSubmitted) {
+            setState('hidden')
+        }
+    }, [])
 
     const emojis = [
         { icon: '😢', label: 'Sad' },
@@ -14,6 +21,7 @@ export default function PulseWidget() {
     ]
 
     const handleRate = async (score: number) => {
+        if (state !== 'rating') return
         setState('thankyou')
 
         try {
@@ -26,12 +34,15 @@ export default function PulseWidget() {
                     comment: ''
                 })
             })
+            localStorage.setItem('pulse_feedback_submitted', 'true')
         } catch (e) {
             console.error('Pulse feedback failed', e)
         }
 
-        setTimeout(() => setState('minimized'), 2000)
+        setTimeout(() => setState('hidden'), 2000)
     }
+
+    if (state === 'hidden') return null
 
     if (state === 'minimized') {
         return (

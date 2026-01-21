@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
         const { data: supplier, error: supplierError } = await supabase
             .from('suppliers')
-            .select('stripe_customer_id')
+            .select('stripe_customer_id, company_name')
             .eq('id', userId)
             .single()
 
@@ -81,6 +81,18 @@ export async function POST(req: Request) {
                 }
             },
         })
+
+        // 4. Send Acknowledgement Email (Draft/Pending)
+        // Since we are creating a session, we can acknowledge that they've reached this step.
+        // In testing mode, we can trigger the fulfillment logic if needed, but for now 
+        // let's at least acknowledge the attempt in development.
+        try {
+            const { sendPaymentConfirmationEmail } = await import('@/lib/emailSender')
+            await sendPaymentConfirmationEmail(userEmail, supplier?.company_name || 'Supplier')
+            console.log(`[Stripe API] Acknowledgment email sent to ${userEmail}`)
+        } catch (emailErr) {
+            console.warn('[Stripe API] Failed to send acknowledgment email:', emailErr)
+        }
 
         return NextResponse.json({ url: session.url })
 

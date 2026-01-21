@@ -199,6 +199,8 @@ export default function GlobalHeader() {
                                 ))}
                             </div>
                         </div>
+
+                        {/* Currency Selector */}
                         <div className="relative group">
                             <button className="flex items-center space-x-2 text-slate-300 hover:text-white text-sm font-medium focus:outline-none">
                                 {currentCurrency && (
@@ -229,9 +231,65 @@ export default function GlobalHeader() {
                             </div>
                         </div>
 
+                        {/* User Profile / Logout */}
+                        <div className="relative">
+                            {user ? (
+                                <div className="flex items-center gap-4">
+                                    <div className="h-6 w-[1px] bg-slate-800 mx-1" />
+                                    <button
+                                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                        className="flex items-center gap-2 group"
+                                    >
+                                        <div className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/30 transition-all">
+                                            <FaUserCircle className="text-xl" />
+                                        </div>
+                                        <div className="hidden lg:block text-left">
+                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tighter leading-none">Registered Partner</p>
+                                            <p className="text-xs text-slate-200 font-bold truncate max-w-[120px]">{user.email}</p>
+                                        </div>
+                                    </button>
 
-
-
+                                    {isProfileOpen && (
+                                        <>
+                                            <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)}></div>
+                                            <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                                                <div className="p-3 border-b border-white/5 bg-white/5">
+                                                    <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Account</p>
+                                                    <p className="text-xs text-white break-all font-medium">{user.email}</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        router.push('/supplier/dashboard')
+                                                        setIsProfileOpen(false)
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 text-xs text-slate-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-3"
+                                                >
+                                                    <FaGlobe className="text-blue-400" /> Go to Portal
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        await supabase.auth.signOut()
+                                                        setUser(null)
+                                                        setIsProfileOpen(false)
+                                                        router.push('/')
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 text-xs text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3"
+                                                >
+                                                    <FaSignOutAlt /> Sign Out
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ) : (
+                                <Link
+                                    href="/auth/supplier"
+                                    className="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-lg shadow-blue-500/20"
+                                >
+                                    Partner Login
+                                </Link>
+                            )}
+                        </div>
                     </div>
 
                     {/* Mobile Menu Button */}

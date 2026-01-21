@@ -88,23 +88,36 @@ export async function updateSession(request: NextRequest) {
         '/auth/register',
         '/register-agent',
         '/auth/create-password',
+        '/auth/forgot-password',
+        '/auth/reset-password',
+        '/auth/callback',
+        '/auth/auth-code-error',
     ]
 
-    // If on a public path, allow access
-    if (publicPaths.some(p => path === p || path.startsWith('/api/'))) {
+    const isPublicPath =
+        publicPaths.some(p => path === p) ||
+        path.startsWith('/api/auth/') ||
+        path.startsWith('/api/stripe-webhook')
+
+    // If no user and trying to access a protected (non-public) path, redirect to home
+    if (!user && !isPublicPath) {
+        console.log(`[Middleware Security] Unauthorized access to ${path}. Redirecting to home.`)
+        return NextResponse.redirect(new URL('/', request.url))
+    }
+
+    // IF ON A PUBLIC PATH: Always allow access regardless of user's auth/status
+    if (isPublicPath) {
         return response
     }
 
-    // If no user, allow access (auth pages will handle login)
-    if (!user) {
-        return response
-    }
+    // If we've reached here, it's a PROTECTED path and we have a USER.
+    // Now we check profile status to see if they are allowed in or need to be gated.
 
     // Check for Agent Profile
     const { data: agentProfile } = await supabase
         .from('agent_profiles')
         .select('verification_status, role')
-        .eq('id', user.id)
+        .eq('id', user!.id)
         .single()
 
     if (agentProfile) {
@@ -114,7 +127,7 @@ export async function updateSession(request: NextRequest) {
         }
 
         const status = agentProfile.verification_status
-        console.log(`[Middleware Proxy] User: ${user.email}, Status: ${status}, Approved: ${(agentProfile as any).is_approved}, Path: ${path}`)
+        console.log(`[Middleware Proxy] User: ${user!.email}, Status: ${status}, Approved: ${(agentProfile as any).is_approved}, Path: ${path}`)
 
         if (status === 'pending') {
             // RELAXED CHECK: If is_approved is TRUE in DB but status is 'pending', allow it.
@@ -136,45 +149,31 @@ export async function updateSession(request: NextRequest) {
     // Check for Supplier Profile
     const { data: supplierProfile } = await supabase
         .from('suppliers')
-        .select('subscription_status, supplier_type')
-        .eq('id', user.id)
+        .select('subscription_status, supplier_type, is_approved')
+        .eq('id', user!.id)
         .single()
-
-    if (supplierProfile) {
-        const status = supplierProfile.subscription_status
-        const supplierType = supplierProfile.supplier_type?.toLowerCase() || ''
-        const isAirline = supplierType.includes('airline') || supplierType.includes('flight')
-
-        if (status === 'pending' || status === 'pending_payment') {
-            // Allow access to payment-init page for pending suppliers so they can complete registration
-            if (path === '/payment-init') {
-                return response
-            }
-            // Allow Airline suppliers to access product creation (to see placeholder)
-            if (isAirline && path === '/supplier/dashboard/products/create') {
-                return response
-            }
-            return NextResponse.redirect(new URL('/approval-pending', request.url))
-        }
-        if (status === 'rejected') {
-            return NextResponse.redirect(new URL('/rejected', request.url))
-        }
-        // If active/approved, allow access
-    }
-
-    // Protected Route: /agent-portal (Agents)
-    if (path.startsWith('/agent-portal')) {
-        if (!agentProfile) {
-            // Not an agent
-            return NextResponse.redirect(new URL('/', request.url))
-        }
-    }
 
     // Protected Route: /supplier/dashboard (Suppliers)
     if (path.startsWith('/supplier/dashboard')) {
         if (!supplierProfile) {
             // Not a supplier, redirect to portal
             return NextResponse.redirect(new URL('/agent-portal', request.url))
+        }
+
+        const status = supplierProfile.subscription_status
+        const isApproved = (supplierProfile as any).is_approved
+
+        if (status === 'pending' || status === 'pending_payment' || !isApproved) {
+            return NextResponse.redirect(new URL('/approval-pending', request.url))
+        }
+    }
+
+    // Protected Route: /payment-init (Only for pending suppliers)
+    if (path === '/payment-init') {
+        if (!supplierProfile) return NextResponse.redirect(new URL('/', request.url))
+        const status = supplierProfile.subscription_status
+        if (status === 'active' && (supplierProfile as any).is_approved) {
+            return NextResponse.redirect(new URL('/supplier/dashboard', request.url))
         }
     }
 

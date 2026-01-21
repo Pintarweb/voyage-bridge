@@ -27,7 +27,8 @@ function ForgotPasswordContent() {
         setSuccess(false)
 
         try {
-            const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+            // Use window.location.origin to ensure improved cookie consistency (localhost vs 127.0.0.1)
+            const siteUrl = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
             const redirectUrl = `${siteUrl}/auth/callback?next=/auth/reset-password`
 
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -128,8 +129,8 @@ function ForgotPasswordContent() {
                                     Email Address
                                 </label>
                                 <div className="relative group/input">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <FaEnvelope className="text-slate-500 group-focus-within/input:text-amber-400 transition-colors" />
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                                        <FaEnvelope className="w-5 h-5 text-slate-500 group-focus-within/input:text-amber-400 transition-colors" />
                                     </div>
                                     <input
                                         id="email"
@@ -139,7 +140,7 @@ function ForgotPasswordContent() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="block w-full pl-11 pr-4 py-3.5 bg-slate-950/50 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all text-sm font-medium hover:border-white/20"
+                                        className="block w-full !pl-16 pr-4 py-3.5 bg-slate-950/50 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all text-sm font-medium hover:border-white/20"
                                         placeholder="name@company.com"
                                     />
                                 </div>

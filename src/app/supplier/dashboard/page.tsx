@@ -144,12 +144,37 @@ export default function Dashboard() {
                             </h1>
                             <p className="text-slate-400 text-sm mt-1">Manage your global inventory and performance.</p>
                         </div>
-                        <button
-                            onClick={handleLogout}
-                            className="px-5 py-2.5 bg-slate-900/50 hover:bg-slate-900 border border-white/10 hover:border-amber-500/30 rounded-xl text-sm font-bold text-white transition-all flex items-center gap-2 backdrop-blur-md shadow-lg"
-                        >
-                            <FaSignOutAlt className="text-amber-500" /> {content.logout}
-                        </button>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setActiveTab('community')}
+                                className="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/50 rounded-full text-amber-400 text-xs font-bold uppercase tracking-wider transition-all hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                            >
+                                <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></span>
+                                Vote Ideas
+                            </button>
+
+                            <div className="h-6 w-px bg-white/10 mx-2 hidden sm:block"></div>
+
+                            {/* User Badge */}
+                            <div className="flex items-center gap-3 bg-white/10 pl-2 pr-4 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 flex items-center justify-center text-xs font-extrabold shadow-lg">
+                                    {(user?.email || 'S')[0]?.toUpperCase()}
+                                </div>
+                                <div className="text-left hidden sm:block">
+                                    <p className="text-slate-200 text-xs font-bold leading-none">{user?.email || 'Supplier'}</p>
+                                    <p className="text-amber-500/80 text-[10px] uppercase tracking-wider font-bold leading-none mt-1">Verified Partner</p>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleLogout}
+                                className="px-5 py-2.5 bg-slate-900/50 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-xl text-sm font-bold text-white transition-all flex items-center gap-2 backdrop-blur-md shadow-lg group"
+                                title="Sign Out"
+                            >
+                                <FaSignOutAlt className="text-amber-500 group-hover:text-red-400 transition-colors" />
+                                <span className="group-hover:text-red-400 transition-colors uppercase tracking-wider">{content.logout}</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Content Views */}

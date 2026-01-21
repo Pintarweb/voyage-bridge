@@ -83,6 +83,40 @@ export const getInviteLinkEmailHtml = (inviteLink: string) => `
     </div>
 `
 
+export const getSupplierWelcomeEmailHtml = (inviteLink: string) => `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #fbbf24; margin: 0; font-size: 28px;">Welcome to the Inner Circle</h1>
+            <p style="color: #94a3b8; font-size: 16px; margin-top: 10px;">Your ArkAlliance Supplier Status is Now <strong>ACTIVE</strong></p>
+        </div>
+
+        <p>Congratulations! Your application has been fully verified and approved by our partners team. You are now officially part of the ArkAlliance ecosystem.</p>
+        
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 25px 0;">
+            <h2 style="margin-top: 0; font-size: 18px; color: #0f172a;">Next Steps to Launch:</h2>
+            <ul style="padding-left: 20px;">
+                <li style="margin-bottom: 10px;"><strong>Finalize Access:</strong> Click the button below to set your secure password.</li>
+                <li style="margin-bottom: 10px;"><strong>Complete Profile:</strong> Update your company bio and high-quality images.</li>
+                <li style="margin-bottom: 10px;"><strong>Upload Inventory:</strong> List your first active product to start receiving discovery interest.</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 35px 0;">
+            <a href="${inviteLink}" 
+               style="display: inline-block; background: #ea580c; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(234, 88, 12, 0.2);">
+                Activate Account & Login
+            </a>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 15px;">This secure link is valid for one-time use only.</p>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+        
+        <p style="font-size: 14px; color: #64748b;">If you encounter any issues during the onboarding process, please don't hesitate to reach out to our dedicated priority support team.</p>
+        
+        <p style="font-size: 14px; font-weight: bold; color: #0f172a;">Best regards,<br/>The ArkAlliance Onboarding Team</p>
+    </div>
+`
+
 export const getRejectionEmailHtml = (reason?: string) => `
     <div style="font-family: Arial, sans-serif; line-height: 1.6;">
         <h1>Account Application Update</h1>

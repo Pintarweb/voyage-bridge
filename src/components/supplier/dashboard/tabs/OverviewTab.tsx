@@ -46,7 +46,7 @@ export default function OverviewTab({ supplier, products, content, handleLogout 
                     <div className="text-3xl font-bold text-white group-hover:text-amber-400 transition-colors">{totalViews.toLocaleString()}</div>
                 </div>
                 <div className="bg-slate-950/40 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-lg group hover:border-white/20 transition-all">
-                    <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Wishlisted</div>
+                    <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Total Wishlisted</div>
                     <div className="text-3xl font-bold text-white group-hover:text-amber-400 transition-colors">{totalWishlisted}</div>
                 </div>
                 <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 backdrop-blur-xl border border-amber-500/30 p-5 rounded-2xl relative overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.1)]">

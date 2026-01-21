@@ -49,17 +49,29 @@ export default function SupplierSubscriptionPage() {
 
                 const { data: profile, error: profileError } = await supabase
                     .from('suppliers')
-                    .select('role')
+                    .select('role, subscription_status')
                     .eq('id', session.user.id)
                     .single()
 
                 if (profileError || !profile) {
-                    router.push('/agent-portal')
+                    console.warn('No supplier profile found.')
+                    router.push('/')
                     return
                 }
 
-                if (profile.role !== 'pending_supplier') {
-                    router.push('/agent-portal')
+                const status = profile.subscription_status
+
+                // If they are already active, they shouldn't be here
+                if (status === 'active') {
+                    router.push('/supplier/dashboard')
+                    return
+                }
+
+                // Allow if they are in a pending state
+                const isPending = status === 'pending_payment' || status === 'pending' || profile.role === 'pending_supplier'
+
+                if (!isPending) {
+                    router.push('/approval-pending')
                     return
                 }
 

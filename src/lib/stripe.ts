@@ -113,19 +113,16 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
     console.log('[Stripe Logic] Supplier updated successfully')
 
     // Send Confirmation Email
-    const recipientEmail = session.customer_details?.email
+    const recipientEmail = session.customer_details?.email || data?.contact_email
     const recipientName = session.customer_details?.name || data?.company_name || 'Supplier'
 
+    console.log(`[Stripe Logic] 💡 Payment event received. Recipient: ${recipientEmail || 'NOT FOUND'}`);
+
     if (recipientEmail) {
-        console.log(`[Stripe Logic] Sending payment confirmation email to ${recipientEmail}`)
-        try {
-            await sendPaymentConfirmationEmail(recipientEmail, recipientName)
-        } catch (emailError) {
-            console.error('[Stripe Logic] Failed to send email:', emailError)
-            // We don't fail the whole process if email fails, but we log it
-        }
+        console.log(`[Stripe Logic] 📧 Triggering confirmation email... (Source: ${session.customer_details?.email ? 'Stripe' : 'Database'})`)
+        await sendPaymentConfirmationEmail(recipientEmail, recipientName)
     } else {
-        console.warn('[Stripe Logic] No email found in session.customer_details, skipping email.')
+        console.error('[Stripe Logic] ⚠️ Fatal: No email found in session or database. Cannot send acknowledgement.')
     }
 
     return { success: true }

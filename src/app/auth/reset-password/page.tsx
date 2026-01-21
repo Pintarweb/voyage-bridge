@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import TourismBackground from '@/components/ui/TourismBackground'
+import Image from 'next/image'
+import Link from 'next/link'
+import { FaLock, FaCheckCircle, FaArrowRight, FaExclamationTriangle } from 'react-icons/fa'
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const [loading, setLoading] = useState(true)
     const [showForm, setShowForm] = useState(false)
     const [password, setPassword] = useState('')
@@ -43,7 +45,7 @@ export default function ResetPasswordPage() {
         }
 
         checkSession()
-    }, [])
+    }, [showForm]) // Added showForm dependency to avoid stale closure issues if re-triggering
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -70,10 +72,10 @@ export default function ResetPasswordPage() {
             if (error) {
                 setFormError(error.message)
             } else {
-                setSuccessMessage('Password updated successfully! Redirecting...')
+                setSuccessMessage('Credentials updated successfully. Redirecting you to the portal...')
                 // Wait briefly then redirect
                 setTimeout(() => {
-                    router.push('/agent-portal')
+                    router.push('/auth/supplier') // Default redirect, can be adjusted based on role later if needed
                 }, 2000)
             }
         } catch (err: any) {
@@ -86,111 +88,188 @@ export default function ResetPasswordPage() {
 
     if (loading) {
         return (
-            <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen">
-                <TourismBackground />
-                <div className="relative z-10 text-white animate-pulse text-xl font-semibold">
-                    Verifying secure link...
-                </div>
+            <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="w-16 h-16 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
+                <div className="text-amber-500 animate-pulse font-bold tracking-widest">VERIFYING SECURITY LINK...</div>
             </div>
         )
     }
 
     if (!showForm) {
         return (
-            <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen">
-                <TourismBackground />
-                <div className="relative z-10 max-w-md w-full bg-white p-8 rounded-lg shadow-md text-center">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Invalid or Expired Link</h2>
-                    <p className="text-gray-600 mb-6">
-                        This password reset link appears to be invalid or has expired.
+            <div className="w-full max-w-md relative z-20 animate-in fade-in zoom-in duration-500">
+                <div className="bg-slate-900/50 backdrop-blur-xl border border-red-500/20 rounded-2xl p-8 shadow-2xl text-center">
+                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+                        <FaExclamationTriangle className="text-3xl text-red-500" />
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-white mb-3">Link Expired or Invalid</h2>
+                    <p className="text-white text-sm mb-8 leading-relaxed">
+                        This secure link is no longer active. Please request a new recovery link.
                     </p>
-                    <button
-                        onClick={() => router.push('/auth/agent')}
-                        className="w-full bg-slate-800 text-white py-2 px-4 rounded hover:bg-slate-900 transition"
+
+                    <Link
+                        href="/auth/forgot-password"
+                        className="block w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all duration-200 shadow-lg mb-3"
                     >
-                        Back to Login
-                    </button>
+                        Request New Link
+                    </Link>
+                    <Link
+                        href="/"
+                        className="block w-full py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl transition-all duration-200"
+                    >
+                        Back to Home
+                    </Link>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="flex-grow relative flex items-center justify-center px-4 py-12 min-h-screen">
-            <TourismBackground />
-
-            <div className="relative z-10 max-w-md w-full bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden border border-white/20 p-8">
-                <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-slate-900">Reset Password</h2>
-                    <p className="text-sm text-slate-500 mt-2">
-                        Enter your new password below.
-                    </p>
+        <div className="w-full max-w-md relative z-20">
+            {/* Brand Header */}
+            <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center mb-6 group hover:scale-105 transition-transform duration-500">
+                    <Image
+                        src="/ark-logo-icon.jpg"
+                        alt="ArkAlliance"
+                        width={80}
+                        height={80}
+                        className="w-20 h-20 object-contain drop-shadow-2xl"
+                    />
                 </div>
+                <h1 className="text-3xl font-black text-white tracking-tight mb-2">
+                    Set New Password
+                </h1>
+                <p className="text-white text-sm font-medium">
+                    Create a strong password to secure your account.
+                </p>
+            </div>
+
+            {/* Main Card */}
+            <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
+                {/* Subtle Grid Pattern Overlay */}
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none" />
+
+                {/* Top Accent Line */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {successMessage ? (
-                    <div className="rounded-md bg-green-50 p-4 mb-6">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <span className="text-green-400">✅</span>
-                            </div>
-                            <div className="ml-3">
-                                <h3 className="text-sm font-medium text-green-800">Success</h3>
-                                <div className="mt-2 text-sm text-green-700">
-                                    <p>{successMessage}</p>
-                                </div>
-                            </div>
+                    <div className="text-center py-4 animate-in fade-in zoom-in duration-500">
+                        <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+                            <FaCheckCircle className="text-3xl text-green-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">Password Updated</h3>
+                        <p className="text-white text-sm mb-4 leading-relaxed">
+                            {successMessage}
+                        </p>
+                        <div className="w-full bg-slate-800/50 rounded-full h-1 mt-6 overflow-hidden">
+                            <div className="h-full bg-green-500 animate-progress-indeterminate"></div>
                         </div>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
                         {formError && (
-                            <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-                                {formError}
+                            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold text-center flex items-center justify-center gap-2 animate-pulse">
+                                <FaExclamationTriangle className="text-xs" /> {formError}
                             </div>
                         )}
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+                        <div className="space-y-2">
+                            <label htmlFor="password" className="block text-xs font-bold !text-white uppercase tracking-wider ml-1">
                                 New Password
                             </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
-                                placeholder="Min. 6 characters"
-                            />
+                            <div className="relative group/input">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                                    <FaLock className="w-4 h-4 text-slate-500 group-focus-within/input:text-amber-400 transition-colors" />
+                                </div>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="block w-full !pl-12 pr-4 py-3.5 bg-slate-950/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all text-sm font-medium hover:border-white/20"
+                                    placeholder="Min. 6 characters"
+                                />
+                            </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">
-                                Confirm New Password
+                        <div className="space-y-2">
+                            <label htmlFor="confirmPassword" className="block text-xs font-bold !text-white uppercase tracking-wider ml-1">
+                                Confirm Password
                             </label>
-                            <input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                required
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
-                                placeholder="Re-enter password"
-                            />
+                            <div className="relative group/input">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                                    <FaLock className="w-4 h-4 text-slate-500 group-focus-within/input:text-amber-400 transition-colors" />
+                                </div>
+                                <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type="password"
+                                    required
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="block w-full !pl-12 pr-4 py-3.5 bg-slate-950/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all text-sm font-medium hover:border-white/20"
+                                    placeholder="Re-enter password"
+                                />
+                            </div>
                         </div>
 
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                            className="w-full relative overflow-hidden group/btn py-4 rounded-xl font-bold text-slate-900 transition-all duration-300 transform hover:-translate-y-1 shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                         >
-                            {isSubmitting ? 'Updating...' : 'Update Password'}
+                            <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 group-hover/btn:animate-gradient-x" />
+                            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                            <span className="relative flex items-center justify-center gap-2">
+                                {isSubmitting ? (
+                                    <>
+                                        <span className="w-4 h-4 border-2 border-slate-900/30 border-t-slate-900 rounded-full animate-spin" />
+                                        Updating Credentials...
+                                    </>
+                                ) : (
+                                    <>Update Credentials <FaArrowRight className="-rotate-45" /></>
+                                )}
+                            </span>
                         </button>
                     </form>
                 )}
             </div>
+
+            {/* Footer Safe Text */}
+            {/* Footer Safe Text */}
+            <p className="text-center text-xs text-slate-300/80 mt-8 font-medium drop-shadow-md">
+                Protected by ArkAlliance Secure Auth Protocol v2.1
+            </p>
+        </div>
+    )
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden font-sans text-white selection:bg-amber-500/30">
+            {/* Cinematic Background */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/10 to-slate-950/60 z-10" />
+                <div className="absolute inset-0 bg-slate-950/20 z-10" />
+                <img
+                    src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop"
+                    alt="City Command"
+                    className="w-full h-full object-cover opacity-75"
+                />
+            </div>
+
+            <Suspense fallback={
+                <div className="flex flex-col items-center justify-center space-y-4 relative z-20">
+                    <div className="w-16 h-16 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
+                    <div className="text-amber-500 animate-pulse font-bold tracking-widest">LOADING INTERFACE...</div>
+                </div>
+            }>
+                <ResetPasswordContent />
+            </Suspense>
         </div>
     )
 }

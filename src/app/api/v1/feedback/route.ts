@@ -1,8 +1,10 @@
+import { createAdminClient } from '@/utils/supabase/admin'
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
     const supabase = await createClient()
+    const adminSupabase = createAdminClient()
 
     try {
         const body = await request.json()
@@ -16,8 +18,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        // 2. Insert into Feedback_Entries
-        const { data, error } = await supabase
+        // 2. Insert into Feedback_Entries using ADMIN client to bypass RLS
+        const { data, error } = await adminSupabase
             .from('feedback_entries')
             .insert({
                 user_id: user?.id || null,

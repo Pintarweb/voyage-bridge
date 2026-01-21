@@ -2,7 +2,7 @@
 
 import { createAdminClient } from '@/utils/supabase/admin'
 import { createClient } from '@/utils/supabase/server'
-import { sendInviteLinkEmail, sendRejectionEmail } from '@/lib/emailSender'
+import { sendInviteLinkEmail, sendRejectionEmail, sendSupplierWelcomeEmail } from '@/lib/emailSender'
 import { revalidatePath } from 'next/cache'
 import { stripe } from '@/lib/stripe'
 
@@ -99,13 +99,19 @@ export async function handleUserApproval(
 
         // 4. Send Email
         const inviteLink = linkData.properties.action_link
-        const emailResult = await sendInviteLinkEmail(userEmail, inviteLink)
+        let emailResult;
+
+        if (profileType === 'supplier') {
+            emailResult = await sendSupplierWelcomeEmail(userEmail, inviteLink)
+        } else {
+            emailResult = await sendInviteLinkEmail(userEmail, inviteLink)
+        }
 
         if (!emailResult.success) {
             console.error('Email Send Error:', emailResult.error)
             return {
                 success: true,
-                error: 'Profile approved, but failed to send invite email.',
+                error: `Profile approved, but failed to send ${profileType} invite email.`,
                 message: 'Approval successful, but email failed to send.'
             }
         }

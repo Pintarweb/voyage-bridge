@@ -13,18 +13,27 @@ export async function createCheckoutSession(priceId: string, userId: string) {
     // Mock Success
     // Also update the database to simulate payment success for the dashboard flow
 
-    // We need to import createAdminClient inside the function to avoid circular deps or context issues
+    // We need to import inside the function to avoid circular deps or context issues
     const { createAdminClient } = await import('@/utils/supabase/admin')
+    const { sendPaymentConfirmationEmail } = await import('@/lib/emailSender')
     const supabaseAdmin = createAdminClient()
 
-    await supabaseAdmin
+    const { data: supplier } = await supabaseAdmin
         .from('suppliers')
         .update({
             payment_status: 'completed',
             stripe_customer_id: 'cus_test_' + userId,
-            // Keep role as 'pending_supplier' and is_approved as false until admin approves
         })
         .eq('id', userId)
+        .select('company_name, contact_email')
+        .single()
+
+    if (supplier?.contact_email) {
+        console.log('[Mock Stripe Checkout] Sending payment confirmation email to:', supplier.contact_email)
+        await sendPaymentConfirmationEmail(supplier.contact_email, supplier.company_name || 'Supplier')
+    } else {
+        console.warn('[Mock Stripe Checkout] Could not find supplier or contact_email to send confirmation. Supplier Data:', supplier)
+    }
 
     return {
         success: true,
