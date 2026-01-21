@@ -106,21 +106,21 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
             <div className="flex flex-col md:flex-row justify-between gap-4 bg-slate-950/40 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-lg">
                 <div className="flex gap-4 flex-1">
                     <div className="relative flex-1 max-w-md">
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" />
                         <input
                             type="text"
                             placeholder={content.searchPlaceholder || "Search products..."}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                            className="w-full !pl-14 pr-4 py-3 !bg-slate-900/60 !border !border-white/10 rounded-xl !text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
                         />
                     </div>
                     <div className="relative">
-                        <FaFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                        <FaFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" />
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="pl-10 pr-10 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white appearance-none focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 cursor-pointer hover:bg-slate-800 transition-colors"
+                            className="!pl-14 pr-10 py-3 !bg-slate-900/60 !border !border-white/10 rounded-xl !text-white appearance-none focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 cursor-pointer hover:bg-slate-800 transition-colors"
                         >
                             <option value="all">All Products</option>
                             <option value="active">Active</option>
@@ -149,6 +149,14 @@ export default function ProductTab({ products, supplier, content, onProductUpdat
                         <div className="text-xs text-slate-500">{folder.count} items</div>
                     </div>
                 ))}
+
+                {/* New Folder Placeholder */}
+                <button onClick={() => alert("Folder creation coming soon!")} className="bg-slate-950/20 hover:bg-slate-900/40 border-2 border-dashed border-white/10 hover:border-amber-500/50 p-4 rounded-xl cursor-pointer transition-all group flex flex-col items-center justify-center h-full min-h-[120px]">
+                    <div className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-amber-500/20 flex items-center justify-center mb-2 transition-colors">
+                        <FaPlus className="text-slate-500 group-hover:text-amber-400 transition-colors" />
+                    </div>
+                    <div className="font-bold text-slate-400 group-hover:text-amber-400 text-xs uppercase tracking-wider transition-colors">New Folder</div>
+                </button>
             </div>
 
             {/* Products Grid */}

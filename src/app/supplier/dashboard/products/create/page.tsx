@@ -7,9 +7,10 @@ import HotelProductForm from '@/components/supplier/HotelProductForm'
 import TransportProductForm from '@/components/supplier/TransportProductForm'
 import LandOperatorProductForm from '@/components/supplier/LandOperatorProductForm'
 import AirlineProductPlaceholder from '@/components/supplier/AirlineProductPlaceholder'
-import { FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaRocket } from 'react-icons/fa'
 import { useLanguage } from '@/context/LanguageContext'
 import { createClient } from '@/utils/supabase/client'
+import SupplierSidebar from '@/components/supplier/dashboard/SupplierSidebar'
 
 function CreateProductContent() {
     const router = useRouter()
@@ -147,94 +148,118 @@ function CreateProductContent() {
     const isAirline = supplierType?.toLowerCase().includes('airline') || supplierType?.toLowerCase().includes('flight')
     const isLandOperator = supplierType?.toLowerCase().includes('tour') || supplierType?.toLowerCase().includes('land') || supplierType?.toLowerCase().includes('operator') || supplierType?.toLowerCase().includes('activity')
 
+    const handleSidebarNavigation = (tab: string) => {
+        router.push('/supplier/dashboard')
+    }
+
     if (!supplierType) {
         return (
-            <div className="flex h-screen items-center justify-center text-foreground">
+            <div className="flex h-screen items-center justify-center text-white bg-slate-950">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-                    <p>{content.loading}</p>
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent"></div>
+                    <p className="text-amber-500/80 font-medium tracking-wide animate-pulse">{content.loading}</p>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen relative flex flex-col font-sans text-white bg-blue-950 overflow-hidden">
-            {/* Background - Consistent with Dashboard */}
-            {/* Background - Consistent with Dashboard */}
-            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                {/* Lighter overlay for brighter background */}
-                <div className="absolute inset-0 bg-blue-950/10 z-10" />
-                <style jsx global>{`
-                  @keyframes pan-slow {
-                    0% { transform: scale(1.1) translate(0, 0); }
-                    100% { transform: scale(1.25) translate(-2%, -2%); }
+        <div className="min-h-screen relative flex font-sans text-white bg-slate-950 overflow-hidden">
+
+            {/* Background Atmosphere (Borrowed from Dashboard for Consistency) */}
+            <div className="fixed inset-0 z-0">
+                <div className="absolute inset-0 bg-slate-950/55 z-10 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 via-transparent to-slate-950/90 z-20" />
+                <div className="absolute top-0 right-[-10%] w-[60%] h-[60%] bg-amber-600/10 blur-[150px] z-20 pointer-events-none" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[150px] z-20 pointer-events-none" />
+
+                <img
+                    src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop"
+                    alt="Global Business Travel"
+                    className="w-full h-full object-cover opacity-50"
+                />
+            </div>
+
+            {/* Sidebar Navigation */}
+            <SupplierSidebar activeTab="products" setActiveTab={handleSidebarNavigation} />
+
+            {/* Main Content Area */}
+            <div className="relative z-20 flex-1 ml-0 lg:ml-20 xl:ml-64 transition-all duration-300">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full min-h-screen flex flex-col">
+
+                    {/* Content */}
+                    <main className="flex-1 pb-20">
+
+                        {/* Welcome Banner - Hidden for specific types as they have custom internal headers, but kept for generic generic ProductForm if used */}
+                        {!isTransport && !isHotel && !isLandOperator && (
+                            <div className="mb-8">
+                                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 shadow-2xl p-8 backdrop-blur-md">
+                                    <div className="relative z-10 flex items-start justify-between">
+                                        <div>
+                                            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-md">
+                                                {content.greeting}
+                                            </h1>
+                                            <p className="text-amber-200/80 text-lg">
+                                                {content.instruction}
+                                            </p>
+                                        </div>
+                                        <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                                            <FaRocket className="text-xl" />
+                                        </div>
+                                    </div>
+
+                                    {/* Decorative Blob */}
+                                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-amber-500/20 blur-3xl rounded-full pointer-events-none"></div>
+                                </div>
+                                <div className="mt-6">
+                                    <button
+                                        onClick={() => router.back()}
+                                        className="flex items-center gap-2 text-slate-400 hover:text-amber-400 transition-colors group"
+                                    >
+                                        <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                                        <span className="font-medium tracking-wide">{content.back}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Forms */}
+                        <div className="animate-fade-in-up">
+                            {isHotel ? (
+                                <HotelProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                            ) : isTransport ? (
+                                <TransportProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                            ) : isAirline ? (
+                                <AirlineProductPlaceholder supplier={supplier} />
+                            ) : isLandOperator ? (
+                                <LandOperatorProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
+                            ) : (
+                                <ProductForm productId={editProductId || undefined} mode={mode} onSuccess={() => router.push('/supplier/dashboard')} />
+                            )}
+                        </div>
+                    </main>
+
+                </div>
+            </div>
+            <style jsx global>{`
+                  @keyframes fade-in-up {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
                   }
-                  .animate-pan-slow {
-                    animation: pan-slow 40s ease-in-out infinite alternate;
+                  .animate-fade-in-up {
+                    animation: fade-in-up 0.6s ease-out forwards;
                   }
                   /* Autofill Transparency Fix */
                   input:-webkit-autofill,
                   input:-webkit-autofill:hover, 
                   input:-webkit-autofill:focus, 
                   input:-webkit-autofill:active {
-                      -webkit-box-shadow: 0 0 0 30px rgba(23, 37, 84, 0.8) inset !important;
+                      -webkit-box-shadow: 0 0 0 30px rgba(2, 6, 23, 0.8) inset !important;
                       -webkit-text-fill-color: white !important;
                       caret-color: white !important;
                       transition: background-color 5000s ease-in-out 0s;
                   }
-                `}</style>
-                <img
-                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
-                    alt="Global Trade Network"
-                    className="w-full h-full object-cover animate-pan-slow"
-                />
-            </div>
-
-            <div className="relative z-20 w-full">
-                <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-                    {/* Welcome Banner - Hidden for Transport, Hotel, and Land Operator as they have custom designs */}
-                    {!isTransport && !isHotel && !isLandOperator && (
-                        <>
-                            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 p-8 shadow-lg mb-8">
-                                <div className="relative z-10">
-                                    <h1 className="text-3xl font-bold text-white mb-2">
-                                        {content.greeting}
-                                    </h1>
-                                    <p className="text-blue-100 text-lg">
-                                        {content.instruction}
-                                    </p>
-                                </div>
-                                {/* Decorative circles */}
-                                <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-                                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-                            </div>
-
-                            <div className="mb-6">
-                                <button
-                                    onClick={() => router.back()}
-                                    className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    <FaArrowLeft className="mr-2" />
-                                    {content.back}
-                                </button>
-                            </div>
-                        </>
-                    )}
-
-                    {isHotel ? (
-                        <HotelProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
-                    ) : isTransport ? (
-                        <TransportProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
-                    ) : isAirline ? (
-                        <AirlineProductPlaceholder supplier={supplier} />
-                    ) : isLandOperator ? (
-                        <LandOperatorProductForm supplier={supplier} productId={editProductId || undefined} onSuccess={() => router.push('/supplier/dashboard')} />
-                    ) : (
-                        <ProductForm productId={editProductId || undefined} mode={mode} onSuccess={() => router.push('/supplier/dashboard')} />
-                    )}
-                </main>
-            </div>
+             `}</style>
         </div>
     )
 }
@@ -242,8 +267,8 @@ function CreateProductContent() {
 export default function CreateProductPage() {
     return (
         <Suspense fallback={
-            <div className="flex h-screen items-center justify-center text-foreground">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+            <div className="flex h-screen items-center justify-center text-white bg-slate-950">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent"></div>
             </div>
         }>
             <CreateProductContent />

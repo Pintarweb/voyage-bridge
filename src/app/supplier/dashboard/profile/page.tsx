@@ -24,8 +24,6 @@ export default async function SupplierProfilePage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <EditProfileForm supplier={supplier} userEmail={user.email} />
-        </div>
+        <EditProfileForm supplier={supplier} userEmail={user.email} />
     )
 }
