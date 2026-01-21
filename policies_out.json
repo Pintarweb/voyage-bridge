@@ -1,0 +1,20 @@
+[
+  {
+    "policyname": "Enable read access for authenticated users",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "policyname": "Enable read access for anon users",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "policyname": "Approved users can view products",
+    "cmd": "SELECT",
+    "qual": "is_approved()",
+    "with_check": null
+  }
+]

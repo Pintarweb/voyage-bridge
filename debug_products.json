@@ -1,0 +1,37 @@
+[
+  {
+    "id": "e3c7495e-481a-433c-993b-b231eefb1a06",
+    "name": "Standard King",
+    "status": "active",
+    "company_name": "Grand Plaza Hotel",
+    "is_approved": false
+  },
+  {
+    "id": "49d450c2-0af8-4975-a3a0-3966f1c13bbe",
+    "name": "Presidential Suite",
+    "status": "active",
+    "company_name": "Grand Plaza Hotel",
+    "is_approved": false
+  },
+  {
+    "id": "ca40459b-6d4b-462d-ba77-88a92a9d687f",
+    "name": "Heathrow Express Transfer",
+    "status": "active",
+    "company_name": "Rapid Transfers",
+    "is_approved": false
+  },
+  {
+    "id": "888c7bff-121f-43be-beeb-456cd2a9aecf",
+    "name": "Gatwick Shuttle Bus",
+    "status": "active",
+    "company_name": "Rapid Transfers",
+    "is_approved": false
+  },
+  {
+    "id": "9faa3a9e-ac01-4684-ab5a-102f27602e21",
+    "name": "Deluxe Double",
+    "status": "active",
+    "company_name": "Grand Plaza Hotel",
+    "is_approved": false
+  }
+]

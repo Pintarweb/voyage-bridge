@@ -1,0 +1,32 @@
+[
+  {
+    "schemaname": "public",
+    "tablename": "products",
+    "policyname": "Enable read access for authenticated users",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "products",
+    "policyname": "Enable read access for anon users",
+    "permissive": "PERMISSIVE",
+    "roles": "{anon}",
+    "cmd": "SELECT",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "products",
+    "policyname": "Approved users can view products",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "is_approved()",
+    "with_check": null
+  }
+]

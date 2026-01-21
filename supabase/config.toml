@@ -1,0 +1,25 @@
+# supabase/config.toml
+
+# Project ID is required but can be any string for local dev if not linked
+project_id = "voyage-bridge"
+
+[api]
+port = 54321
+
+[db]
+port = 54322
+
+[studio]
+port = 54323
+
+# Configure Mailpit (Legacy name 'inbucket' used by CLI config commonly)
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://127.0.0.1:3000", "http://localhost:3000", "http://localhost:3000/auth/callback", "http://127.0.0.1:3000/auth/callback"]
+jwt_expiry = 3600
+enable_signup = true

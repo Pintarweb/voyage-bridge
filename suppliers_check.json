@@ -1,0 +1,38 @@
+[
+  {
+    "company_name": "Rapid Transfers",
+    "supplier_type": "TRANSPORT",
+    "is_approved": false,
+    "subscription_status": "active"
+  },
+  {
+    "company_name": "Supplier 99",
+    "supplier_type": "Transport",
+    "is_approved": true,
+    "subscription_status": "active"
+  },
+  {
+    "company_name": "Ali Port",
+    "supplier_type": "Land Operator",
+    "is_approved": true,
+    "subscription_status": "active"
+  },
+  {
+    "company_name": "Grand Plaza Hotel",
+    "supplier_type": "HOTEL",
+    "is_approved": false,
+    "subscription_status": "pending_payment"
+  },
+  {
+    "company_name": "Supplier 01",
+    "supplier_type": "Land Operator",
+    "is_approved": false,
+    "subscription_status": "active"
+  },
+  {
+    "company_name": "Jualan 100",
+    "supplier_type": "Hotel",
+    "is_approved": true,
+    "subscription_status": "active"
+  }
+]
