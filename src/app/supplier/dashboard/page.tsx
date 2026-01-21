@@ -117,7 +117,7 @@ export default function Dashboard() {
 
             {/* Background Atmosphere */}
             <div className="fixed inset-0 z-0">
-                <div className="absolute inset-0 bg-slate-950/70 z-10 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-slate-950/40 z-10 mix-blend-multiply" />
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 via-transparent to-slate-950/90 z-20" />
                 <div className="absolute top-0 right-[-10%] w-[60%] h-[60%] bg-amber-600/10 blur-[150px] z-20 pointer-events-none" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[150px] z-20 pointer-events-none" />

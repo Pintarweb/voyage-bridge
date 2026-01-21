@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { FaColumns, FaUserCircle, FaCreditCard, FaBox, FaChartLine, FaComments } from 'react-icons/fa'
 
 export default function SupplierSidebar({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) {
@@ -9,7 +10,14 @@ export default function SupplierSidebar({ activeTab, setActiveTab }: { activeTab
         <aside className="hidden lg:flex flex-col w-20 xl:w-64 bg-slate-950/40 backdrop-blur-xl border-r border-white/5 pt-8 pb-4 transition-all duration-300 h-screen fixed top-0 left-0 z-40">
             {/* Logo Area */}
             <div className="px-6 mb-8 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 shadow-[0_0_15px_rgba(245,158,11,0.3)] flex-shrink-0"></div>
+                <div className="relative w-8 h-8 flex-shrink-0">
+                    <Image
+                        src="/ark-logo-icon.jpg"
+                        alt="ArkAlliance"
+                        fill
+                        className="object-contain rounded-md"
+                    />
+                </div>
                 <span className="font-bold text-white tracking-tight hidden xl:block">Ark<span className="text-amber-500">Alliance</span></span>
             </div>
 
