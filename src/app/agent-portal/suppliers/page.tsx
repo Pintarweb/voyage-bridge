@@ -10,6 +10,9 @@ type Supplier = {
     description: string
     website_url: string
     supplier_type: string
+    city?: string
+    country_code?: string
+    contact_email?: string
     product_count: number
 }
 
@@ -42,6 +45,9 @@ export default async function SupplierListPage({
             description,
             website_url,
             supplier_type,
+            contact_email,
+            city,
+            country_code,
             products:products(count)
         `)
         .ilike('supplier_type', type)
@@ -50,14 +56,22 @@ export default async function SupplierListPage({
 
     let filteredSuppliers: Supplier[] = []
 
-    if (country && city) {
-        // Filter by city through products if location is specified
-        const { data: supplierIds } = await supabase
+    if (country || city) {
+        // Filter by location (country and/or city) through products
+        let productQuery = supabase
             .from('products')
             .select('supplier_id')
-            .eq('country_code', country)
-            .eq('city', city)
             .eq('status', 'active')
+
+        if (country) {
+            productQuery = productQuery.eq('country_code', country)
+        }
+
+        if (city) {
+            productQuery = productQuery.eq('city', city)
+        }
+
+        const { data: supplierIds } = await productQuery
 
         const validSupplierIds = new Set(supplierIds?.map((s: any) => s.supplier_id) || [])
 
@@ -69,6 +83,9 @@ export default async function SupplierListPage({
                 description: s.description || '',
                 website_url: s.website_url || '',
                 supplier_type: s.supplier_type,
+                contact_email: s.contact_email || undefined,
+                city: s.city,
+                country_code: s.country_code,
                 product_count: s.products?.[0]?.count || 0
             }))
     } else {
@@ -79,6 +96,9 @@ export default async function SupplierListPage({
             description: s.description || '',
             website_url: s.website_url || '',
             supplier_type: s.supplier_type,
+            contact_email: s.contact_email || undefined,
+            city: s.city,
+            country_code: s.country_code,
             product_count: s.products?.[0]?.count || 0
         }))
     }
@@ -102,7 +122,9 @@ export default async function SupplierListPage({
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                             <div>
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter drop-shadow-2xl mb-4">
-                                    {type} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-100">{city ? `in ${city}` : "Global Network"}</span>
+                                    {type} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-100">
+                                        {city ? `in ${city}` : (country ? `in ${country}` : "Global Network")}
+                                    </span>
                                 </h1>
                                 <div className="flex items-center gap-4">
                                     <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">

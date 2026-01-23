@@ -306,29 +306,8 @@ export default function ProductDetailsView({ product }: { product: Product }) {
                     <div className="lg:col-span-4 space-y-6">
                         <div className="sticky top-32 bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-[0_0_50px_rgba(0,0,0,0.3)]">
                             <div className="mb-8 text-center bg-gradient-to-r from-amber-500/10 to-transparent p-4 rounded-xl border border-amber-500/10">
-                                <p className="text-sm font-bold text-amber-400 uppercase tracking-widest mb-1">Founding Member Rate</p>
+                                <p className="text-sm font-bold text-amber-400 uppercase tracking-widest mb-1">Founding Member Benefits</p>
                                 <p className="text-xs text-slate-400">Exclusive access active</p>
-                            </div>
-
-                            <div className="space-y-6 mb-8">
-                                <div className="flex justify-between items-end border-b border-white/10 pb-4 border-dashed">
-                                    <p className="text-slate-400 font-medium">Retail Price (RRP)</p>
-                                    <p className="text-xl text-slate-500 line-through decoration-red-500/50">
-                                        {symbol} {convertPrice(product.suggested_retail_price, product.currency)}
-                                    </p>
-                                </div>
-
-                                <div className="flex justify-between items-end">
-                                    <div>
-                                        <p className="text-slate-200 font-bold text-lg">Your Net Price</p>
-                                        <p className="text-xs text-green-400 font-mono">Commission: 20%</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-5xl font-black text-white tracking-tight drop-shadow-xl text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">
-                                            {symbol}{convertPrice(agentPrice, product.currency)}
-                                        </p>
-                                    </div>
-                                </div>
                             </div>
 
                             <button
@@ -339,7 +318,7 @@ export default function ProductDetailsView({ product }: { product: Product }) {
                             </button>
 
                             <p className="text-center text-[10px] text-slate-500 mt-4 leading-relaxed">
-                                *Direct line to supplier. No booking fees.
+                                *Direct line to supplier.
                             </p>
                         </div>
                     </div>

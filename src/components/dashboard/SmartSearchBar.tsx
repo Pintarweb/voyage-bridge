@@ -68,6 +68,7 @@ export default function SmartSearchBar({ countries }: SmartSearchBarProps) {
                     'transport': 'Transport',
                     'transportation': 'Transport',
                     'vehicle': 'Transport',
+                    'caravan': 'Transport', // Added support for caravan
 
                     // Hotel
                     'hotel': 'Hotel',
@@ -99,21 +100,33 @@ export default function SmartSearchBar({ countries }: SmartSearchBarProps) {
                     'operator': 'Land Operator'
                 }
 
-                // Intent Detection: Match synonyms or partial synonyms
+                // Parser Logic for "X in Y"
+                let cleanQuery = searchTerm
+                let locationConstraint: string | null = null
+
+                if (searchTerm.includes(' in ')) {
+                    const parts = searchTerm.split(' in ')
+                    if (parts.length === 2) {
+                        cleanQuery = parts[0].trim()
+                        locationConstraint = parts[1].trim()
+                    }
+                }
+
+                // Intent Detection on Clean Query
                 const matchingSynonym = Object.entries(categorySynonyms).find(([syn, cat]) =>
-                    syn.startsWith(trimmedQuery) || trimmedQuery.startsWith(syn)
+                    syn.startsWith(cleanQuery) || cleanQuery.startsWith(syn)
                 )
 
                 // Check direct category names too
                 const isDirectCategory = ['Hotel', 'Transport', 'Airline', 'Land Operator'].find(cat =>
-                    cat.toLowerCase().startsWith(trimmedQuery)
+                    cat.toLowerCase().startsWith(cleanQuery)
                 )
 
                 const mappedCategory = isDirectCategory || (matchingSynonym ? matchingSynonym[1] : null)
 
                 // 1. Filter Countries (Local)
                 const matchedCountries = countries
-                    .filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .filter(c => c.name.toLowerCase().includes((locationConstraint || cleanQuery).toLowerCase()))
                     .slice(0, 3)
                     .map(c => ({
                         type: 'country' as const,
@@ -130,12 +143,18 @@ export default function SmartSearchBar({ countries }: SmartSearchBarProps) {
                     .from('suppliers')
                     .select('id, company_name, supplier_type, city, country_code')
 
+                if (locationConstraint) {
+                    // If we have a location, we filter strictly by that location (city or country code inferred?)
+                    // For now, simple text match on city or we rely on the user typing the city name
+                    supplierQuery = supplierQuery.ilike('city', `%${locationConstraint}%`)
+                }
+
                 if (mappedCategory) {
                     // When a category is detected, we prioritize it
-                    supplierQuery = supplierQuery.or(`company_name.ilike."%${searchTerm}%",supplier_type.ilike."${mappedCategory}",city.ilike."%${searchTerm}%"`)
+                    supplierQuery = supplierQuery.or(`company_name.ilike."%${cleanQuery}%",supplier_type.ilike."${mappedCategory}"`)
                 } else {
                     // Multi-field search
-                    supplierQuery = supplierQuery.or(`company_name.ilike."%${searchTerm}%",supplier_type.ilike."%${searchTerm}%",city.ilike."%${searchTerm}%"`)
+                    supplierQuery = supplierQuery.or(`company_name.ilike."%${cleanQuery}%",supplier_type.ilike."%${cleanQuery}%"`)
                 }
 
                 const { data: suppliers } = await supplierQuery.limit(4)
@@ -155,10 +174,14 @@ export default function SmartSearchBar({ countries }: SmartSearchBarProps) {
                     .select('id, product_name, city, country_code, product_category')
                     .eq('status', 'active')
 
+                if (locationConstraint) {
+                    productQuery = productQuery.ilike('city', `%${locationConstraint}%`)
+                }
+
                 if (mappedCategory) {
-                    productQuery = productQuery.or(`product_name.ilike."%${searchTerm}%",product_category.ilike."${mappedCategory}",city.ilike."%${searchTerm}%"`)
+                    productQuery = productQuery.or(`product_name.ilike."%${cleanQuery}%",product_category.ilike."${mappedCategory}"`)
                 } else {
-                    productQuery = productQuery.or(`product_name.ilike."%${searchTerm}%",product_category.ilike."%${searchTerm}%",city.ilike."%${searchTerm}%"`)
+                    productQuery = productQuery.or(`product_name.ilike."%${cleanQuery}%",product_category.ilike."%${cleanQuery}"`)
                 }
 
                 const { data: products } = await productQuery.limit(5)

@@ -29,7 +29,7 @@ export default function AgentDashboard({
     const [selectedFlag, setSelectedFlag] = useState<string | null>(null)
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen pt-16 bg-transparent">
+        <div className="flex flex-col lg:flex-row min-h-screen pt-32 bg-transparent">
 
             <PortalSidebar />
 
@@ -40,8 +40,8 @@ export default function AgentDashboard({
                 <div className="min-h-[45vh] flex flex-col items-center justify-center relative p-8">
                     <div className="w-full max-w-4xl z-10 space-y-10 text-center">
 
-                        <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl">
+                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-2xl">
                                 Where to next, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-100">{userName || 'Agent'}</span>?
                             </h1>
                             <p className="text-white text-lg font-light shadow-black/50 drop-shadow-md">
@@ -184,7 +184,7 @@ export default function AgentDashboard({
                             <h4 className="text-xs font-bold uppercase">System Update</h4>
                         </div>
                         <p className="text-xs text-white leading-relaxed">
-                            Multi-currency settlement engine upgraded to v2.0. Instant transfers now available for verified agents.
+                            Global connectivity protocols optimized for real-time inventory synchronization. Direct supplier messaging now active for all regions.
                         </p>
                     </div>
                 </div>

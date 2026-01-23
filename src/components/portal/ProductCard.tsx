@@ -154,18 +154,13 @@ export default function ProductCard({ product, isWishlisted = false, onToggleWis
                     </p>
 
                     {/* Meta Info */}
-                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Starting at</span>
-                            <span className="text-lg font-black text-white">{product.currency || '$'}{product.starting_price || product.base_price || '---'}</span>
-                        </div>
-
+                    <div className="flex items-center justify-end pt-4 border-t border-white/5">
                         <button
                             onClick={handleRequest}
                             disabled={isLoading}
                             className="px-6 py-2.5 bg-white text-slate-950 hover:bg-amber-400 text-[10px] font-black uppercase tracking-tight rounded-lg transition-all duration-300 transform group-hover:scale-105 disabled:opacity-50 shadow-lg shadow-black/20"
                         >
-                            {isLoading ? '...' : (onBook ? 'Book Now' : 'Reserve Access')}
+                            {isLoading ? '...' : 'View Details'}
                         </button>
                     </div>
                 </div>

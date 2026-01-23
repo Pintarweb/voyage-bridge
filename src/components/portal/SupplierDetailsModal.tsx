@@ -95,8 +95,6 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
         alert('Review feature coming soon!')
     }
 
-    const price = product.starting_price ?? product.base_price
-
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-hidden">
             <style>{`
@@ -176,14 +174,6 @@ export default function SupplierDetailsModal({ supplier, product, isOpen, onClos
 
                     {/* Key Details Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {price !== undefined && (
-                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <p className="text-xs text-slate-500 uppercase font-bold text-center">Starting From</p>
-                                <p className="text-lg font-bold text-slate-800 text-center text-blue-600">
-                                    {product.currency} {price}
-                                </p>
-                            </div>
-                        )}
                         {product.service_type && (
                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                 <p className="text-xs text-slate-500 uppercase font-bold text-center">Service Type</p>
