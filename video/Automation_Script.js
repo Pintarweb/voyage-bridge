@@ -22,7 +22,7 @@ async function smoothMove(page, targetSelector, steps = 60) {
         const element = page.locator(targetSelector).first();
         const box = await element.boundingBox();
         if (!box) {
-            console.log(`Could not find element: ${targetSelector}`);
+            console.log(`Could not find element for movement: ${targetSelector}`);
             return;
         }
         const endX = box.x + box.width / 2;
@@ -49,15 +49,55 @@ async function smoothMove(page, targetSelector, steps = 60) {
     }
 }
 
-// --- Overlay Helper ---
+// --- Overlay Helper (Robust) ---
 async function showOverlay(page, text) {
     await page.evaluate((text) => {
+        // 1. Ensure Styles Exist (re-inject if lost after navigation)
+        if (!document.getElementById('marketing-overlay-styles')) {
+            const style = document.createElement('style');
+            style.id = 'marketing-overlay-styles';
+            style.textContent = `
+                .marketing-overlay {
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(20, 20, 25, 0.85);
+                    backdrop-filter: blur(20px);
+                    border: 3px solid #FFB800;
+                    color: #FFB800;
+                    font-family: sans-serif;
+                    font-size: 5rem;
+                    font-weight: 900;
+                    padding: 3rem 6rem;
+                    border-radius: 30px;
+                    z-index: 2147483647;
+                    text-transform: uppercase;
+                    box-shadow: 0 0 100px rgba(255, 184, 0, 0.5);
+                    text-shadow: 0 0 30px rgba(255, 184, 0, 0.8);
+                    animation: popIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                    pointer-events: none;
+                    text-align: center;
+                    white-space: nowrap;
+                    opacity: 0;
+                }
+                @keyframes popIn { 
+                    0% { opacity: 0; transform: translate(-50%, -40%) scale(0.9); } 
+                    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // 2. Create and Append Overlay
         const div = document.createElement('div');
         div.className = 'marketing-overlay';
         div.textContent = text;
         document.body.appendChild(div);
 
+        // Remove after 4 seconds
         setTimeout(() => {
+            div.style.transition = 'opacity 1s ease';
             div.style.opacity = '0';
             setTimeout(() => div.remove(), 1000);
         }, 4000);
@@ -77,6 +117,7 @@ async function showOverlay(page, text) {
         args: ['--start-maximized']
     });
 
+    // Set viewport to 1080p for high quality
     const context = await browser.newContext({
         viewport: { width: 1920, height: 1080 },
         recordVideo: {
@@ -87,48 +128,33 @@ async function showOverlay(page, text) {
 
     const page = await context.newPage();
 
-    await page.addStyleTag({
-        content: `
-            .marketing-overlay {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(20, 20, 25, 0.6);
-                backdrop-filter: blur(20px);
-                border: 2px solid rgba(255, 184, 0, 0.5);
-                color: #FFB800;
-                font-family: 'Inter', sans-serif;
-                font-size: 5rem;
-                font-weight: 900;
-                padding: 3rem 6rem;
-                border-radius: 30px;
-                z-index: 99999;
-                text-transform: uppercase;
-                box-shadow: 0 0 100px rgba(255, 184, 0, 0.3);
-                text-shadow: 0 0 30px rgba(255, 184, 0, 0.8);
-                animation: popIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-                pointer-events: none;
-                text-align: center;
-                white-space: nowrap;
-            }
-            @keyframes popIn { 
-                0% { opacity: 0; transform: translate(-50%, -40%) scale(0.9); } 
-                100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
-            }
-        `
-    });
-
     try {
-        // SCENE 1
-        console.log("Scene 1: Hero");
+        // ----------------------------------------------------------------
+        // 0. SCENE: PRE-ROLL - LOGIN
+        // ----------------------------------------------------------------
+        console.log("Scene 0: Login (Setting up state)");
+        await page.goto('http://localhost:3000/auth/agent');
+        await page.waitForTimeout(1000);
+
+        await page.fill('input[type="email"]', 'sarah.jenkins@elite-travels.com');
+        await page.fill('input[type="password"]', 'Password123!');
+        await page.click('button:has-text("Sign In")');
+
+        // Wait for redirect to dashboard to confirm login
+        await page.waitForURL('**/agent-portal**', { timeout: 10000 }).catch(() => console.log("Login redirect timeout or already logged in"));
+        await page.waitForTimeout(1000);
+
+        // ----------------------------------------------------------------
+        // 1. SCENE: HERO & LOGO (0:00 - 0:10)
+        // ----------------------------------------------------------------
+        console.log("Scene 1: Hero & Language");
         await page.goto('http://localhost:3000');
         await page.waitForTimeout(1000);
-        await showOverlay(page, "STOP PAYING COMMISSIONS");
-        await page.waitForTimeout(4000);
 
-        // SCENE 2
-        console.log("Scene 2: Language");
+        await showOverlay(page, "GLOBAL B2B CONNECTIVITY");
+        await page.waitForTimeout(2000);
+
+        // Language Toggle
         const langBtnSelector = 'button:has(span:text-is("EN"))';
         try {
             const langBtn = page.locator(langBtnSelector).first();
@@ -142,92 +168,116 @@ async function showOverlay(page, text) {
                 await page.click('text=日本語');
                 await page.waitForTimeout(2000);
 
-                await showOverlay(page, "0% COMMISSION");
-
-                // Reset
-                // Check for JA for Japanese
-                const closeBtnSelector = 'button:has(span:text-is("JA"))';
-                // If not found, try generic close or just reload
-                const closeBtn = page.locator(closeBtnSelector).first();
-                if (await closeBtn.isVisible()) {
-                    await closeBtn.click();
+                // REVERT TO ENGLISH
+                // Find the button (now likely displaying JA or similar)
+                const jpBtn = page.locator('button:has(span:text-is("JA")), button:has(span:text-is("JP")), button:has(img[alt*="日本語"])').first();
+                if (await jpBtn.isVisible()) {
+                    await jpBtn.click();
                 } else {
-                    // Try EN again if it didn't change?
-                    const enBtn = page.locator(langBtnSelector).first();
-                    if (await enBtn.isVisible()) await enBtn.click();
+                    // Fallback
+                    await langBtn.click();
                 }
-
                 await page.waitForTimeout(500);
-                const engOption = page.locator('text=English');
-                if (await engOption.isVisible()) {
-                    await engOption.click();
-                }
+                await page.click('text=English');
                 await page.waitForTimeout(1000);
             }
-        } catch (e) {
-            console.log("Language toggle issue:", e.message);
-        }
+        } catch (e) { console.log("Language toggle skipped", e); }
 
-        // SCENE 3
-        console.log("Scene 3: Dashboard");
+        // SCENE 2
+        console.log("Scene 2: Dashboard");
         await page.goto('http://localhost:3000/agent-portal');
         await page.waitForLoadState('networkidle');
 
-        await page.mouse.wheel(0, 500);
-        await page.waitForTimeout(1000);
-        await page.mouse.wheel(0, -500);
+        await page.mouse.move(960, 540, { steps: 50 });
 
+        await showOverlay(page, "0% COMMISSION");
+        await page.waitForTimeout(2000);
+
+        // SCENE 3
+        console.log("Scene 3: Search");
         await showOverlay(page, "100% PROFIT RETENTION");
-        await page.waitForTimeout(3000);
 
-        // SCENE 4
-        console.log("Scene 4: Search");
         const searchInputSelector = 'input[placeholder*="Search destinations"]';
-        const searchInput = page.locator(searchInputSelector).first();
 
-        if (await searchInput.isVisible()) {
+        // Wait for search input
+        const searchInput = page.locator(searchInputSelector).first();
+        try {
+            await searchInput.waitFor({ state: 'visible', timeout: 10000 });
+
             await smoothMove(page, searchInputSelector);
             await searchInput.click();
-            await page.keyboard.type('Bangkok', { delay: 100 });
-            await page.waitForTimeout(1500);
 
-            await page.keyboard.press('ArrowDown');
-            await page.waitForTimeout(200);
-            await page.keyboard.press('Enter');
+            // "hotel in bangkok"
+            await page.keyboard.type('hotel in bangkok', { delay: 100 });
+            await page.waitForTimeout(2000);
+
+            // Select result
+            const specificResult = page.locator('text=Grand Bangkok Hotel').first();
+            if (await specificResult.isVisible()) {
+                await specificResult.click();
+            } else {
+                console.log("Specific hotel not found, pushing Enter");
+                await page.keyboard.press('ArrowDown');
+                await page.waitForTimeout(200);
+                await page.keyboard.press('Enter');
+            }
+        } catch (e) {
+            console.log("Search input not found, attempting generic input");
+            const genericInput = page.locator('input').first();
+            if (await genericInput.isVisible()) {
+                await genericInput.click();
+                await page.keyboard.type('hotel in bangkok', { delay: 100 });
+                await page.keyboard.press('Enter');
+            }
         }
 
         await page.waitForLoadState('networkidle');
         await page.waitForTimeout(2000);
 
-        const firstCard = page.locator('.group').first();
-        if (await firstCard.isVisible()) {
-            await smoothMove(page, '.group');
-            await firstCard.click();
-            await page.waitForTimeout(2000);
+        // SCENE 4: CONNECT (FAILSAFE ADDED)
+        console.log("Scene 4: Connect");
+
+        // Failsafe
+        const isProductPage = page.url().includes('/product/');
+        if (!isProductPage) {
+            console.log("Not on product page, forcing navigation to suppliers...");
+            await page.goto('http://localhost:3000/agent-portal/suppliers', { timeout: 60000 }); // INCREASED TIMEOUT
+            // Relaxed wait state in case networkidle is too strict for slow assets
+            await page.waitForLoadState('domcontentloaded');
+
+            const firstCard = page.locator('.group').first();
+            if (await firstCard.isVisible()) {
+                await smoothMove(page, '.group');
+                await firstCard.click();
+                await page.waitForTimeout(2000);
+            }
         }
 
-        await showOverlay(page, "DIRECT CONNECTIVITY");
-        await page.waitForTimeout(3000);
+        await showOverlay(page, "DIRECT PARTNER ACCESS");
 
-        // SCENE 5
-        console.log("Scene 5: CTA");
-        const connectBtnSelector = 'button:has-text("Connect with Supplier")';
-        const connectBtn = page.locator(connectBtnSelector);
+        // "Connect with Supplier"
+        const connectBtn = page.locator('button').filter({ hasText: /Connect with Supplier|Contact Supplier|CONNECT WITH SUPPLIER/i }).first();
 
-        // Wait for it
         try {
             await connectBtn.waitFor({ state: 'visible', timeout: 5000 });
             if (await connectBtn.isVisible()) {
-                await smoothMove(page, connectBtnSelector);
-                await connectBtn.hover();
-                await page.waitForTimeout(1000);
-                await connectBtn.click();
+                const box = await connectBtn.boundingBox();
+                if (box) {
+                    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 30 });
+                    await connectBtn.click();
+                } else {
+                    await connectBtn.click();
+                }
             }
-        } catch (e) {
-            console.log("CTA not found");
-        }
+        } catch (e) { console.log("Connect button not interactable"); }
 
+        await page.waitForTimeout(2000);
+
+        // SCENE 5
+        console.log("Scene 5: Close");
         await showOverlay(page, "70% OFF + 30-DAY TRIAL");
+
+        await page.mouse.wheel(0, 400);
         await page.waitForTimeout(5000);
 
     } catch (e) {
@@ -235,6 +285,26 @@ async function showOverlay(page, text) {
     } finally {
         await context.close();
         await browser.close();
-        console.log(`Recording Complete. Check ${path.join(__dirname, 'recordings')}`);
+
+        // Rename latest video
+        const recordingsDir = path.join(__dirname, 'recordings');
+        try {
+            const files = fs.readdirSync(recordingsDir)
+                .filter(f => f.endsWith('.webm'))
+                .map(f => ({ name: f, time: fs.statSync(path.join(recordingsDir, f)).mtime.getTime() }))
+                .sort((a, b) => b.time - a.time);
+
+            if (files.length > 0) {
+                const latest = files[0].name;
+                const newName = 'Ark_Alliance_Marketing_60s.webm';
+                if (fs.existsSync(path.join(recordingsDir, newName))) {
+                    fs.unlinkSync(path.join(recordingsDir, newName));
+                }
+                fs.renameSync(path.join(recordingsDir, latest), path.join(recordingsDir, newName));
+                console.log(`Success! Video saved as: ${path.join(recordingsDir, newName)}`);
+            }
+        } catch (e) {
+            console.log("Error renaming file:", e);
+        }
     }
 })();
